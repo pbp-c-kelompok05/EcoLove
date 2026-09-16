@@ -1,65 +1,58 @@
 Nama Anggota & NPM:
-    - Maurilla Maharani Nur Abdul (2506588374)
-    - David Mesakh (2506604503)
-    - Qanita Syafika (2506551996)
-    - Karen Lim (2506623982)
-    - Sayyid Aqil Kusuma (2506596331)
+   - Maurilla Maharani Nur Abdul (2506588374)
+   - David Mesakh (2506604503)
+   - Qanita Syafika (2506551996)
+   - Karen Lim (2506623982)
+   - Sayyid Aqil Kusuma (2506596331)
 
-Nama aplikasi: 
-    MBGT 
 
-Deskripsi Aplikasi: 
+Nama aplikasi:
+   EcoLove
 
-    Makan Bergizi Gratis Tracker (MBGT) adalah aplikasi berbasis web untuk membantu Satuan Pelayanan Pemenuhan Gizi (SPPG) dan sekolah mitra mencatat, memantau, dan mengevaluasi sisa makanan dalam pelaksanaan Program Makan Bergizi Gratis.
 
-    Aplikasi mencakup seluruh alur operasional, mulai dari pendataan sekolah dan penerima, penyusunan menu, perencanaan jumlah produksi, distribusi makanan, penerimaan di sekolah, pencatatan sisa makanan, hingga tindakan perbaikan untuk periode berikutnya.
+Deskripsi Aplikasi:
+    EcoLove adalah aplikasi marketplace berbasis web yang mempertemukan masyarakat untuk menjual, membeli, dan menemukan barang maupun kegiatan yang mendukung gaya hidup berkelanjutan.
 
-    Petugas sekolah dapat mencatat jumlah porsi yang diterima dan dibagikan, berat makanan yang tersisa, komponen makanan yang paling banyak tidak dikonsumsi, serta alasan dominannya. Data dari berbagai periode dan sekolah kemudian ditampilkan melalui dashboard agar pengelola dapat menemukan pola food waste dan melakukan evaluasi berbasis data.
+    Melalui EcoLove, pengguna dapat memberikan kesempatan kedua kepada barang-barang yang masih layak digunakan, seperti pakaian preloved, perabot, buku, alat elektronik, wadah pakai ulang, produk upcycle, serta berbagai barang ramah lingkungan lainnya. Konsep tersebut direpresentasikan melalui tagline “Love Me Again”, yaitu mengajak pengguna untuk kembali menghargai dan memperpanjang masa pakai suatu barang.
 
-    Badan Gizi Nasional menyebutkan bahwa penanganan sisa pangan dalam pelaksanaan MBG mencakup pemilahan, pencatatan, dan penanganan lanjutan. Pengawasan pengelolaan sisa pangan juga melibatkan SPPG dan satuan pendidikan. BGN: Penanganan Sisa Pangan dan Limbah MBG dan BGN: Pengawasan Sisa Pangan MBG.
+    Berbeda dari marketplace umum, EcoLove berfokus pada barang dan aktivitas yang memiliki nilai keberlanjutan. Setiap barang dapat dilengkapi dengan kategori dan sustainability tags, seperti preloved, reusable, recycled, upcycled, refillable, repairable, locally made, dan low-waste.
 
-Sumber Public API: 
-    https://docs.apiindonesia.id/#sekolah 
+    Selain marketplace, EcoLove menyediakan informasi kegiatan bertema lingkungan, seperti acara pertukaran barang, workshop perbaikan, bazar barang bekas, kegiatan bersih-bersih, dan webinar. Pengguna juga dapat membaca serta membagikan konten edukasi mengenai konsumsi sadar, perawatan barang, daur ulang, dan gaya hidup minim sampah.
 
-User Role & Target User: 
-    Petugas SPPG
-        - Mengelola menu.
-        - Mengelola rencana produksi.
-        - Mencatat realisasi produksi.
-        - Membuat catatan distribusi.
-        - Melihat data food waste sekolah mitra.
-        - Membuat tindakan perbaikan.
-        - Melihat laporan SPPG.
+    EcoLove mengusung konsep “From the people, by the people, for the people” karena konten dan aktivitas di dalam aplikasi berasal dari kontribusi masyarakat. Pengguna dapat menjadi pembeli, penjual, penyelenggara kegiatan, pemberi ulasan, maupun kontributor konten edukasi dalam satu akun yang sama.
+   
+Sumber Public API:
+   https://github.com/emsifa/api-wilayah-indonesia.git
 
-    Petugas Sekolah
-        - Melihat distribusi untuk sekolahnya.
-        - Memverifikasi jumlah porsi yang diterima.
-        - Mencatat kondisi makanan.
-        - Mencatat jumlah penerima aktual.
-        - Mencatat jumlah dan berat sisa makanan.
-        - Memberikan feedback menu.
-        - Melihat riwayat sekolahnya sendiri.
 
-    Admin/Pengawas
-        - Mengelola pengguna.
-        - Mengelola data master.
-        - Melihat seluruh data SPPG dan sekolah.
-        - Mengelola kategori food waste.
-        - Mengoreksi atau menghapus data tidak valid.
-        - Melihat dashboard keseluruhan.
+User Role & Target User:
+   
+    User Role: 
+        Guest / Anonymous : Hanya bisa melihat katalog produk berdasarkan lokasi, membaca artikel edukasi, dan melihat jadwal acara.
+        Buyer (User) : Dapat mengelola profil, membeli barang bekas menggunakan pembayaran Midtrans, dan memberikan ulasan pesanan. 
+        Seller (User) : Dapat mengunggah foto produk bekas, menetapkan harga, menentukan lokasi penjemputan, dan mengatur status barang. 
+        Event Creator : Memiliki semua akses pengguna biasa, ditambah hak membuat agenda acara baru dan menerbitkan artikel edukasi. 
+        Admin : Memegang kendali penuh untuk memoderasi produk, memantau transaksi Midtrans, mengelola akun, dan memvalidasi konten. 
+    Target User:
+        Gen Z & Thrifter : Anak muda berusia 18–35 tahun yang mencari barang bekas berkualitas 
+        Penjual :  Individu yang ingin menjual barang layak pakai di rumahnya secara mudah dan aman. 
 
-Perbandingan dengan kompetisi: 
-    MBGT
-        - Khusus pengelolaan sisa makanan Program MBG
-        - Mencakup alur dari pendataan sekolah hingga evaluasi sisa makanan
-        - Pencatatan porsi, berat sisa, komponen makanan, dan alasan sisa secara terstruktur
-        - Dashboard terintegrasi untuk memantau data berbagai periode dan sekolah
 
-    Excel Spreadsheet 
-        - Pencatatan data secara umum
-        - Input manual, perlu kolom dan rumus yang disiapkan
-        - Pengguna harus membuat dan mengatur template sendiri
-        - Memerlukan pengolahan data dan pembuatan grafik secara manual
 
-Daftar Modul & PIC: 
-    Belum ditentukan.
+Perbandingan: 
+    
+    Compared to existing secondhand marketplaces, EcoLove combines marketplace functionality with features that support sustainable living.
+
+    OLX provides **User & Profile, Item, Transaction & Payment, and Reviews**, but does not include **Events** or **Education** features.
+
+    Facebook Marketplace provides **User & Profile, Item, Transaction & Payment, Reviews, and Events**, but does not specifically provide an **Education** feature.
+
+    EcoLove includes all of these features: **User & Profile, Item, Transaction & Payment, Reviews, Events, and Education**. The combination is designed to support not only secondhand transactions, but also community engagement and awareness of sustainable living.
+
+
+Daftar Modul & PIC:
+    Auth-Profile-User = 
+    Event+Education =
+    Item = 
+    Review = 
+    Transaction+Payment =
