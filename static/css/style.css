@@ -1,0 +1,324 @@
+/* =========================
+   ECOLOVE DESIGN SYSTEM
+   ========================= */
+
+:root {
+    --primary: #2E7D32;
+    --primary-light: #A5D6A7;
+
+    --background: #FAF7F0;
+    --surface: #FFFFFF;
+
+    --text: #1F2D21;
+    --text-muted: #6B756C;
+
+    --border: #DDE5DC;
+
+    --tag-green: #E8F5E9;
+    --tag-teal: #E0F2F1;
+    --tag-orange: #FFF3E0;
+
+    --radius: 14px;
+}
+
+
+/* =========================
+   RESET
+   ========================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: var(--background);
+    color: var(--text);
+    line-height: 1.6;
+}
+
+
+/* =========================
+   GENERAL
+   ========================= */
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.section {
+    padding: 80px 8%;
+}
+
+.section-alt {
+    background-color: #F1F5EF;
+}
+
+.section-heading {
+    max-width: 650px;
+    margin-bottom: 40px;
+}
+
+.section-heading h2 {
+    font-size: 2.3rem;
+    margin-bottom: 12px;
+}
+
+.section-heading p {
+    color: var(--text-muted);
+}
+
+.eyebrow {
+    color: var(--primary);
+    font-size: 0.8rem;
+    font-weight: bold;
+    letter-spacing: 0.12em;
+    margin-bottom: 8px;
+}
+
+
+/* =========================
+   NAVBAR
+   ========================= */
+
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 20px 8%;
+
+    background-color: var(--surface);
+    border-bottom: 1px solid var(--border);
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary);
+}
+
+.navbar nav {
+    display: flex;
+    gap: 28px;
+}
+
+.navbar nav a {
+    color: var(--text-muted);
+}
+
+.navbar nav a:hover {
+    color: var(--primary);
+}
+
+.nav-actions {
+    display: flex;
+    gap: 10px;
+}
+
+
+/* =========================
+   BUTTONS
+   ========================= */
+
+.btn {
+    display: inline-block;
+
+    padding: 10px 18px;
+
+    border-radius: 999px;
+
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    color: white;
+}
+
+.btn-primary:hover {
+    opacity: 0.9;
+}
+
+.btn-outline {
+    border: 1px solid var(--primary);
+    color: var(--primary);
+}
+
+.btn-outline:hover {
+    background-color: var(--tag-green);
+}
+
+
+/* =========================
+   HERO
+   ========================= */
+
+.hero {
+    min-height: 600px;
+
+    display: flex;
+    align-items: center;
+
+    padding: 80px 8%;
+
+    background-color: var(--background);
+}
+
+.hero-content {
+    max-width: 700px;
+}
+
+.hero h1 {
+    font-size: clamp(3rem, 7vw, 6rem);
+    line-height: 0.95;
+    margin-bottom: 24px;
+}
+
+.hero-description {
+    max-width: 550px;
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    margin-bottom: 30px;
+}
+
+.hero-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+
+/* =========================
+   CARDS
+   ========================= */
+
+.card-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 24px;
+}
+
+.product-card,
+.info-card,
+.education-card {
+    background-color: var(--surface);
+
+    border: 1px solid var(--border);
+
+    border-radius: var(--radius);
+
+    overflow: hidden;
+}
+
+.product-image {
+    height: 220px;
+    background-color: var(--primary-light);
+}
+
+.card-content {
+    padding: 20px;
+}
+
+.card-content h3 {
+    margin: 10px 0 4px;
+}
+
+.card-content p {
+    color: var(--text-muted);
+}
+
+.info-card {
+    padding: 28px;
+}
+
+.info-card h3 {
+    margin: 16px 0 8px;
+}
+
+.info-card p {
+    color: var(--text-muted);
+}
+
+
+/* =========================
+   TAG
+   ========================= */
+
+.tag {
+    display: inline-block;
+
+    padding: 5px 10px;
+
+    border-radius: 999px;
+
+    background-color: var(--tag-green);
+
+    color: var(--primary);
+
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+/* =========================
+   FOOTER
+   ========================= */
+
+.footer {
+    padding: 50px 8%;
+
+    background-color: var(--text);
+
+    color: white;
+}
+
+.footer h2 {
+    margin-bottom: 8px;
+}
+
+.footer p {
+    color: #D5DED5;
+}
+
+
+/* =========================
+   RESPONSIVE
+   ========================= */
+
+@media (max-width: 768px) {
+
+    .navbar {
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .navbar nav {
+        order: 3;
+        width: 100%;
+
+        justify-content: center;
+    }
+
+    .hero {
+        min-height: 500px;
+    }
+
+    .card-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .section {
+        padding: 60px 6%;
+    }
+}
