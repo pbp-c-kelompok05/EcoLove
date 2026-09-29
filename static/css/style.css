@@ -1,94 +1,209 @@
 :root {
-    --bg-pastel: #F2F7F2;
-    --primary-main: #528974;
-    --primary-dark: #2A5A48;
-    --secondary-sage: #DDE8DF;
-    --neutral-900: #1B211E;
-    --neutral-600: #5C6561;
-    --border-color: #E1EBE3;
-
+    --primary: #2E7D32;
+    --primary-light: #A5D6A7;
+    --background: #FAF7F0;
+    --surface: #FFFFFF;
+    --text: #1F2D21;
+    --text-muted: #6B756C;
+    --border: #DDE5DC;
+    --tag-green: #E8F5E9;
+    --tag-teal: #E0F2F1;
+    --tag-orange: #FFF3E0;
+    --radius: 14px;
     --font-ui: 'Plus Jakarta Sans', sans-serif;
-    --font-tagline: 'Patrick Hand', cursive;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
 }
 
 body {
     font-family: var(--font-ui);
-    color: var(--neutral-900);
-    background-color: var(--bg-pastel);
-    margin: 0;
-    padding: 0;
-    min-height: 100vh;
+    background-color: var(--background);
+    color: var(--text);
+    line-height: 1.6;
 }
 
-/* Background Leaf Accents */
-body::before {
-    content: "🌿";
-    position: fixed;
-    font-size: 130px;
-    opacity: 0.08;
-    top: 20px;
-    right: 30px;
-    pointer-events: none;
+a {
+    text-decoration: none;
+    color: inherit;
 }
 
-body::after {
-    content: "🍃";
-    position: fixed;
-    font-size: 130px;
-    opacity: 0.08;
-    bottom: 20px;
-    left: 30px;
-    pointer-events: none;
-}
-
-/* Navbar */
+/* NAVBAR */
 .navbar {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 14px 28px;
-    background-color: #FFFFFF;
-    border-bottom: 1px solid var(--border-color);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    justify-content: space-between;
+    padding: 20px 8%;
+    background-color: var(--surface);
+    border-bottom: 1px solid var(--border);
 }
 
-.navbar-brand {
-    font-family: var(--font-tagline);
-    font-size: 26px;
-    color: var(--primary-dark);
-    text-decoration: none;
+.logo {
+    font-size: 1.5rem;
     font-weight: bold;
+    color: var(--primary);
+}
+
+.navbar nav {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 28px;
 }
 
-.nav-link {
-    text-decoration: none;
-    color: var(--primary-dark);
-    background-color: var(--secondary-sage);
-    padding: 6px 16px;
-    border-radius: 20px;
-    font-size: 14px;
-    font-weight: 600;
+.navbar nav a {
+    color: var(--text-muted);
 }
 
-/* Container & Card Layout */
-.main-container {
+.navbar nav a:hover {
+    color: var(--primary);
+}
+
+/* BUTTONS */
+.btn {
+    display: inline-block;
+    padding: 10px 18px;
+    border-radius: 999px;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-primary:hover {
+    opacity: 0.9;
+}
+
+.btn-outline {
+    border: 1px solid var(--primary);
+    color: var(--primary);
+}
+
+.btn-outline:hover {
+    background-color: var(--tag-green);
+}
+
+/* HERO & SECTIONS */
+.hero {
+    min-height: 500px;
+    display: flex;
+    align-items: center;
+    padding: 80px 8%;
+    background-color: var(--background);
+}
+
+.hero-content {
+    max-width: 700px;
+}
+
+.hero h1 {
+    font-size: clamp(3rem, 6vw, 5rem);
+    line-height: 1;
+    margin-bottom: 24px;
+}
+
+.hero-description {
+    max-width: 550px;
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    margin-bottom: 30px;
+}
+
+.hero-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.section {
+    padding: 80px 8%;
+}
+
+.section-alt {
+    background-color: #F1F5EF;
+}
+
+.section-heading {
+    max-width: 650px;
+    margin-bottom: 40px;
+}
+
+.section-heading h2 {
+    font-size: 2.3rem;
+    margin-bottom: 12px;
+}
+
+.section-heading p {
+    color: var(--text-muted);
+}
+
+.eyebrow {
+    color: var(--primary);
+    font-size: 0.8rem;
+    font-weight: bold;
+    letter-spacing: 0.12em;
+    margin-bottom: 8px;
+}
+
+/* CARDS & GRID */
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+.product-card, .info-card {
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+
+.product-image {
+    height: 220px;
+    background-color: var(--primary-light);
+}
+
+.card-content, .info-card {
+    padding: 24px;
+}
+
+.tag {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background-color: var(--tag-green);
+    color: var(--primary);
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+/* AUTH / LOGIN FORM STYLES */
+.auth-container {
     max-width: 420px;
-    margin: 40px auto;
+    margin: 60px auto;
     padding: 0 16px;
 }
 
 .card {
-    background: #FFFFFF;
-    border: 1px solid var(--border-color);
-    border-radius: 16px;
-    padding: 32px 28px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.03);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 32px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
 }
 
-/* Form Styles */
 .form-group {
     margin-bottom: 18px;
 }
@@ -97,40 +212,36 @@ body::after {
     display: block;
     font-size: 13px;
     font-weight: 600;
-    color: var(--neutral-600);
+    color: var(--text-muted);
     margin-bottom: 6px;
 }
 
 .input-field {
     width: 100%;
     padding: 12px 14px;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--border);
     border-radius: 10px;
     font-size: 14px;
     font-family: var(--font-ui);
     box-sizing: border-box;
-    background-color: #FAFCFA;
     outline: none;
 }
 
 .input-field:focus {
-    border-color: var(--primary-main);
-    background-color: #FFFFFF;
+    border-color: var(--primary);
 }
 
-.btn-primary {
-    background-color: var(--primary-main);
+/* FOOTER */
+.footer {
+    padding: 40px 8%;
+    background-color: var(--text);
     color: white;
-    border: none;
-    border-radius: 10px;
-    padding: 12px;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    width: 100%;
-    margin-top: 8px;
+    text-align: center;
+    margin-top: 60px;
 }
 
-.btn-primary:hover {
-    background-color: var(--primary-dark);
+@media (max-width: 768px) {
+    .card-grid {
+        grid-template-columns: 1fr;
+    }
 }

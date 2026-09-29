@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="card" style="text-align: center;">
+        <div style="font-size: 50px; margin-bottom: 10px;">🌿</div>
+        <h2>Profil Saya</h2>
+        <hr style="border: 0; border-top: 1px solid var(--border); margin: 20px 0;">
+
+        <p style="margin-bottom: 8px;"><strong>Username:</strong> {{ request.user.username }}</p>
+        <p style="margin-bottom: 20px; color: var(--text-muted);"><strong>Email:</strong> {{ request.user.email }}</p>
+
+        <a href="/logout/" class="btn btn-outline" style="width: 100%; display: block;">Log Out</a>
+    </div>
+</div>
+{% endblock %}
