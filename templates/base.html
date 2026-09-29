@@ -1,0 +1,22 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>EcoLove</title>
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/" class="navbar-brand">EcoLove</a>
+        <div>
+            <a href="/login" class="badge" style="text-decoration: none;">Login</a>
+        </div>
+    </nav>
+
+    <div style="max-width: 480px; margin: 20px auto; padding: 0 16px;">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

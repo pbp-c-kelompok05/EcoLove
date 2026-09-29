@@ -1,0 +1,136 @@
+:root {
+    --bg-pastel: #F2F7F2;
+    --primary-main: #528974;
+    --primary-dark: #2A5A48;
+    --secondary-sage: #DDE8DF;
+    --neutral-900: #1B211E;
+    --neutral-600: #5C6561;
+    --border-color: #E1EBE3;
+
+    --font-ui: 'Plus Jakarta Sans', sans-serif;
+    --font-tagline: 'Patrick Hand', cursive;
+}
+
+body {
+    font-family: var(--font-ui);
+    color: var(--neutral-900);
+    background-color: var(--bg-pastel);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+}
+
+/* Background Leaf Accents */
+body::before {
+    content: "🌿";
+    position: fixed;
+    font-size: 130px;
+    opacity: 0.08;
+    top: 20px;
+    right: 30px;
+    pointer-events: none;
+}
+
+body::after {
+    content: "🍃";
+    position: fixed;
+    font-size: 130px;
+    opacity: 0.08;
+    bottom: 20px;
+    left: 30px;
+    pointer-events: none;
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 28px;
+    background-color: #FFFFFF;
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.navbar-brand {
+    font-family: var(--font-tagline);
+    font-size: 26px;
+    color: var(--primary-dark);
+    text-decoration: none;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.nav-link {
+    text-decoration: none;
+    color: var(--primary-dark);
+    background-color: var(--secondary-sage);
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* Container & Card Layout */
+.main-container {
+    max-width: 420px;
+    margin: 40px auto;
+    padding: 0 16px;
+}
+
+.card {
+    background: #FFFFFF;
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 32px 28px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.03);
+}
+
+/* Form Styles */
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--neutral-600);
+    margin-bottom: 6px;
+}
+
+.input-field {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: var(--font-ui);
+    box-sizing: border-box;
+    background-color: #FAFCFA;
+    outline: none;
+}
+
+.input-field:focus {
+    border-color: var(--primary-main);
+    background-color: #FFFFFF;
+}
+
+.btn-primary {
+    background-color: var(--primary-main);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 8px;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+}
