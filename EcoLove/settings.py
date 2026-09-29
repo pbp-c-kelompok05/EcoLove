@@ -37,6 +37,11 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://qanita-syafika-ecolove.pws.cs.ui.ac.id',
+    'http://qanita-syafika-ecolove.pws.cs.ui.ac.id',
+]
+
 PRODUCTION = os.getenv('PRODUCTION', 'False').lower() == 'true'
 
 # Application definition
