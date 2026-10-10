@@ -13,10 +13,15 @@
         <a href="/" class="logo">EcoLove</a>
         <nav>
             <a href="/#home">Home</a>
+<<<<<<< Updated upstream
             <a href="/#marketplace">Marketplace</a>
             <a href="/#events">Events</a>
 
             {% if user.is_authenticated %}
+=======
+            <a href="{% url 'items:show_marketplace' %}">Marketplace</a>
+            <a href="{% url 'show_events' %}">Events</a>            {% if user.is_authenticated %}
+>>>>>>> Stashed changes
                 <!-- Jika SUDAH Login -->
                 <a href="/profile/" style="font-weight: 600; color: var(--primary);">
                     👤 {{ user.username }}
@@ -24,7 +29,7 @@
                 <a href="/logout/" class="btn btn-outline" style="padding: 6px 14px; font-size: 13px;">Logout</a>
             {% else %}
                 <!-- Jika BELUM Login -->
-                <a href="/login/" class="btn btn-primary" style="padding: 6px 16px;">Login</a>
+                <a href="/login/" class="btn btn-primary" style="padding: 6px 16px; color: #ffffff !important;">Login</a>
             {% endif %}
         </nav>
     </header>

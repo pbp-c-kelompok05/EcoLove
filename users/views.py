@@ -5,9 +5,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
 def login_user(request):
+    username_input = ''
     if request.method == 'POST':
-        username_input = request.POST.get('username')
-        password_input = request.POST.get('password')
+        username_input = request.POST.get('username', '')
+        password_input = request.POST.get('password', '')
         user = authenticate(request, username=username_input, password=password_input)
         
         if user is not None:
@@ -16,7 +17,7 @@ def login_user(request):
         else:
             messages.error(request, "Username atau password salah.")
             
-    return render(request, 'login.html')
+    return render(request, 'login.html', {'username': username_input})
 
 def register_user(request):
     if request.method == 'POST':
