@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="section">
+  <!-- Container baru yang membentang 100% -->
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%; margin-bottom: 30px;">
+    
+    <!-- Bagian teks dibiarkan menggunakan class aslinya -->
+    <div class="section-heading" style="text-align: left; margin: 0; max-width: 600px;">
+      <h2 style="margin-bottom: 8px;">Marketplace EcoLove</h2>
+      <p>Discover secondhand and sustainable products from the EcoLove community.</p>
+    </div>
+
+    <!-- Tombol diletakkan di luar class section-heading agar bebas ke kanan -->
+    {% if user.is_authenticated %}
+    <div style="margin-top: 10px;">
+      <a href="{% url 'items:add_item' %}" class="btn btn-primary" style="text-decoration: none; padding: 10px 24px; font-weight: 600; border-radius: 50px; white-space: nowrap;">
+        + Sell an Item
+      </a>
+    </div>
+    {% endif %}
+    
+  </div>
+
+  <div class="card-grid">
+    {% for item in items %}
+    <article class="product-card">
+      
+      <!-- Image Area -->
+      <a href="{% url 'items:item_detail' item.id %}">
+    {% if item.image %}
+        <div class="product-image" style="background-image: url('{{ item.image.url }}'); background-size: cover; background-position: center; height: 200px;"></div>
+    {% else %}
+        <div class="product-image" style="background-color: #a3d9a5; height: 200px;"></div>
+    {% endif %}
+    </a>
+      <div class="card-content">
+        <!-- Category Tag -->
+        <span class="tag">{{ item.get_category_display }}</span>
+        
+        <!-- Product Name and Like/Dislike Buttons -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
+            <a href="{% url 'items:item_detail' item.id %}" style="text-decoration: none; color: inherit;">
+                <h3 style="margin: 0; font-size: 1.1rem;">{{ item.name }}</h3>
+            </a>
+
+            <!-- Interaction Buttons (Only for logged-in users) -->
+            {% if user.is_authenticated %}
+            <div class="interaction-buttons" style="display: flex; gap: 6px;">
+                <form action="{% url 'items:like_item' item.id %}" method="POST" style="margin: 0;">
+                    {% csrf_token %}
+                    <button type="submit" style="cursor: pointer; border: 1px solid #ddd; background: white; padding: 4px 8px; border-radius: 4px; font-size: 0.85em;">
+                        👍 {{ item.likes.count }}
+                    </button>
+                </form>
+                <form action="{% url 'items:dislike_item' item.id %}" method="POST" style="margin: 0;">
+                    {% csrf_token %}
+                    <button type="submit" style="cursor: pointer; border: 1px solid #ddd; background: white; padding: 4px 8px; border-radius: 4px; font-size: 0.85em;">
+                        👎 {{ item.dislikes.count }}
+                    </button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Price -->
+        <p style="margin-top: 8px; font-weight: 600;">Rp{{ item.price }}</p>
+      </div>
+    </article>
+    {% empty %}
+    
+    <!-- Empty State Message -->
+    <div style="grid-column: 1 / -1; padding: 20px 0;">
+        <p>There are currently no items available on the marketplace.</p>
+    </div>
+    
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
