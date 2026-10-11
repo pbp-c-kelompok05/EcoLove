@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- MARKETPLACE -->
+<section id="marketplace" class="section" style="padding-top: 80px;">
+  <div class="section-heading">
+    <p class="eyebrow">MARKETPLACE</p>
+    <h2>Find Something to Love Again</h2>
+    <p>
+      Discover secondhand and sustainable products from the EcoLove community.
+    </p>
+  </div>
+
+  <div class="card-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px;">
+    <article class="product-card" style="display: flex; flex-direction: column; background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; height: 100%;">
+      <div class="product-image" style="background-color: #a3d9a5; height: 200px;"></div>
+      <div class="card-content" style="padding: 16px; display: flex; flex-direction: column; flex-grow: 1; justify-content: space-between;">
+        <div>
+          <span class="tag">Preloved</span>
+          <h3 style="margin: 12px 0 0 0; font-size: 1.1rem;">Product Name</h3>
+        </div>
+        <p style="margin-top: 12px; font-weight: 600;">Rp100.000</p>
+      </div>
+    </article>
+
+    <article class="product-card" style="display: flex; flex-direction: column; background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; height: 100%;">
+      <div class="product-image" style="background-color: #a3d9a5; height: 200px;"></div>
+      <div class="card-content" style="padding: 16px; display: flex; flex-direction: column; flex-grow: 1; justify-content: space-between;">
+        <div>
+          <span class="tag">Reusable</span>
+          <h3 style="margin: 12px 0 0 0; font-size: 1.1rem;">Product Name</h3>
+        </div>
+        <p style="margin-top: 12px; font-weight: 600;">Rp75.000</p>
+      </div>
+    </article>
+
+    <article class="product-card" style="display: flex; flex-direction: column; background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; height: 100%;">
+      <div class="product-image" style="background-color: #a3d9a5; height: 200px;"></div>
+      <div class="card-content" style="padding: 16px; display: flex; flex-direction: column; flex-grow: 1; justify-content: space-between;">
+        <div>
+          <span class="tag">Upcycled</span>
+          <h3 style="margin: 12px 0 0 0; font-size: 1.1rem;">Product Name</h3>
+        </div>
+        <p style="margin-top: 12px; font-weight: 600;">Rp125.000</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section class="section">
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%; margin-bottom: 30px;">
+    
+    <div class="section-heading" style="text-align: left; margin: 0; max-width: 600px;">
+      <h2 style="margin-bottom: 8px;">Marketplace EcoLove</h2>
+      <p>Discover secondhand and sustainable products from the EcoLove community.</p>
+    </div>
+
+    {% if user.is_authenticated %}
+    <div style="margin-top: 10px;">
+      <a href="{% url 'items:add_item' %}" class="btn btn-primary" style="text-decoration: none; padding: 10px 24px; font-weight: 600; border-radius: 50px; white-space: nowrap;">
+        + Sell an Item
+      </a>
+    </div>
+    {% endif %}
+    
+  </div>
+
+  <div class="card-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px;">
+    {% for item in items %}
+    <article class="product-card" style="display: flex; flex-direction: column; background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; height: 100%;">
+      
+      <!-- Image Area -->
+      <a href="{% url 'items:item_detail' item.id %}" style="display: block; text-decoration: none;">
+        {% if item.image %}
+            <div class="product-image" style="background-image: url('{{ item.image.url }}'); background-size: cover; background-position: center; height: 200px;"></div>
+        {% else %}
+            <div class="product-image" style="background-color: #a3d9a5; height: 200px;"></div>
+        {% endif %}
+      </a>
+      <div class="card-content" style="padding: 16px; display: flex; flex-direction: column; flex-grow: 1; justify-content: space-between;">
+        <div>
+          <!-- Category Tag -->
+          <span class="tag">{{ item.get_category_display }}</span>
+          
+          <!-- Product Name and Like/Dislike Buttons -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px; gap: 8px;">
+            <a href="{% url 'items:item_detail' item.id %}" style="text-decoration: none; color: inherit; flex-grow: 1;">
+              <h3 style="margin: 0; font-size: 1.1rem;">{{ item.name }}</h3>
+            </a>
+
+            <!-- Interaction Buttons (Only for logged-in users) -->
+            {% if user.is_authenticated %}
+            <div class="interaction-buttons" style="display: flex; gap: 6px; flex-shrink: 0;">
+              <form action="{% url 'items:like_item' item.id %}" method="POST" style="margin: 0;">
+                {% csrf_token %}
+                <button type="submit" style="cursor: pointer; border: 1px solid #ddd; background: white; padding: 4px 8px; border-radius: 4px; font-size: 0.85em;">
+                  👍 {{ item.likes.count }}
+                </button>
+              </form>
+              <form action="{% url 'items:dislike_item' item.id %}" method="POST" style="margin: 0;">
+                {% csrf_token %}
+                <button type="submit" style="cursor: pointer; border: 1px solid #ddd; background: white; padding: 4px 8px; border-radius: 4px; font-size: 0.85em;">
+                  👎 {{ item.dislikes.count }}
+                </button>
+              </form>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Price -->
+        <p style="margin-top: 12px; font-weight: 600;">Rp{{ item.price }}</p>
+      </div>
+    </article>
+    {% empty %}
+    
+    <!-- Empty State Message -->
+    <div style="grid-column: 1 / -1; padding: 20px 0;">
+      <p>There are currently no items available on the marketplace.</p>
+    </div>
+    
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

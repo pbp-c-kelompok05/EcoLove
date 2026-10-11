@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="section">
+  <div style="max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; border: 1px solid #ddd;">
+    <h2 style="margin-bottom: 20px;">Sell an Item</h2>
+    
+    <!-- enctype is REQUIRED for image uploads -->
+    <form method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 15px;">
+        {% csrf_token %}
+        
+        <!-- Render the form fields dynamically -->
+        {{ form.as_p }}
+        
+        <div style="display: flex; gap: 10px; margin-top: 10px;">
+            <button type="submit" class="btn btn-primary" style="flex: 1;">List Item</button>
+            <a href="{% url 'items:show_marketplace' %}" class="btn btn-outline" style="flex: 1; text-align: center; text-decoration: none;">Cancel</a>
+        </div>
+    </form>
+  </div>
+</section>
+{% endblock %}
