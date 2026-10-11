@@ -18,8 +18,8 @@ class Item(models.Model):
     image = models.ImageField(upload_to='item_images/', null=True, blank=True)
     
     # Interaction fields:
-    likes = models.ManyToManyField(User, related_name='liked_items', blank=True)
-    dislikes = models.ManyToManyField(User, related_name='disliked_items', blank=True)
+    liked_by = models.ManyToManyField(User, related_name='liked_items', blank=True)
+    disliked_by = models.ManyToManyField(User, related_name='disliked_items', blank=True)
 
     def __str__(self):
         return self.name
