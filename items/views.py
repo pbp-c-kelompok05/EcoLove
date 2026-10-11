@@ -1,5 +1,8 @@
-from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.views.decorators.http import require_GET
+from django.shortcuts import render, get_object_or_404, redirect
+
 from .models import Item
 from .forms import ItemForm
 
@@ -55,3 +58,37 @@ def add_item(request):
         form = ItemForm()
         
     return render(request, 'add_item.html', {'form': form})
+
+@require_GET
+def get_items_json(request):
+    title_query = request.GET.get("title", "").strip()
+    items = Item.objects.prefetch_related("likes", "dislikes").all()
+
+    if title_query:
+        items = items.filter(title__icontains=title_query)
+
+    data = []
+    for item in items:
+        liked_users = item.liked_by.all()
+        disliked_users = item.disliked_by.all()
+        is_liked = request.user in liked_users \
+            if request.user.is_authenticated and not request.user in disliked_users \
+            else False
+        is_disliked = request.user in disliked_users \
+            if request.user.is_authenticated and not request.user in liked_users \
+            else False
+
+        data.append({
+            "pk": str(item.id),
+            "fields": {
+                "name": item.name,
+                "price": item.price,
+                "description": item.description,
+                "category": item.category,
+                "image": item.image.path,
+                "like_count": liked_users.count(),
+                "is_liked": is_liked,
+            }
+        })
+
+    return JsonResponse(data, safe=False)
