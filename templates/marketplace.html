@@ -50,13 +50,13 @@
                 <form action="{% url 'items:like_item' item.id %}" method="POST" style="margin: 0;">
                     {% csrf_token %}
                     <button type="submit" style="cursor: pointer; border: 1px solid #ddd; background: white; padding: 4px 8px; border-radius: 4px; font-size: 0.85em;">
-                        👍 {{ item.likes.count }}
+                        👍 {{ item.liked_by.count }}
                     </button>
                 </form>
                 <form action="{% url 'items:dislike_item' item.id %}" method="POST" style="margin: 0;">
                     {% csrf_token %}
                     <button type="submit" style="cursor: pointer; border: 1px solid #ddd; background: white; padding: 4px 8px; border-radius: 4px; font-size: 0.85em;">
-                        👎 {{ item.dislikes.count }}
+                        👎 {{ item.disliked_by.count }}
                     </button>
                 </form>
             </div>

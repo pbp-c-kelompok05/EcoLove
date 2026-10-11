@@ -19,14 +19,14 @@ def like_item(request, id):
     item = get_object_or_404(Item, id=id)
     
     # If the user previously disliked it, remove the dislike
-    if request.user in item.dislikes.all():
-        item.dislikes.remove(request.user)
+    if request.user in item.disliked_by.all():
+        item.disliked_by.remove(request.user)
         
     # Toggle like
-    if request.user in item.likes.all():
-        item.likes.remove(request.user)
+    if request.user in item.liked_by.all():
+        item.liked_by.remove(request.user)
     else:
-        item.likes.add(request.user)
+        item.liked_by.add(request.user)
         
     return redirect('items:show_marketplace')
 
@@ -35,14 +35,14 @@ def dislike_item(request, id):
     item = get_object_or_404(Item, id=id)
     
     # If the user previously liked it, remove the like
-    if request.user in item.likes.all():
-        item.likes.remove(request.user)
+    if request.user in item.liked_by.all():
+        item.liked_by.remove(request.user)
         
     # Toggle dislike
-    if request.user in item.dislikes.all():
-        item.dislikes.remove(request.user)
+    if request.user in item.disliked_by.all():
+        item.disliked_by.remove(request.user)
     else:
-        item.dislikes.add(request.user)
+        item.disliked_by.add(request.user)
         
     return redirect('items:show_marketplace')
 
