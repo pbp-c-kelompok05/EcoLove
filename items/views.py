@@ -85,9 +85,11 @@ def get_items_json(request):
                 "price": item.price,
                 "description": item.description,
                 "category": item.category,
-                "image": item.image.path,
+                "image": item.image.url if item.image else '',
                 "like_count": liked_users.count(),
                 "is_liked": is_liked,
+                "dislike_count": disliked_users.count(),
+                "is_disliked": is_disliked,
             }
         })
 
