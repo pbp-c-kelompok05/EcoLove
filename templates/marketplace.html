@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
+{% load static %}
 <section class="section">
   <!-- Container baru yang membentang 100% -->
   <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%; margin-bottom: 30px;">
@@ -22,59 +23,31 @@
     
   </div>
 
-  <div class="card-grid">
-    {% for item in items %}
-    <article class="product-card">
-      
-      <!-- Image Area -->
-      <a href="{% url 'items:item_detail' item.id %}">
-    {% if item.image %}
-        <div class="product-image" style="background-image: url('{{ item.image.url }}'); background-size: cover; background-position: center; height: 200px;"></div>
-    {% else %}
-        <div class="product-image" style="background-color: #a3d9a5; height: 200px;"></div>
-    {% endif %}
-    </a>
-      <div class="card-content">
-        <!-- Category Tag -->
-        <span class="tag">{{ item.get_category_display }}</span>
-        
-        <!-- Product Name and Like/Dislike Buttons -->
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
-            <a href="{% url 'items:item_detail' item.id %}" style="text-decoration: none; color: inherit;">
-                <h3 style="margin: 0; font-size: 1.1rem;">{{ item.name }}</h3>
-            </a>
-
-            <!-- Interaction Buttons (Only for logged-in users) -->
-            {% if user.is_authenticated %}
-            <div class="interaction-buttons" style="display: flex; gap: 6px;">
-                <form action="{% url 'items:like_item' item.id %}" method="POST" style="margin: 0;">
-                    {% csrf_token %}
-                    <button type="submit" style="cursor: pointer; border: 1px solid #ddd; background: white; padding: 4px 8px; border-radius: 4px; font-size: 0.85em;">
-                        👍 {{ item.liked_by.count }}
-                    </button>
-                </form>
-                <form action="{% url 'items:dislike_item' item.id %}" method="POST" style="margin: 0;">
-                    {% csrf_token %}
-                    <button type="submit" style="cursor: pointer; border: 1px solid #ddd; background: white; padding: 4px 8px; border-radius: 4px; font-size: 0.85em;">
-                        👎 {{ item.disliked_by.count }}
-                    </button>
-                </form>
-            </div>
-            {% endif %}
-        </div>
-
-        <!-- Price -->
-        <p style="margin-top: 8px; font-weight: 600;">Rp{{ item.price }}</p>
-      </div>
-    </article>
-    {% empty %}
-    
-    <!-- Empty State Message -->
-    <div style="grid-column: 1 / -1; padding: 20px 0;">
-        <p>There are currently no items available on the marketplace.</p>
-    </div>
-    
-    {% endfor %}
+  <!-- Loading State -->
+  <div id="loading" class="hide" style="display: none; grid-column: 1 / -1; padding: 20px 0;">
+      <p>Memuat item...</p>
   </div>
+
+  <!-- Error State -->
+  <div id="error" class="hide" style="display: none; grid-column: 1 / -1; padding: 20px 0;">
+      <p>Gagal memuat data item. Silakan coba lagi.</p>
+  </div>
+
+  <!-- Empty State -->
+  <div id="empty" class="hide" style="grid-column: 1 / -1; padding: 20px 0;">
+      <p>There are currently no items available on the marketplace.</p>
+  </div>
+
+  <!-- Item Grid -->
+  <div id="grid"
+    class="card-grid hide"
+    data-get-items-json="{% url 'items:get_items_json' %}"
+    data-item-detail="{% url 'items:item_detail' 0 %}"
+    data-like-item="{% url 'items:like_item' 0 %}"
+    data-dislike-item="{% url 'items:dislike_item' 0 %}"
+    data-is-authenticated="{{ user.is_authenticated }}"
+  ></div>
 </section>
+
+<script src="{% static 'js/marketplace.js' %}"></script>
 {% endblock %}
