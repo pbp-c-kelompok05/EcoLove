@@ -6,7 +6,6 @@ const ITEM_DETAIL_ENDPOINT = GRID.dataset.itemDetail;
 const LIKE_ITEM_ENDPOINT = GRID.dataset.likeItem;
 const DISLIKE_ITEM_ENDPOINT = GRID.dataset.dislikeItem;
 const IS_AUTHENTICATED= GRID.dataset.isAuthenticated === 'True';
-console.log(IS_AUTHENTICATED);
 let productsAbortController;
 
 // DOM Elements
@@ -70,7 +69,6 @@ function buildProductActions(item) {
     const likeButton = document.createElement('button');
     likeButton.setAttribute('style', 'cursor: pointer; border: 1px solid #ddd; background: white; padding: 4px 8px; border-radius: 4px; font-size: 0.85em;')
     likeButton.innerHTML = `👍 ${product.like_count}`;
-    likeButton.classList.add('liked');
     likeButton.classList.toggle('liked', product.is_liked);
     
     // Like button event listener
@@ -81,15 +79,14 @@ function buildProductActions(item) {
         // Changing innerHTML and appearance
         likeButton.innerHTML = `👍 ${product.like_count}`;
         likeButton.classList.toggle('liked', product.is_liked);
-        dislikeButton.innerHTML = `👍 ${product.dislike_count}`;
+        dislikeButton.innerHTML = `👎 ${product.dislike_count}`;
         dislikeButton.classList.toggle('disliked', product.is_disliked);
     })
 
     // Dislike button
     const dislikeButton = document.createElement('button');
     dislikeButton.setAttribute('style', 'cursor: pointer; border: 1px solid #ddd; background: white; padding: 4px 8px; border-radius: 4px; font-size: 0.85em;')
-    dislikeButton.innerHTML = `👍 ${product.dislike_count}`;
-    dislikeButton.classList.add('disliked');
+    dislikeButton.innerHTML = `👎 ${product.dislike_count}`;
     dislikeButton.classList.toggle('disliked', product.is_disliked);
 
     // Dislike button event listener
@@ -100,7 +97,7 @@ function buildProductActions(item) {
         // Changing innerHTML and appearance
         likeButton.innerHTML = `👍 ${product.like_count}`;
         likeButton.classList.toggle('liked', product.is_liked);
-        dislikeButton.innerHTML = `👍 ${product.dislike_count}`;
+        dislikeButton.innerHTML = `👎 ${product.dislike_count}`;
         dislikeButton.classList.toggle('disliked', product.is_disliked);
     })
 
