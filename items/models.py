@@ -23,10 +23,3 @@ class Item(models.Model):
 
     def __str__(self):
         return self.name
-
-class ImagesField(models.ImageField):
-    description = "A field for images with foreign key pointed to items."
-
-    def __init__(self, *args, **kwargs):
-        kwargs["item"] = models.ForeignKey(Item, related_name="images", on_delete=models.CASCADE)
-        super().__init__(*args, **kwargs)
