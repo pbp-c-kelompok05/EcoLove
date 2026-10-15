@@ -1,8 +1,15 @@
 {% extends 'base.html' %}
 
 {% block content %}
+{% load static %}
 <section class="section">
-  <div class="item-detail-container" style="max-width: 1000px; margin: 0 auto; display: flex; gap: 40px; flex-wrap: wrap;">
+  <div id="item-detail"
+    class="item-detail-container"
+    style="max-width: 1000px; margin: 0 auto; display: flex; gap: 40px; flex-wrap: wrap;"
+    data-item-id="{{ item.id }}"
+    data-like-item="{% url 'items:like_item' 0 %}"
+    data-dislike-item="{% url 'items:dislike_item' 0 %}"
+  >
     
     <!-- Left Column: Image -->
     <div class="image-column" style="flex: 1; min-width: 300px;">
@@ -34,18 +41,16 @@
       <!-- Interaction Buttons -->
       {% if user.is_authenticated %}
       <div class="interaction-buttons" style="display: flex; gap: 12px; margin-top: 10px;">
-        <form action="{% url 'items:like_item' item.id %}" method="POST">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-outline" style="cursor: pointer;">
-                👍 Like ({{ item.likes.count }})
-            </button>
-        </form>
-        <form action="{% url 'items:dislike_item' item.id %}" method="POST">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-outline" style="cursor: pointer;">
-                👎 Dislike ({{ item.dislikes.count }})
-            </button>
-        </form>
+          <button id="like-button" 
+                  class="btn btn-outline {% if user in item.liked_by.all %} liked {% endif %}" 
+                  style="cursor: pointer;">
+              👍 Like ({{ item.liked_by.count }})
+          </button>
+          <button id="dislike-button" 
+                  class="btn btn-outline {% if user in item.disliked_by.all %} disliked {% endif %}" 
+                  style="cursor: pointer;">
+              👎 Dislike ({{ item.disliked_by.count }})
+          </button>
       </div>
       {% else %}
       <p style="color: #777; font-style: italic; margin-top: 10px;">
@@ -63,4 +68,6 @@
     </div>
   </div>
 </section>
+
+<script src="{% static 'js/item_detail.js' %}"></script>
 {% endblock %}

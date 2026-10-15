@@ -194,9 +194,17 @@ a {
     color: white;
 }
 
+.liked:hover {
+    opacity: 0.9;
+}
+
 .disliked {
     background: #9a0000 !important;
     color: white;
+}
+
+.disliked:hover {
+    opacity: 0.9;
 }
 
 .hide {
