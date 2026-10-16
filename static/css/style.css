@@ -189,6 +189,28 @@ a {
     font-weight: bold;
 }
 
+.liked {
+    background: #2E7D32 !important;
+    color: white;
+}
+
+.liked:hover {
+    opacity: 0.9;
+}
+
+.disliked {
+    background: #9a0000 !important;
+    color: white;
+}
+
+.disliked:hover {
+    opacity: 0.9;
+}
+
+.hide {
+    display: none !important;
+}
+
 /* AUTH / LOGIN FORM STYLES */
 .auth-container {
     max-width: 420px;

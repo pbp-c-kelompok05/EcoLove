@@ -1,8 +1,16 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
 <section class="section">
-  <div class="item-detail-container" style="max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px;">
+  <!-- Container utama -->
+  <div id="item-detail"
+    class="item-detail-container"
+    style="max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px;"
+    data-item-id="{{ item.id }}"
+    data-like-item="{% url 'items:like_item' 0 %}"
+    data-dislike-item="{% url 'items:dislike_item' 0 %}"
+  >
     
     <!-- Tombol Back to Marketplace (Kiri Atas) -->
     <div style="width: 100%;">
@@ -32,7 +40,7 @@
         <div>
           <span class="tag" style="display: inline-block; margin-bottom: 12px;">{{ item.get_category_display }}</span>
           <h2 style="margin: 0; font-size: 2.2rem; color: #222;">{{ item.name }}</h2>
-          <p style="font-size: 1.5rem; font-weight: 700; color: #2e7d32; margin-top: 8px;">${{ item.price }}</p>
+          <p style="font-size: 1.5rem; font-weight: 700; color: #2e7d32; margin-top: 8px;">Rp{{ item.price }}</p>
         </div>
 
         <!-- Description -->
@@ -41,21 +49,19 @@
           <p style="white-space: pre-line;">{{ item.description }}</p>
         </div>
 
-        <!-- Interaction Buttons (Like / Dislike) -->
+        <!-- Interaction Buttons (AJAX enabled) -->
         {% if user.is_authenticated %}
         <div class="interaction-buttons" style="display: flex; gap: 12px; margin-top: 10px;">
-          <form action="{% url 'items:like_item' item.id %}" method="POST">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-outline" style="cursor: pointer;">
-                  👍 Like ({{ item.likes.count }})
-              </button>
-          </form>
-          <form action="{% url 'items:dislike_item' item.id %}" method="POST">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-outline" style="cursor: pointer;">
-                  👎 Dislike ({{ item.dislikes.count }})
-              </button>
-          </form>
+          <button id="like-button" 
+                  class="btn btn-outline {% if user in item.likes.all %} liked {% endif %}" 
+                  style="cursor: pointer;">
+              👍 Like ({{ item.likes.count }})
+          </button>
+          <button id="dislike-button" 
+                  class="btn btn-outline {% if user in item.dislikes.all %} disliked {% endif %}" 
+                  style="cursor: pointer;">
+              👎 Dislike ({{ item.dislikes.count }})
+          </button>
         </div>
         {% else %}
         <p style="color: #777; font-style: italic; margin-top: 10px;">
@@ -63,10 +69,7 @@
         </p>
         {% endif %}
 
-        <!-- ========================================== -->
         <!-- OWNER ACTIONS (EDIT & DELETE) -->
-        <!-- Posisi Baru: Di bagian bawah, menggantikan tombol Back sebelumnya -->
-        <!-- ========================================== -->
         {% if request.user == item.user %}
         <div style="margin-top: auto; padding-top: 20px;">
           <div style="display: flex; gap: 12px;">
@@ -87,4 +90,7 @@
     </div>
   </div>
 </section>
+
+<!-- Script AJAX -->
+<script src="{% static 'js/item_detail.js' %}"></script>
 {% endblock %}

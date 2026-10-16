@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
+{% load static %}
 <section class="section">
   <!-- Container -->
   <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%; margin-bottom: 30px;">
@@ -74,6 +75,31 @@
     </div>
     
     {% endfor %}
+  <!-- Loading State -->
+  <div id="loading" class="hide" style="display: none; grid-column: 1 / -1; padding: 20px 0;">
+      <p>Loading item...</p>
   </div>
+
+  <!-- Error State -->
+  <div id="error" class="hide" style="display: none; grid-column: 1 / -1; padding: 20px 0;">
+      <p>Failed to fetch items.</p>
+  </div>
+
+  <!-- Empty State -->
+  <div id="empty" class="hide" style="grid-column: 1 / -1; padding: 20px 0;">
+      <p>There are currently no items available on the marketplace.</p>
+  </div>
+
+  <!-- Item Grid -->
+  <div id="grid"
+    class="card-grid hide"
+    data-get-items-json="{% url 'items:get_items_json' %}"
+    data-item-detail="{% url 'items:item_detail' 0 %}"
+    data-like-item="{% url 'items:like_item' 0 %}"
+    data-dislike-item="{% url 'items:dislike_item' 0 %}"
+    data-is-authenticated="{{ user.is_authenticated }}"
+  ></div>
 </section>
+
+<script src="{% static 'js/marketplace.js' %}"></script>
 {% endblock %}
