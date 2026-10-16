@@ -1,105 +1,57 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} 
 
 {% block content %}
-{% load static %}
-<section class="section">
-  <!-- Container -->
-  <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%; margin-bottom: 30px;">
-    
-    <div class="section-heading" style="text-align: left; margin: 0; max-width: 600px;">
-      <h2 style="margin-bottom: 8px;">Marketplace EcoLove</h2>
-      <p>Discover secondhand and sustainable products from the EcoLove community.</p>
-    </div>
-
-    <!-- Tombol add item -->
-    {% if user.is_authenticated %}
-    <div style="margin-top: 10px;">
-      <a href="{% url 'items:add_item' %}" class="btn btn-primary" style="text-decoration: none; padding: 10px 24px; font-weight: 600; border-radius: 50px; white-space: nowrap;">
-        + Sell an Item
-      </a>
-    </div>
-    {% endif %}
-    
+<section class="section" style="padding-top: 40px;">
+  <div class="section-heading" style="text-align: left; margin: 0 0 30px 0;">
+    <h2 style="margin-bottom: 8px">Marketplace EcoLove</h2>
+    <p>Discover secondhand and sustainable products from the EcoLove community.</p>
   </div>
 
-  <div class="card-grid">
+  <div class="card-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; width: 100%;">
     {% for item in items %}
-    <article class="product-card">
-      
-      <!-- Image Area -->
-      <a href="{% url 'items:item_detail' item.id %}">
-    {% if item.image %}
+    <article class="product-card" style="display: flex; flex-direction: column; background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; height: 100%;">
+      <a href="{% url 'items:item_detail' item.id %}" style="display: block; text-decoration: none">
+        {% if item.image %}
         <div class="product-image" style="background-image: url('{{ item.image.url }}'); background-size: cover; background-position: center; height: 200px;"></div>
-    {% else %}
-        <div class="product-image" style="background-color: #a3d9a5; height: 200px;"></div>
-    {% endif %}
-    </a>
-      <div class="card-content">
-        <!-- Category Tag -->
-        <span class="tag">{{ item.get_category_display }}</span>
-        
-        <!-- Product Name and Like/Dislike Buttons -->
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
-            <a href="{% url 'items:item_detail' item.id %}" style="text-decoration: none; color: inherit;">
-                <h3 style="margin: 0; font-size: 1.1rem;">{{ item.name }}</h3>
+        {% else %}
+        <div class="product-image" style="background-color: #a3d9a5; height: 200px"></div>
+        {% endif %}
+      </a>
+      <div class="card-content" style="padding: 16px; display: flex; flex-direction: column; flex-grow: 1; justify-content: space-between;">
+        <div>
+          <span class="tag">{{ item.get_category_display }}</span>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px; gap: 8px;">
+            <a href="{% url 'items:item_detail' item.id %}" style="text-decoration: none; color: inherit; flex-grow: 1">
+              <h3 style="margin: 0; font-size: 1.1rem">{{ item.name }}</h3>
             </a>
 
-            <!-- Interaction Buttons (Only for logged-in users) -->
             {% if user.is_authenticated %}
-            <div class="interaction-buttons" style="display: flex; gap: 6px;">
-                <form action="{% url 'items:like_item' item.id %}" method="POST" style="margin: 0;">
-                    {% csrf_token %}
-                    <button type="submit" style="cursor: pointer; border: 1px solid #ddd; background: white; padding: 4px 8px; border-radius: 4px; font-size: 0.85em;">
-                        👍 {{ item.likes.count }}
-                    </button>
-                </form>
-                <form action="{% url 'items:dislike_item' item.id %}" method="POST" style="margin: 0;">
-                    {% csrf_token %}
-                    <button type="submit" style="cursor: pointer; border: 1px solid #ddd; background: white; padding: 4px 8px; border-radius: 4px; font-size: 0.85em;">
-                        👎 {{ item.dislikes.count }}
-                    </button>
-                </form>
+            <div class="interaction-buttons" style="display: flex; gap: 6px; flex-shrink: 0">
+              <form action="{% url 'items:like_item' item.id %}" method="POST" style="margin: 0">
+                {% csrf_token %}
+                <button type="submit" style="cursor: pointer; border: 1px solid #ddd; background: white; padding: 4px 8px; border-radius: 4px; font-size: 0.85em;">
+                  👍 {{ item.liked_by.count }}
+                </button>
+              </form>
+              <form action="{% url 'items:dislike_item' item.id %}" method="POST" style="margin: 0">
+                {% csrf_token %}
+                <button type="submit" style="cursor: pointer; border: 1px solid #ddd; background: white; padding: 4px 8px; border-radius: 4px; font-size: 0.85em;">
+                  👎 {{ item.disliked_by.count }}
+                </button>
+              </form>
             </div>
             {% endif %}
+          </div>
         </div>
 
-        <!-- Price -->
-        <p style="margin-top: 8px; font-weight: 600;">${{ item.price }}</p>
+        <p style="margin-top: 12px; font-weight: 600">Rp{{ item.price }}</p>
       </div>
     </article>
     {% empty %}
-    
-    <!-- Empty State Message -->
-    <div style="grid-column: 1 / -1; padding: 20px 0;">
-        <p>There are currently no items available on the marketplace.</p>
+    <div style="grid-column: 1 / -1; padding: 20px 0; text-align: center;">
+      <p>No items are available right now.</p>
     </div>
-    
     {% endfor %}
-  <!-- Loading State -->
-  <div id="loading" class="hide" style="display: none; grid-column: 1 / -1; padding: 20px 0;">
-      <p>Loading item...</p>
   </div>
-
-  <!-- Error State -->
-  <div id="error" class="hide" style="display: none; grid-column: 1 / -1; padding: 20px 0;">
-      <p>Failed to fetch items.</p>
-  </div>
-
-  <!-- Empty State -->
-  <div id="empty" class="hide" style="grid-column: 1 / -1; padding: 20px 0;">
-      <p>There are currently no items available on the marketplace.</p>
-  </div>
-
-  <!-- Item Grid -->
-  <div id="grid"
-    class="card-grid hide"
-    data-get-items-json="{% url 'items:get_items_json' %}"
-    data-item-detail="{% url 'items:item_detail' 0 %}"
-    data-like-item="{% url 'items:like_item' 0 %}"
-    data-dislike-item="{% url 'items:dislike_item' 0 %}"
-    data-is-authenticated="{{ user.is_authenticated }}"
-  ></div>
 </section>
-
-<script src="{% static 'js/marketplace.js' %}"></script>
 {% endblock %}

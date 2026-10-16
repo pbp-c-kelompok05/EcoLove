@@ -9,15 +9,12 @@ from .forms import ItemForm
 
 def show_marketplace(request):
     all_items = Item.objects.all().order_by('-id')
-    user_items = []
-    
-    if request.user.is_authenticated:
-        user_items = Item.objects.filter(user=request.user).order_by('-id')[:8]
-        
-    return render(request, 'marketplace.html', {
-        'items': all_items,
-        'user_items': user_items
-    })
+    return render(request, 'marketplace.html', {'items': all_items})
+
+@login_required(login_url='/login/')
+def my_marketplace(request):
+    user_items = Item.objects.filter(user=request.user).order_by('-id')
+    return render(request, 'my_marketplace.html', {'user_items': user_items})
 
 def item_detail(request, id):
     item = get_object_or_404(Item, id=id)
