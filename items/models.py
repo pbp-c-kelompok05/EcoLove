@@ -8,7 +8,7 @@ class Item(models.Model):
         ('FURNITURE', 'Furniture'),
         ('OTHERS', 'Others'),
     ]
-
+    user = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
     name = models.CharField(max_length=255)
     price = models.IntegerField() 
     description = models.TextField()

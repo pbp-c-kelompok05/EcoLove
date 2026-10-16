@@ -4,8 +4,16 @@ from .models import Item
 from .forms import ItemForm
 
 def show_marketplace(request):
-    items = Item.objects.all()
-    return render(request, 'marketplace.html', {'items': items})
+    all_items = Item.objects.all().order_by('-id')
+    user_items = []
+    
+    if request.user.is_authenticated:
+        user_items = Item.objects.filter(user=request.user).order_by('-id')[:8]
+        
+    return render(request, 'marketplace.html', {
+        'items': all_items,
+        'user_items': user_items
+    })
 
 def item_detail(request, id):
     item = get_object_or_404(Item, id=id)
@@ -55,3 +63,27 @@ def add_item(request):
         form = ItemForm()
         
     return render(request, 'add_item.html', {'form': form})
+
+@login_required(login_url='/login/')
+def edit_item(request, id):
+    item = get_object_or_404(Item, id=id, user=request.user)
+    
+    if request.method == 'POST':
+        form = ItemForm(request.POST, request.FILES, instance=item)
+        if form.is_valid():
+            form.save()
+            return redirect('items:item_detail', id=item.id)
+    else:
+        form = ItemForm(instance=item)
+    
+    return render(request, 'edit_item.html', {'form': form, 'item': item})
+
+@login_required(login_url='/login/')
+def delete_item(request, id):
+    item = get_object_or_404(Item, id=id, user=request.user)
+    
+    if request.method == 'POST':
+        item.delete()
+        return redirect('items:show_marketplace')
+  
+    return render(request, 'delete_confirm.html', {'item': item})

@@ -2,16 +2,15 @@
 
 {% block content %}
 <section class="section">
-  <!-- Container baru yang membentang 100% -->
+  <!-- Container -->
   <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%; margin-bottom: 30px;">
     
-    <!-- Bagian teks dibiarkan menggunakan class aslinya -->
     <div class="section-heading" style="text-align: left; margin: 0; max-width: 600px;">
       <h2 style="margin-bottom: 8px;">Marketplace EcoLove</h2>
       <p>Discover secondhand and sustainable products from the EcoLove community.</p>
     </div>
 
-    <!-- Tombol diletakkan di luar class section-heading agar bebas ke kanan -->
+    <!-- Tombol add item -->
     {% if user.is_authenticated %}
     <div style="margin-top: 10px;">
       <a href="{% url 'items:add_item' %}" class="btn btn-primary" style="text-decoration: none; padding: 10px 24px; font-weight: 600; border-radius: 50px; white-space: nowrap;">
@@ -64,7 +63,7 @@
         </div>
 
         <!-- Price -->
-        <p style="margin-top: 8px; font-weight: 600;">Rp{{ item.price }}</p>
+        <p style="margin-top: 8px; font-weight: 600;">${{ item.price }}</p>
       </div>
     </article>
     {% empty %}
