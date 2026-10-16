@@ -27,11 +27,9 @@ def item_detail(request, id):
 def like_item(request, id):
     item = get_object_or_404(Item, id=id)
     
-    # If the user previously disliked it, remove the dislike
     if request.user in item.disliked_by.all():
         item.disliked_by.remove(request.user)
         
-    # Toggle like
     if request.user in item.liked_by.all():
         item.liked_by.remove(request.user)
     else:
@@ -50,11 +48,9 @@ def like_item_ajax(request, id):
 
     item = get_object_or_404(Item, id=id)
         
-    # If the user previously disliked it, remove the dislike
     if request.user in item.disliked_by.all():
         item.disliked_by.remove(request.user)
         
-    # Toggle like
     liked_users = item.liked_by.all()
     is_liked = request.user in liked_users
     if is_liked:
@@ -64,7 +60,6 @@ def like_item_ajax(request, id):
         item.liked_by.add(request.user)
         message = "Sucessfully gave like to item."
 
-    # Update var
     liked_users = item.liked_by.all()
     is_liked = request.user in liked_users
     disliked_users = item.disliked_by.all()
@@ -85,11 +80,9 @@ def like_item_ajax(request, id):
 def dislike_item(request, id):
     item = get_object_or_404(Item, id=id)
     
-    # If the user previously liked it, remove the like
     if request.user in item.liked_by.all():
         item.liked_by.remove(request.user)
         
-    # Toggle dislike
     if request.user in item.disliked_by.all():
         item.disliked_by.remove(request.user)
     else:
@@ -108,11 +101,9 @@ def dislike_item_ajax(request, id):
 
     item = get_object_or_404(Item, id=id)
         
-    # If the user previously liked it, remove the like
     if request.user in item.liked_by.all():
         item.liked_by.remove(request.user)
         
-    # Toggle dislike
     disliked_users = item.disliked_by.all()
     is_disliked = request.user in disliked_users
     if is_disliked:
@@ -122,7 +113,6 @@ def dislike_item_ajax(request, id):
         item.disliked_by.add(request.user)
         message = "Sucessfully gave dislike to item."
 
-    # Update var
     liked_users = item.liked_by.all()
     is_liked = request.user in liked_users
     disliked_users = item.disliked_by.all()
@@ -142,10 +132,11 @@ def dislike_item_ajax(request, id):
 @login_required(login_url='/login/')
 def add_item(request):
     if request.method == 'POST':
-        # request.FILES is required for image uploads
         form = ItemForm(request.POST, request.FILES) 
         if form.is_valid():
-            form.save()
+            item = form.save(commit=False)
+            item.user = request.user  # Assign user pembuat barang
+            item.save()
             return redirect('items:show_marketplace')
     else:
         form = ItemForm()
@@ -174,7 +165,7 @@ def delete_item(request, id):
         item.delete()
         return redirect('items:show_marketplace')
   
-    return render(request, 'delete_confirm.html', {'item': item})
+    return redirect('items:show_marketplace')
 
 @require_GET
 def get_items_json(request):
@@ -182,7 +173,7 @@ def get_items_json(request):
     items = Item.objects.prefetch_related("liked_by", "disliked_by").all()
 
     if title_query:
-        items = items.filter(title__icontains=title_query)
+        items = items.filter(name__icontains=title_query) # Diubah dari 'title' menjadi 'name'
 
     data = []
     for item in items:
