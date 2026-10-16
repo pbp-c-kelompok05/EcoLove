@@ -38,7 +38,7 @@
         </div>
 
         <div style="margin-top: 16px;">
-          <p style="margin: 0 0 12px 0; font-weight: 600">Rp{{ item.price }}</p>
+          <p style="margin: 0 0 12px 0; font-weight: 600">${{ item.price }}</p>
           <div style="display: flex; gap: 8px;">
             <a href="{% url 'items:edit_item' item.id %}" class="btn btn-primary" style="padding: 6px 12px; font-size: 0.85em; text-decoration: none; border-radius: 6px; text-align: center; flex: 1;">Edit</a>
             <form action="{% url 'items:delete_item' item.id %}" method="POST" style="margin: 0; flex: 1; display: flex;">

@@ -132,9 +132,9 @@ def add_item(request):
         form = ItemForm(request.POST, request.FILES) 
         if form.is_valid():
             item = form.save(commit=False)
-            item.user = request.user  # Assign user pembuat barang
+            item.user = request.user
             item.save()
-            return redirect('items:show_marketplace')
+            return redirect('items:my_marketplace')
     else:
         form = ItemForm()
         
@@ -160,7 +160,7 @@ def delete_item(request, id):
     
     if request.method == 'POST':
         item.delete()
-        return redirect('items:show_marketplace')
+        return redirect('items:my_marketplace')
   
     return redirect('items:show_marketplace')
 

@@ -16,7 +16,6 @@ async function like() {
 
         const result = await response.json();
 
-        // If response in ok, update JSON
         if (response.ok) {
             console.log(result.message);
             return result;
@@ -38,7 +37,6 @@ async function dislike() {
 
         const result = await response.json();
 
-        // If response in ok, update JSON
         if (response.ok) {
             console.log(result.message);
             return result;
@@ -66,28 +64,26 @@ function getCookie(name) {
 
 // Updating like dan dislike button
 function updateButtons(result) {
-    likeButton.innerHTML = `👍 Like (${result.like_count})`;
+    likeButton.innerHTML = `👍 ${result.like_count}`;
     likeButton.classList.toggle('liked', result.is_liked);
-    dislikeButton.innerHTML = `👎 Dislike (${result.dislike_count})`;
+    dislikeButton.innerHTML = `👎 ${result.dislike_count}`;
     dislikeButton.classList.toggle('disliked', result.is_disliked);
 }
 
-// Like button event listener
+// Safe Event Listeners (Biar tidak crash saat user belum login)
 const likeButton = document.getElementById('like-button');
-likeButton.addEventListener('click', async function(event) {
-    event.preventDefault();
-    const result = await like();
-
-    // Changing innerHTML and appearance
-    if (result) updateButtons(result);
-});
-
-// Dislike button event listener
 const dislikeButton = document.getElementById('dislike-button');
-dislikeButton.addEventListener('click', async function(event) {
-    event.preventDefault();
-    const result = await dislike();
 
-    // Changing innerHTML and appearance
-    if (result) updateButtons(result);
-});
+if (likeButton && dislikeButton) {
+    likeButton.addEventListener('click', async function(event) {
+        event.preventDefault();
+        const result = await like();
+        if (result) updateButtons(result);
+    });
+
+    dislikeButton.addEventListener('click', async function(event) {
+        event.preventDefault();
+        const result = await dislike();
+        if (result) updateButtons(result);
+    });
+}

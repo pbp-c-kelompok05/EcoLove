@@ -5,7 +5,7 @@ const GET_ITEMS_ENDPOINT = GRID.dataset.getItemsJson;
 const ITEM_DETAIL_ENDPOINT = GRID.dataset.itemDetail;
 const LIKE_ITEM_ENDPOINT = GRID.dataset.likeItem;
 const DISLIKE_ITEM_ENDPOINT = GRID.dataset.dislikeItem;
-const IS_AUTHENTICATED= GRID.dataset.isAuthenticated === 'True';
+const IS_AUTHENTICATED = GRID.dataset.isAuthenticated === 'True';
 let productsAbortController;
 
 // DOM Elements
@@ -14,7 +14,7 @@ const errorState = document.getElementById('error');
 const emptyState = document.getElementById('empty');
 const gridContainer = document.getElementById('grid');
 
-function displayPageSection({ showLoading=false, showError=false, showEmpty=false, showGrid=false }) {
+function displayPageSection({ showLoading = false, showError = false, showEmpty = false, showGrid = false }) {
     loadingState.classList.toggle('hide', !showLoading);
     errorState.classList.toggle('hide', !showError);
     emptyState.classList.toggle('hide', !showEmpty);
@@ -25,37 +25,47 @@ function buildProductCard(item) {
     const productId = item.pk;
     const product = item.fields;
 
-    // Product's Card
     const card = document.createElement('article');
-    card.setAttribute('class', 'product-card')
+    card.setAttribute('class', 'product-card');
+    card.setAttribute('style', 'display: flex; flex-direction: column; background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; height: 100%;');
 
-    // Product's URLs
+    // Menggunakan variabel detailUrl resmi dari JavaScript
     const detailUrl = ITEM_DETAIL_ENDPOINT.replace('0', productId);
-    
-    // Product's Image
+
+    // Placeholder jika gambar kosong agar area atas tetap rapi dan bisa diklik
     const image = product.image
         ? `<img class="product-image" src="${product.image}" style="height: 200px; width: 100%; object-fit: cover;">`
-        : '<img class="product-image" style="background-color: #a3d9a5; height: 200px;">';
+        : `<div class="product-image" style="height: 200px; width: 100%; background-color: #f0fdf4; display: flex; align-items: center; justify-content: center; color: #2e7d32; font-weight: 600;">No Image Available</div>`;
 
     const cardContent = `
-        <a href="${detailUrl}">${image}</a>
-        <div class="card-content">
-            <span class="tag">${product.category}</span>
+        <a href="${detailUrl}" style="text-decoration: none; color: inherit; display: block;">
+            ${image}
+        </a>
+        <div class="card-content" style="padding: 16px; display: flex; flex-direction: column; flex-grow: 1; justify-content: space-between;">
+            <div>
+                <span class="tag">${product.category}</span>
 
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
-                <a href="{% url 'items:item_detail' item.id %}" style="text-decoration: none; color: inherit;">
-                    <h3 style="margin: 0; font-size: 1.1rem;">${product.name}</h3>
-                </a>
-
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px; gap: 8px;">
+                    <!-- Perbaikan Link 404: Menggunakan ${detailUrl} bukan Django tag -->
+                    <a href="${detailUrl}" style="text-decoration: none; color: inherit; flex-grow: 1;">
+                        <h3 style="margin: 0; font-size: 1.1rem;">${product.name}</h3>
+                    </a>
+                </div>
             </div>
 
-            <p style="margin-top: 8px; font-weight: 600;">Rp${product.price}</p>
+            <p style="margin-top: 12px; font-weight: 600;">\$${product.price}</p>
         </div>
     `;
 
     card.innerHTML = cardContent;
-    if (IS_AUTHENTICATED) card.getElementsByTagName('div').item(0)
-        .getElementsByTagName('div').item(0).appendChild(buildProductActions(item));
+
+    if (IS_AUTHENTICATED) {
+        const targetDiv = card.querySelector('.card-content > div > div');
+        if (targetDiv) {
+            targetDiv.appendChild(buildProductActions(item));
+        }
+    }
+
     return card;
 }
 
@@ -64,44 +74,40 @@ function buildProductActions(item) {
 
     const productActions = document.createElement('div');
     productActions.setAttribute('class', 'interaction-buttons');
-    productActions.setAttribute('style', 'display: flex; gap: 6px;');
+    productActions.setAttribute('style', 'display: flex; gap: 6px; flex-shrink: 0;');
 
     const likeButton = document.createElement('button');
-    likeButton.setAttribute('style', 'cursor: pointer; border: 1px solid #ddd; background: white; padding: 4px 8px; border-radius: 4px; font-size: 0.85em;')
+    likeButton.setAttribute('style', 'cursor: pointer; border: 1px solid #ddd; background: white; padding: 4px 8px; border-radius: 4px; font-size: 0.85em;');
     likeButton.innerHTML = `👍 ${product.like_count}`;
     likeButton.classList.toggle('liked', product.is_liked);
-    
-    // Like button event listener
-    likeButton.addEventListener('click', async function(event) {
+
+    likeButton.addEventListener('click', async function (event) {
         event.preventDefault();
+        event.stopPropagation(); // Mencegah klik terobosan ke link kartu
         await like(item);
 
-        // Changing innerHTML and appearance
         likeButton.innerHTML = `👍 ${product.like_count}`;
         likeButton.classList.toggle('liked', product.is_liked);
         dislikeButton.innerHTML = `👎 ${product.dislike_count}`;
         dislikeButton.classList.toggle('disliked', product.is_disliked);
-    })
+    });
 
-    // Dislike button
     const dislikeButton = document.createElement('button');
-    dislikeButton.setAttribute('style', 'cursor: pointer; border: 1px solid #ddd; background: white; padding: 4px 8px; border-radius: 4px; font-size: 0.85em;')
+    dislikeButton.setAttribute('style', 'cursor: pointer; border: 1px solid #ddd; background: white; padding: 4px 8px; border-radius: 4px; font-size: 0.85em;');
     dislikeButton.innerHTML = `👎 ${product.dislike_count}`;
     dislikeButton.classList.toggle('disliked', product.is_disliked);
 
-    // Dislike button event listener
-    dislikeButton.addEventListener('click', async function(event) {
+    dislikeButton.addEventListener('click', async function (event) {
         event.preventDefault();
+        event.stopPropagation(); // Mencegah klik terobosan ke link kartu
         await dislike(item);
 
-        // Changing innerHTML and appearance
         likeButton.innerHTML = `👍 ${product.like_count}`;
         likeButton.classList.toggle('liked', product.is_liked);
         dislikeButton.innerHTML = `👎 ${product.dislike_count}`;
         dislikeButton.classList.toggle('disliked', product.is_disliked);
-    })
+    });
 
-    // Appending both buttons as productActions's children
     productActions.appendChild(likeButton);
     productActions.appendChild(dislikeButton);
 
@@ -110,9 +116,8 @@ function buildProductActions(item) {
 
 async function like(item) {
     const product = item.fields;
-
     const likeUrl = LIKE_ITEM_ENDPOINT.replace('0', item.pk);
-    
+
     try {
         const response = await fetch(likeUrl, {
             method: 'POST',
@@ -121,13 +126,11 @@ async function like(item) {
 
         const result = await response.json();
 
-        // If response in ok, update JSON
         if (response.ok) {
             product.like_count = result.like_count;
             product.is_liked = result.is_liked;
             product.dislike_count = result.dislike_count;
             product.is_disliked = result.is_disliked;
-            console.log(result.message);
         } else throw new Error(result.message);
     } catch (error) {
         console.error('ITEM ERROR:', error);
@@ -136,9 +139,8 @@ async function like(item) {
 
 async function dislike(item) {
     const product = item.fields;
-
     const dislikeUrl = DISLIKE_ITEM_ENDPOINT.replace('0', item.pk);
-    
+
     try {
         const response = await fetch(dislikeUrl, {
             method: 'POST',
@@ -147,29 +149,26 @@ async function dislike(item) {
 
         const result = await response.json();
 
-        // If response in ok, update JSON
         if (response.ok) {
             product.like_count = result.like_count;
             product.is_liked = result.is_liked;
             product.dislike_count = result.dislike_count;
             product.is_disliked = result.is_disliked;
-            console.log(result.message);
         } else throw new Error(result.message);
     } catch (error) {
         console.error('ITEM ERROR:', error);
     }
 }
 
-// Fetch products data
 async function fetchProducts(searchQuery = "") {
     if (productsAbortController) productsAbortController.abort();
     productsAbortController = new AbortController();
 
     try {
-        displayPageSection({ showLoading:true });
-        
+        displayPageSection({ showLoading: true });
+
         const url = searchQuery ? `${GET_ITEMS_ENDPOINT}?title=${encodeURIComponent(searchQuery)}` : GET_ITEMS_ENDPOINT;
-        
+
         const response = await fetch(url, {
             method: 'GET',
             headers: { 'Accept': 'application/json' },
@@ -181,18 +180,18 @@ async function fetchProducts(searchQuery = "") {
         const productsData = await response.json();
 
         if (productsData.length === 0) {
-            displayPageSection({ showEmpty:true });
+            displayPageSection({ showEmpty: true });
         } else {
             gridContainer.innerHTML = '';
             productsData.forEach(item => {
                 gridContainer.appendChild(buildProductCard(item));
             });
-            displayPageSection({ showGrid:true });
+            displayPageSection({ showGrid: true });
         }
     } catch (error) {
         if (error.name === 'AbortError') return;
         console.error('ITEM ERROR:', error);
-        displayPageSection({ showError:true });
+        displayPageSection({ showError: true });
     }
 }
 
@@ -207,6 +206,10 @@ function getCookie(name) {
                 break;
             }
         }
+    }
+    if (!cookieValue) {
+        const csrfInput = document.querySelector('input[name="csrfmiddlewaretoken"]');
+        if (csrfInput) cookieValue = csrfInput.value;
     }
     return cookieValue;
 }

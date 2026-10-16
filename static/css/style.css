@@ -148,6 +148,22 @@ a {
     color: var(--text-muted);
 }
 
+.marketplace-heading-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 24px;
+    margin-bottom: 40px;
+}
+
+.marketplace-heading-row .section-heading {
+    margin-bottom: 0;
+}
+
+.marketplace-sell-button {
+    flex-shrink: 0;
+}
+
 .eyebrow {
     color: var(--primary);
     font-size: 0.8rem;
@@ -173,6 +189,55 @@ a {
 .product-image {
     height: 220px;
     background-color: var(--primary-light);
+    background-size: cover;
+    background-position: center;
+}
+
+.product-image-link {
+    display: block;
+}
+
+.product-card-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.product-name {
+    min-width: 0;
+}
+
+.product-name h3 {
+    font-size: 1.1rem;
+    overflow-wrap: anywhere;
+}
+
+.interaction-buttons {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.interaction-buttons button {
+    padding: 4px 8px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--surface);
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.85rem;
+}
+
+.product-price {
+    margin-top: 8px;
+    font-weight: 600;
+}
+
+.marketplace-empty {
+    grid-column: 1 / -1;
+    padding: 20px 0;
 }
 
 .card-content, .info-card {
@@ -262,8 +327,57 @@ a {
     margin-top: 60px;
 }
 
+@media (max-width: 1024px) {
+  .navbar {
+    padding: 15px 5%;
+  }
+  
+  .hero {
+    padding: 60px 5%;
+  }
+
+  .card-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 @media (max-width: 768px) {
-    .card-grid {
-        grid-template-columns: 1fr;
-    }
+  html, body {
+    overflow-x: hidden;
+  }
+
+  .navbar {
+    flex-direction: column;
+    padding: 15px;
+    gap: 15px;
+  }
+  
+  .hero {
+    padding: 40px 20px;
+    text-align: center;
+  }
+  
+  .hero-content {
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .hero-content h1 {
+    font-size: 2rem;
+  }
+  
+  .hero-actions {
+    flex-direction: column;
+    width: 100%;
+    gap: 15px;
+  }
+  
+  .hero-actions .btn {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .card-grid {
+    grid-template-columns: 1fr;
+  }
 }
