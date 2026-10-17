@@ -13,3 +13,7 @@ __pycache__/
 .vscode/*
 !.vscode/settings.json
 .idea/
+
+# Media Directories
+item_images/
+media/
