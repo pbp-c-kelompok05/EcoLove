@@ -44,6 +44,12 @@ def like_item_ajax(request, id):
         )
 
     item = get_object_or_404(Item, id=id)
+
+    if request.user == item.user:
+        return JsonResponse(
+            {"message": "Cannot give likes to owned items."},
+            status=403,
+        )
         
     if request.user in item.disliked_by.all():
         item.disliked_by.remove(request.user)
@@ -97,6 +103,12 @@ def dislike_item_ajax(request, id):
         )
 
     item = get_object_or_404(Item, id=id)
+
+    if request.user == item.user:
+        return JsonResponse(
+            {"message": "Cannot give dislikes to owned items."},
+            status=403,
+        )
         
     if request.user in item.liked_by.all():
         item.liked_by.remove(request.user)
@@ -185,6 +197,7 @@ def get_items_json(request):
 
         data.append({
             "pk": str(item.id),
+            "user_id": str(item.user.id),
             "fields": {
                 "name": item.name,
                 "price": item.price,

@@ -6,6 +6,7 @@ const ITEM_DETAIL_ENDPOINT = GRID.dataset.itemDetail;
 const LIKE_ITEM_ENDPOINT = GRID.dataset.likeItem;
 const DISLIKE_ITEM_ENDPOINT = GRID.dataset.dislikeItem;
 const IS_AUTHENTICATED = GRID.dataset.isAuthenticated === 'True';
+const USER_ID = GRID.dataset.userId;
 let productsAbortController;
 
 // DOM Elements
@@ -77,7 +78,6 @@ function buildProductActions(item) {
     productActions.setAttribute('style', 'display: flex; gap: 6px; flex-shrink: 0;');
 
     const likeButton = document.createElement('button');
-    likeButton.setAttribute('style', 'cursor: pointer; border: 1px solid #ddd; background: white; padding: 4px 8px; border-radius: 4px; font-size: 0.85em;');
     likeButton.innerHTML = `👍 ${product.like_count}`;
     likeButton.classList.toggle('liked', product.is_liked);
 
@@ -93,7 +93,6 @@ function buildProductActions(item) {
     });
 
     const dislikeButton = document.createElement('button');
-    dislikeButton.setAttribute('style', 'cursor: pointer; border: 1px solid #ddd; background: white; padding: 4px 8px; border-radius: 4px; font-size: 0.85em;');
     dislikeButton.innerHTML = `👎 ${product.dislike_count}`;
     dislikeButton.classList.toggle('disliked', product.is_disliked);
 
@@ -107,6 +106,11 @@ function buildProductActions(item) {
         dislikeButton.innerHTML = `👎 ${product.dislike_count}`;
         dislikeButton.classList.toggle('disliked', product.is_disliked);
     });
+
+    if (USER_ID === item.user_id) {
+        likeButton.disabled = true;
+        dislikeButton.disabled = true;
+    }
 
     productActions.appendChild(likeButton);
     productActions.appendChild(dislikeButton);

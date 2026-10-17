@@ -42,6 +42,7 @@
     data-like-item="{% url 'items:like_item_ajax' 0 %}"
     data-dislike-item="{% url 'items:dislike_item_ajax' 0 %}"
     data-is-authenticated="{{ user.is_authenticated }}"
+    data-user-id="{{ user.id }}"
   >
   </div>
 </section>

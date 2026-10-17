@@ -55,13 +55,15 @@
         {% if user.is_authenticated %}
         <div class="interaction-buttons" style="display: flex; gap: 12px; margin-top: 10px;">
           <button id="like-button" 
-                  class="btn btn-outline {% if user in item.liked_by.all %} liked {% endif %}" 
-                  style="cursor: pointer;">
+                  class="{% if user in item.liked_by.all %} liked {% endif %}" 
+                  style="cursor: pointer;"
+                  {% if request.user == item.user %} disabled {% endif %}>
               👍 {{ item.liked_by.count }}
           </button>
           <button id="dislike-button" 
-                  class="btn btn-outline {% if user in item.disliked_by.all %} disliked {% endif %}" 
-                  style="cursor: pointer;">
+                  class="{% if user in item.disliked_by.all %} disliked {% endif %}" 
+                  style="cursor: pointer;"
+                  {% if request.user == item.user %} disabled {% endif %}>
               👎 {{ item.disliked_by.count }}
           </button>
         </div>
