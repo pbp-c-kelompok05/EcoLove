@@ -38,9 +38,9 @@
     class="card-grid hide" 
     style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; width: 100%;"
     data-get-items-json="{% url 'items:get_items_json' %}"
-    data-item-detail="{% url 'items:item_detail' 0 %}"
-    data-like-item="{% url 'items:like_item_ajax' 0 %}"
-    data-dislike-item="{% url 'items:dislike_item_ajax' 0 %}"
+    data-item-detail="{% url 'items:item_detail' '00000000-0000-0000-0000-000000000000' %}"
+    data-like-item="{% url 'items:like_item_ajax' '00000000-0000-0000-0000-000000000000' %}"
+    data-dislike-item="{% url 'items:dislike_item_ajax' '00000000-0000-0000-0000-000000000000' %}"
     data-is-authenticated="{{ user.is_authenticated }}"
     data-user-id="{{ user.id }}"
   >

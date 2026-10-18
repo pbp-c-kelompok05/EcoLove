@@ -19,14 +19,14 @@ urlpatterns = [
     path('', show_marketplace, name='show_marketplace'),
     path('my-marketplace/', my_marketplace, name='my_marketplace'),
     path('api/items', get_items_json, name='get_items_json'),
-    path('detail/<int:id>/', item_detail, name='item_detail'),
+    path('detail/<uuid:id>/', item_detail, name='item_detail'),
 
     # === ITEM CONFIGURATION === 
-    path('like/<int:id>/', like_item, name='like_item'),
-    path('dislike/<int:id>/', dislike_item, name='dislike_item'),
-    path('like-ajax/<int:id>/', like_item_ajax, name='like_item_ajax'),
-    path('dislike-ajax/<int:id>/', dislike_item_ajax, name='dislike_item_ajax'),
+    path('like/<uuid:id>/', like_item, name='like_item'),
+    path('dislike/<uuid:id>/', dislike_item, name='dislike_item'),
+    path('like-ajax/<uuid:id>/', like_item_ajax, name='like_item_ajax'),
+    path('dislike-ajax/<uuid:id>/', dislike_item_ajax, name='dislike_item_ajax'),
     path('add/', add_item, name='add_item'),
-    path('edit/<int:id>/', edit_item, name='edit_item'),
-    path('delete/<int:id>/', delete_item, name='delete_item'),
+    path('edit/<uuid:id>/', edit_item, name='edit_item'),
+    path('delete/<uuid:id>/', delete_item, name='delete_item'),
 ]

@@ -8,8 +8,8 @@
     class="item-detail-container"
     style="max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px;"
     data-item-id="{{ item.id }}"
-    data-like-item="{% url 'items:like_item_ajax' 0 %}"
-    data-dislike-item="{% url 'items:dislike_item_ajax' 0 %}"
+    data-like-item="{% url 'items:like_item_ajax' '00000000-0000-0000-0000-000000000000' %}"
+    data-dislike-item="{% url 'items:dislike_item_ajax' '00000000-0000-0000-0000-000000000000' %}"
   >
     <!-- CSRF Token bawaan untuk cadangan JS -->
     {% csrf_token %}

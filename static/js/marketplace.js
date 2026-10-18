@@ -31,7 +31,7 @@ function buildProductCard(item) {
     card.setAttribute('style', 'display: flex; flex-direction: column; background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; height: 100%;');
 
     // Menggunakan variabel detailUrl resmi dari JavaScript
-    const detailUrl = ITEM_DETAIL_ENDPOINT.replace('0', productId);
+    const detailUrl = ITEM_DETAIL_ENDPOINT.replace('00000000-0000-0000-0000-000000000000', productId);
 
     // Placeholder jika gambar kosong agar area atas tetap rapi dan bisa diklik
     const image = product.image
@@ -120,7 +120,7 @@ function buildProductActions(item) {
 
 async function like(item) {
     const product = item.fields;
-    const likeUrl = LIKE_ITEM_ENDPOINT.replace('0', item.pk);
+    const likeUrl = LIKE_ITEM_ENDPOINT.replace('00000000-0000-0000-0000-000000000000', item.pk);
 
     try {
         const response = await fetch(likeUrl, {
@@ -143,7 +143,7 @@ async function like(item) {
 
 async function dislike(item) {
     const product = item.fields;
-    const dislikeUrl = DISLIKE_ITEM_ENDPOINT.replace('0', item.pk);
+    const dislikeUrl = DISLIKE_ITEM_ENDPOINT.replace('00000000-0000-0000-0000-000000000000', item.pk);
 
     try {
         const response = await fetch(dislikeUrl, {

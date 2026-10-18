@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+import uuid
+
 class Item(models.Model):
     CATEGORY_CHOICES = [
         ('CLOTHES', 'Clothes'),
@@ -8,7 +10,9 @@ class Item(models.Model):
         ('FURNITURE', 'Furniture'),
         ('OTHERS', 'Others'),
     ]
-    user = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     price = models.IntegerField() 
     description = models.TextField()
