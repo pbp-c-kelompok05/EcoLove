@@ -35,6 +35,15 @@ a {
     color: inherit;
 }
 
+h2, h3 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+p {
+    word-wrap: break-word;
+}
+
 /* NAVBAR */
 .navbar {
     display: flex;

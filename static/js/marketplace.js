@@ -47,8 +47,7 @@ function buildProductCard(item) {
                 <span class="tag">${product.category}</span>
 
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px; gap: 8px;">
-                    <!-- Perbaikan Link 404: Menggunakan ${detailUrl} bukan Django tag -->
-                    <a href="${detailUrl}" style="text-decoration: none; color: inherit; flex-grow: 1;">
+                    <a href="${detailUrl}" style="text-decoration: none; color: inherit; flex-grow: 1; max-width: 67%;">
                         <h3 style="margin: 0; font-size: 1.1rem;">${product.name}</h3>
                     </a>
                 </div>
