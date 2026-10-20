@@ -12,9 +12,9 @@
     <header class="navbar">
         <a href="/" class="logo">EcoLove</a>
         <nav>
-            <a href="/">Home</a>
+            <a href="/#home">Home</a>
             <a href="{% url 'items:show_marketplace' %}">Marketplace</a>
-            <a href="{% url 'items:show_events' %}">Events</a>
+            <a href="/#events">Events</a>
 
             {% if user.is_authenticated %}
             

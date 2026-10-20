@@ -10,6 +10,13 @@
         <p style="margin-bottom: 8px;"><strong>Username:</strong> {{ request.user.username }}</p>
         <p style="margin-bottom: 20px; color: var(--text-muted);"><strong>Email:</strong> {{ request.user.email }}</p>
 
+        <!-- tombol ke user's personal marketplace -->
+        <a href="{% url 'items:my_marketplace' %}" 
+        class="btn btn-primary" 
+        style="display: block; width: 100%; text-align: center; background-color: #2e7d32; color: #ffffff; padding: 12px 24px; border-radius: 50px; text-decoration: none; font-weight: 600; margin-bottom: 12px; box-sizing: border-box;">
+        My Marketplace</a>
+
+        <!-- tombol log out -->
         <a href="/logout/" class="btn btn-outline" style="width: 100%; display: block;">Log Out</a>
     </div>
 </div>

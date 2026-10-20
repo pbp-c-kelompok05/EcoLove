@@ -35,6 +35,15 @@ a {
     color: inherit;
 }
 
+h2, h3 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+p {
+    word-wrap: break-word;
+}
+
 /* NAVBAR */
 .navbar {
     display: flex;
@@ -72,6 +81,10 @@ a {
     border-radius: 999px;
     font-weight: bold;
     transition: 0.2s;
+}
+
+button:disabled {
+    cursor: auto !important;
 }
 
 .btn-primary {
@@ -223,7 +236,35 @@ a {
     color: var(--primary);
     font-size: 0.8rem;
     font-weight: bold;
-    margin-bottom: 12px;
+}
+
+.liked {
+    background: #2E7D32 !important;
+    color: white;
+}
+
+.liked:hover {
+    opacity: 0.9;
+}
+
+.disliked {
+    background: #9a0000 !important;
+    color: white;
+}
+
+.disliked:hover {
+    opacity: 0.9;
+}
+
+.hide {
+    display: none !important;
+}
+
+/* AUTH / LOGIN FORM STYLES */
+.auth-container {
+    max-width: 420px;
+    margin: 60px auto;
+    padding: 0 16px;
 }
 
 .product-card-heading {

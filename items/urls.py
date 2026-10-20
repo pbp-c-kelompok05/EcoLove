@@ -1,14 +1,32 @@
 from django.urls import path
-from . import views
+from items.views import (
+    show_marketplace,
+    my_marketplace,
+    item_detail,
+    like_item,
+    like_item_ajax,
+    dislike_item,
+    dislike_item_ajax,
+    add_item,
+    edit_item,
+    delete_item,
+    get_items_json,
+)
 
 app_name = 'items'
 
 urlpatterns = [
-    path('', views.show_home, name='home'),
-    path('marketplace/', views.show_marketplace, name='show_marketplace'),
-    path('events/', views.show_events, name='show_events'),
-    path('add/', views.add_item, name='add_item'),
-    path('<int:id>/', views.item_detail, name='item_detail'),
-    path('like/<int:id>/', views.like_item, name='like_item'),
-    path('dislike/<int:id>/', views.dislike_item, name='dislike_item'),
+    path('', show_marketplace, name='show_marketplace'),
+    path('my-marketplace/', my_marketplace, name='my_marketplace'),
+    path('api/items', get_items_json, name='get_items_json'),
+    path('detail/<uuid:id>/', item_detail, name='item_detail'),
+
+    # === ITEM CONFIGURATION === 
+    path('like/<uuid:id>/', like_item, name='like_item'),
+    path('dislike/<uuid:id>/', dislike_item, name='dislike_item'),
+    path('like-ajax/<uuid:id>/', like_item_ajax, name='like_item_ajax'),
+    path('dislike-ajax/<uuid:id>/', dislike_item_ajax, name='dislike_item_ajax'),
+    path('add/', add_item, name='add_item'),
+    path('edit/<uuid:id>/', edit_item, name='edit_item'),
+    path('delete/<uuid:id>/', delete_item, name='delete_item'),
 ]
