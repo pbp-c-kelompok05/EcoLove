@@ -6,7 +6,7 @@ const LIKE_ITEM_ENDPOINT = GRID.dataset.likeItem;
 const DISLIKE_ITEM_ENDPOINT = GRID.dataset.dislikeItem;
 
 async function like() {
-    const likeUrl = LIKE_ITEM_ENDPOINT.replace('0', ITEM_ID);
+    const likeUrl = LIKE_ITEM_ENDPOINT.replace('00000000-0000-0000-0000-000000000000', ITEM_ID);
     
     try {
         const response = await fetch(likeUrl, {
@@ -27,7 +27,7 @@ async function like() {
 }
 
 async function dislike() {
-    const dislikeUrl = DISLIKE_ITEM_ENDPOINT.replace('0', ITEM_ID);
+    const dislikeUrl = DISLIKE_ITEM_ENDPOINT.replace('00000000-0000-0000-0000-000000000000', ITEM_ID);
     
     try {
         const response = await fetch(dislikeUrl, {
