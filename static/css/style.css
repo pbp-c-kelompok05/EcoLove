@@ -304,8 +304,25 @@ button:disabled {
     box-shadow: 0 4px 12px rgba(0,0,0,0.03);
 }
 
+.form-container {
+    padding-top: 100px;
+    padding-bottom: 50px;
+    min-height: 80vh;
+    display: flex;
+    justify-content: center;
+}
+
 .form-group {
     margin-bottom: 18px;
+}
+
+input[type=file],
+select {
+  cursor: pointer;
+}
+
+input[type=file]::file-selector-button {
+  display: none;
 }
 
 .form-label {
@@ -316,7 +333,7 @@ button:disabled {
     margin-bottom: 6px;
 }
 
-.input-field {
+.input-field, .form-group {
     width: 100%;
     padding: 12px 14px;
     border: 1px solid var(--border);
