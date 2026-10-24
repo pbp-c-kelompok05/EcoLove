@@ -1,0 +1,16 @@
+<div class="pure-g ee-grid">
+{% for entry in page %}
+<div class="pure-u-1 pure-u-md-1-2 pure-u-lg-1-3"><article class="ee-card">
+{% if entry.image %}<img src="{{ entry.image.url }}" alt="{{ entry.title }}" loading="lazy">{% endif %}
+<div class="ee-card-body"><span class="tag">{{ entry.get_category_display }}</span>
+<h2><a href="{% if kind == 'event' %}{% url 'events:event_detail' entry.pk %}{% else %}{% url 'events:education_detail' entry.pk %}{% endif %}">{{ entry.title }}</a></h2>
+{% if kind == 'event' %}<p>{{ entry.starts_at|date:'d M Y H:i' }} – {{ entry.ends_at|date:'d M Y H:i' }} WIB</p><p>{% if entry.is_online %}Online{% else %}Offline{% endif %} · {{ entry.location }}</p><p>{{ entry.description|truncatechars:150 }}</p><small>{% if entry.ends_at < now %}Selesai{% elif entry.starts_at > now %}Mendatang{% else %}Berlangsung{% endif %}</small>
+{% else %}<p>{{ entry.summary|truncatechars:180 }}</p>{% endif %}
+</div></article></div>
+{% empty %}<p class="ee-empty">Belum ada konten yang cocok dengan pencarian ini.</p>{% endfor %}
+</div>
+<nav class="ee-pagination" aria-label="Halaman hasil">
+{% if page.has_previous %}<a href="{% querystring page=page.previous_page_number %}" data-page="{{ page.previous_page_number }}">Sebelumnya</a>{% endif %}
+<span>Halaman {{ page.number }} / {{ page.paginator.num_pages }}</span>
+{% if page.has_next %}<a href="{% querystring page=page.next_page_number %}" data-page="{{ page.next_page_number }}">Berikutnya</a>{% endif %}
+</nav>

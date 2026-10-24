@@ -1,0 +1,14 @@
+{% extends 'base.html' %}{% load static %}
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'events/vendor/grids-min.css' %}">
+<link rel="stylesheet" href="{% static 'events/vendor/grids-responsive-min.css' %}">
+<link rel="stylesheet" href="{% static 'events/module.css' %}">
+{% endblock %}
+{% block content %}
+<section class="ee">
+<nav class="ee-tabs" aria-label="Event dan edukasi"><a href="{% url 'events:event_list' %}">Events</a><a href="{% url 'events:education_list' %}">Education</a></nav>
+{% block module_content %}{% endblock %}
+<p id="ee-feedback" role="status" aria-live="polite"></p>
+</section>
+{% endblock %}
+{% block extra_scripts %}<script src="{% static 'events/module.js' %}" defer></script>{% endblock %}

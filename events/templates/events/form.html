@@ -1,0 +1,11 @@
+{% extends 'events/base.html' %}
+{% block module_content %}
+<a href="{{ list_url }}">← Kembali ke daftar</a>
+<h1>{% if object %}Edit{% else %}Tambah{% endif %} {{ label }}</h1>
+<p>Waktu event menggunakan WIB (UTC+7). Gambar opsional. Kolom lain wajib kecuali yang diberi keterangan khusus.</p>
+<form method="post" enctype="multipart/form-data" id="ee-content-form" class="ee-editor">{% csrf_token %}
+<div class="ee-errors" role="alert" tabindex="-1">{{ form.non_field_errors }}</div>
+{% for field in form %}<div class="ee-field">{{ field.label_tag }}{{ field }}{% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}<div data-errors-for="{{ field.name }}">{{ field.errors }}</div></div>{% endfor %}
+<button class="btn btn-primary" type="submit">Simpan</button> <a href="{{ list_url }}">Batal</a>
+</form>
+{% endblock %}

@@ -31,7 +31,7 @@ User Role & Target User:
         Guest / Anonymous : Hanya bisa melihat katalog produk berdasarkan lokasi, membaca artikel edukasi, dan melihat jadwal acara.
         Buyer (User) : Dapat mengelola profil, membeli barang bekas menggunakan pembayaran Midtrans, dan memberikan ulasan pesanan. 
         Seller (User) : Dapat mengunggah foto produk bekas, menetapkan harga, menentukan lokasi penjemputan, dan mengatur status barang. 
-        Event Creator : Memiliki semua akses pengguna biasa, ditambah hak membuat agenda acara baru dan menerbitkan artikel edukasi. 
+        Event + Education : Hanya superuser yang boleh membuat, mengedit, dan menghapus event/artikel. Pengguna login boleh berkomentar pada event; artikel hanya dibaca.
         Admin : Memegang kendali penuh untuk memoderasi produk, memantau transaksi Midtrans, mengelola akun, dan memvalidasi konten. 
     Target User:
         Gen Z & Thrifter : Anak muda berusia 18–35 tahun yang mencari barang bekas berkualitas 
@@ -52,7 +52,55 @@ Perbandingan:
 
 Daftar Modul & PIC:
     Auth-Profile-User = 
-    Event+Education =
+    Event+Education = David Mesakh (2506604503)
     Item = 
     Review = 
     Transaction+Payment =
+
+
+## Modul Event + Education
+
+PIC: **David Mesakh (2506604503)**. App: `events`.
+
+- Halaman: `/events/` dan `/events/education/`, dilengkapi pencarian/filter AJAX dan pagination.
+- Superuser mengelola event/artikel; pengguna login dapat berkomentar pada event dan menghapus komentar sendiri. Superuser dapat memoderasi semua komentar. Artikel hanya dibaca.
+- Guest dapat membaca informasi umum. Kontak, link pertemuan, dan komentar event hanya tersedia setelah login, termasuk pada JSON.
+- Mendukung gambar opsional, validasi tanggal, waktu WIB, CSRF, escaping XSS, dan tampilan responsif Pure CSS 3.0.0 (grid lokal beserta lisensi BSD).
+
+### Menjalankan lokal
+
+Pastikan `.env` memakai `PRODUCTION=False` dan database lokal sendiri.
+
+```powershell
+.\env\Scripts\Activate.ps1
+python manage.py migrate
+python manage.py createsuperuser
+python manage.py runserver
+```
+
+Seed opsional dan idempotent (3 event + 3 artikel sintetis), hanya untuk database lokal:
+
+```powershell
+python manage.py seed_events --username NAMA_SUPERUSER_LOKAL
+```
+
+### Pengujian
+
+Gunakan database test terisolasi. `test_settings` memaksa SQLite in-memory, hasher MD5 khusus test, dan media uji; auth/middleware/form/migration tetap sama. Test runner menonaktifkan DEBUG, sehingga route development juga diuji dengan DEBUG aktif. PostgreSQL dan konfigurasi hosting belum diuji:
+
+```powershell
+python manage.py check --settings=EcoLove.test_settings
+python manage.py makemigrations --check --dry-run --settings=EcoLove.test_settings
+python manage.py test --settings=EcoLove.test_settings
+```
+
+Hasil: check dan konsistensi migrasi lulus; 24 test lulus, mencakup CRUD, akses, komentar, validasi, filter, CSRF, XSS, dan privasi HTML/JSON. Browser: akses guest/user, komentar, serta create/update event sudah dicoba. DOM desktop/mobile diperiksa, tetapi screenshot dan kelanjutan alur dialog hapus timeout; review visual lengkap dan CRUD Education lewat UI masih diperlukan.
+
+Uji sebagai guest untuk informasi publik, user untuk komentar, dan superuser untuk CRUD/moderasi. Login saat ini mengarah ke Marketplace; buka Events melalui navbar setelah login.
+
+### Catatan integrasi
+
+- Kategori awal: Reuse & Repair, Minim Sampah, Komunitas, Gaya Hidup. Kontak/link boleh kosong; hindari menulis informasi privat di deskripsi publik.
+- Koordinasikan kategori final, migrasi deployment, dan pembagian requirement 50 data lintas modul.
+- Konfigurasi storage lama dipertahankan: tanpa MEDIA_ROOT eksplisit, upload berada di `item_images/`, `event_images/`, dan `education_images/` relatif direktori kerja. Route development dibatasi ke folder tersebut. Tidak ada gambar dipindahkan/dihapus; file lama dari percobaan konfigurasi `media/` perlu dikoordinasikan jika ada. Hosting perlu mengatur persistensi dan penyajian media.
+- Database lokal/deployment belum dimigrasikan atau di-seed selama implementasi. Warning WhiteNoise tentang `staticfiles/` ditangani melalui `collectstatic` saat integrasi hosting.

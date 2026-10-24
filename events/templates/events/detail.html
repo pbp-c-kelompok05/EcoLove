@@ -1,0 +1,22 @@
+{% extends 'events/base.html' %}
+{% block module_content %}
+<a href="{{ list_url }}">← Kembali ke daftar</a>
+<article class="ee-detail">
+<span class="tag">{{ object.get_category_display }}</span><h1>{{ object.title }}</h1>
+{% if object.image %}<img class="ee-cover" src="{{ object.image.url }}" alt="{{ object.title }}">{% endif %}
+{% if kind == 'event' %}
+<p><strong>{{ object.starts_at|date:'d M Y H:i' }} – {{ object.ends_at|date:'d M Y H:i' }} WIB (UTC+7)</strong></p>
+<p>{% if object.is_online %}Online{% else %}Offline{% endif %} · {{ object.location }}</p>
+<div class="ee-prose">{{ object.description|linebreaksbr }}</div>
+{% if user.is_authenticated %}
+<aside class="ee-private"><h2>Informasi penyelenggara</h2><p>Kontak: {{ object.organizer_contact|default:'Belum tersedia' }}</p>
+<p>Link pertemuan: {% if object.safe_meeting_link %}<a href="{{ object.safe_meeting_link }}" rel="noopener noreferrer" target="_blank">{{ object.safe_meeting_link }}</a>{% else %}Belum tersedia{% endif %}</p></aside>
+{% else %}<p class="ee-private"><a href="{% url 'login' %}">Login</a> untuk melihat kontak penyelenggara, link pertemuan, dan komentar.</p>{% endif %}
+{% else %}<p><strong>{{ object.summary }}</strong></p><div class="ee-prose">{{ object.body|linebreaksbr }}</div><p>Penulis: {{ object.author.username }} · Diperbarui {{ object.updated_at|date:'d M Y H:i' }} WIB</p>{% endif %}
+{% if user.is_superuser %}<div class="ee-actions"><a class="btn btn-outline" href="{{ edit_url }}">Edit</a><form method="post" action="{{ delete_url }}" data-delete data-redirect="true">{% csrf_token %}<button class="btn ee-danger" type="submit">Hapus konten</button></form></div>{% endif %}
+</article>
+{% if kind == 'event' and user.is_authenticated %}
+<section class="ee-comments"><h2>Diskusi event</h2><div id="ee-comments">{% for comment in comments %}{% include 'events/comment.html' %}{% endfor %}</div><p id="ee-comments-empty" {% if comments %}hidden{% endif %}>Belum ada komentar. Mulai diskusinya!</p>
+<form method="post" action="{% url 'events:comment_add' object.pk %}" id="ee-comment-form">{% csrf_token %}{{ comment_form.as_p }}<div class="ee-errors" role="alert" tabindex="-1"></div><button class="btn btn-primary" type="submit">Kirim komentar</button></form></section>
+{% endif %}
+{% endblock %}

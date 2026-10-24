@@ -1,0 +1,14 @@
+{% extends 'events/base.html' %}
+{% block module_content %}
+<p class="eyebrow">LOVE ME AGAIN · BELAJAR & BERGERAK</p>
+<h1>{{ label }}</h1>
+<p>{% if kind == 'event' %}Temukan kegiatan untuk memberi bumi kesempatan yang lebih baik. Semua waktu dalam WIB (UTC+7).{% else %}Langkah kecil untuk hidup berkelanjutan, dimulai dari pengetahuan.{% endif %}</p>
+{% if user.is_superuser %}<a class="btn btn-primary" href="{{ create_url }}">Tambah {{ label }}</a>{% endif %}
+<form id="ee-filter" action="{{ list_url }}" method="get" class="ee-filters">
+<label>Cari <input type="search" name="q" value="{{ query }}" placeholder="Cari judul atau isi"></label>
+<label>Kategori <select name="category"><option value="">Semua kategori</option>{% for value, text in categories %}<option value="{{ value }}" {% if category == value %}selected{% endif %}>{{ text }}</option>{% endfor %}</select></label>
+{% if kind == 'event' %}<label>Waktu <select name="status"><option value="">Semua waktu</option><option value="upcoming" {% if status == 'upcoming' %}selected{% endif %}>Mendatang</option><option value="ongoing" {% if status == 'ongoing' %}selected{% endif %}>Berlangsung</option><option value="finished" {% if status == 'finished' %}selected{% endif %}>Selesai</option></select></label>{% endif %}
+<button class="btn btn-primary" type="submit">Terapkan</button>
+</form>
+<div id="ee-results" aria-live="polite">{% include 'events/cards.html' %}</div>
+{% endblock %}

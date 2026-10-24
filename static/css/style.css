@@ -364,6 +364,19 @@ button:disabled {
     padding: 15px;
     gap: 15px;
   }
+
+  /* Keep the shared navigation usable with Events and Education links. */
+  .navbar nav {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    max-width: 100%;
+  }
+
+  .navbar nav a {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
   
   .hero {
     padding: 40px 20px;

@@ -1,0 +1,13 @@
+.ee {max-width:1160px;margin:auto;padding:40px 24px 70px;min-height:70vh;overflow-wrap:anywhere}
+.ee h1 {font-size:clamp(2rem,5vw,3rem);margin:12px 0}.ee h2{font-size:1.3rem;margin:12px 0;overflow:visible}
+.ee p {margin:12px 0}.ee a:hover{text-decoration:underline}.ee-tabs{display:flex;gap:24px;margin-bottom:28px;color:var(--primary);font-weight:700}
+.ee-filters,.ee-actions,.ee-pagination{display:flex;gap:16px;align-items:end;flex-wrap:wrap;margin:24px 0}
+.ee label{display:block;font-weight:600}.ee input:not([type=checkbox]),.ee textarea,.ee select{display:block;max-width:100%;width:100%;padding:11px;border:1px solid var(--border);border-radius:8px;font:inherit;background:white;color:var(--text)}
+.ee .ee-filters input{min-width:200px}.ee .ee-filters select{min-width:160px}.ee-grid{margin:0 -10px}.ee-grid>div{padding:10px;box-sizing:border-box;letter-spacing:normal;font-family:var(--font-ui)}
+.ee-card{height:100%;border:1px solid var(--border);border-radius:14px;background:white;overflow:hidden}.ee-card img{width:100%;height:210px;object-fit:cover}.ee-card-body{padding:24px}.ee-card h2 a{color:var(--primary)}
+.ee-detail,.ee-comments{max-width:800px;margin:24px auto}.ee-cover{max-width:100%;max-height:420px;border-radius:14px;object-fit:contain}.ee-prose{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.9;margin:20px 0}.ee-private{padding:20px;background:var(--tag-green);border-radius:12px;margin:24px 0}
+.ee-comment{padding:20px;border-bottom:1px solid var(--border);background:white}.ee-editor{max-width:760px}.ee-field{margin:20px 0}.ee-field small{display:block;color:var(--text-muted)}.ee-errors,[data-errors-for],.ee-error{color:#a32626}.ee-errors:empty{display:none}.ee-danger{background:#a32626;color:white;border:0}.ee button{cursor:pointer;font:inherit}.ee button:disabled{opacity:.65}.ee-pagination button{padding:8px 16px;border:1px solid var(--primary);border-radius:8px;background:white;color:var(--primary)}.ee-empty{padding:40px 10px}.ee [hidden]{display:none!important}
+/* Navbar bersama tetap dapat dipakai di layar kecil pada halaman modul. */
+@media(max-width:700px){body:has(.ee) .navbar{padding:16px;flex-wrap:wrap;gap:12px}body:has(.ee) .navbar nav{flex-wrap:wrap;gap:12px}.ee{padding:24px 16px}.ee-filters>label{width:100%}}
+
+.ee-grid>div{min-width:0}.ee-pagination a{padding:8px 16px;border:1px solid var(--primary);border-radius:8px;background:white;color:var(--primary)}

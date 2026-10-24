@@ -1,0 +1,2 @@
+<article class="ee-comment"><p><strong>{{ comment.user.username }}</strong> · {{ comment.created_at|date:'d M Y H:i' }} WIB</p><p class="ee-prose">{{ comment.body }}</p>
+{% if user.is_superuser or user.pk == comment.user_id %}<form method="post" action="{% url 'events:comment_delete' comment.pk %}" data-delete>{% csrf_token %}<button class="btn btn-outline" type="submit">Hapus komentar</button></form>{% endif %}</article>
