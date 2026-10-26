@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.db import models
 from django.db.models import F, Q
+from django.utils import timezone
 
 CATEGORIES = [('reuse', 'Reuse & Repair'), ('waste', 'Minim Sampah'), ('community', 'Komunitas'), ('lifestyle', 'Gaya Hidup')]
 
@@ -54,6 +55,17 @@ class Event(Content):
             return ''
         return self.meeting_link
 
+    @property
+    def registration_open(self):
+        return self.starts_at > timezone.now()
+
+    @property
+    def status_label(self):
+        now = timezone.now()
+        if self.ends_at < now:
+            return 'Selesai'
+        return 'Mendatang' if self.starts_at > now else 'Berlangsung'
+
 class Education(Content):
     summary = models.TextField('Ringkasan', max_length=500)
     body = models.TextField('Isi artikel')
@@ -72,3 +84,14 @@ class EventComment(models.Model):
 
     class Meta:
         ordering = ['created_at', 'id']
+
+
+class EventRegistration(models.Model):
+    """One participation per account; no extra personal data is collected."""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='registrations')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='event_registrations')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=['event', 'user'], name='unique_event_participant')]

@@ -426,3 +426,64 @@ class EventsTests(TestCase):
         form=registered.get_form(request,self.event)(instance=self.event)
         self.assertIn('2027-01-10T00:30',str(form['starts_at']))
         self.assertEqual(registered.starts_at_wib(self.event),'10-01-2027 00:30 WIB')
+
+    def test_pagination_hidden_for_single_page_and_empty_results(self):
+        for kind in ['event', 'education']:
+            url = self.url(kind, 'list')
+            for params in [{}, {'q': 'tidak-ditemukan'}]:
+                response = self.client.get(url, params)
+                self.assertNotContains(response, 'class="ee-pagination"')
+                html = self.client.get(url, params, **AJAX).json()['html']
+                self.assertNotIn('class="ee-pagination"', html)
+
+    def test_empty_collection_and_filtered_results_have_distinct_guidance(self):
+        for kind, model in [('event', Event), ('education', Education)]:
+            url = self.url(kind, 'list')
+            filtered = self.client.get(url, {'q': 'tidak-ditemukan'})
+            self.assertContains(filtered, 'Reset pencarian dan filter')
+            self.assertContains(filtered, f'href="{url}"')
+            model.objects.all().delete()
+            empty = self.client.get(url)
+            self.assertContains(empty, 'Belum ada')
+            self.assertNotContains(empty, 'Reset pencarian dan filter')
+
+    def test_validation_descriptions_reference_rendered_help_and_error_holders(self):
+        from html.parser import HTMLParser
+
+        class FormElements(HTMLParser):
+            def __init__(self):
+                super().__init__()
+                self.ids = set()
+                self.descriptions = []
+
+            def handle_starttag(self, tag, attrs):
+                attrs = dict(attrs)
+                if attrs.get('id'):
+                    self.ids.add(attrs['id'])
+                if attrs.get('aria-describedby'):
+                    self.descriptions.extend(attrs['aria-describedby'].split())
+
+        self.client.force_login(self.admin)
+        for kind in ['event', 'education']:
+            url = self.url(kind, 'create')
+            for response in [self.client.get(url), self.client.post(url, {})]:
+                parsed = FormElements()
+                parsed.feed(response.content.decode())
+                self.assertTrue(parsed.descriptions)
+                self.assertTrue(set(parsed.descriptions).issubset(parsed.ids))
+                self.assertContains(response, 'id="id_title_errors" data-errors-for="title"')
+        comment = self.client.get(self.url('event', 'detail', self.event))
+        self.assertContains(comment, 'aria-describedby="id_body_errors"')
+        self.assertContains(comment, 'id="id_body_errors" data-errors-for="body"')
+
+    def test_success_feedback_survives_ajax_redirect_and_plain_form_posts(self):
+        self.client.force_login(self.admin)
+        for kind, model in [('event', Event), ('education', Education)]:
+            created = self.client.post(self.url(kind, 'create'), self.payload(kind), **AJAX)
+            self.assertEqual(created.status_code, 201)
+            self.assertContains(self.client.get(created.json()['url']), 'berhasil ditambahkan.')
+            obj = model.objects.get(title=self.payload(kind)['title'])
+            edited = self.client.post(self.url(kind, 'edit', obj), self.payload(kind), follow=True)
+            self.assertContains(edited, 'berhasil diperbarui.')
+            deleted = self.client.post(self.url(kind, 'delete', obj), **AJAX)
+            self.assertContains(self.client.get(deleted.json()['url']), 'berhasil dihapus.')

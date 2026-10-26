@@ -1,22 +1,41 @@
-{% extends 'events/base.html' %}
+{% extends 'events/base.html' %}{% load education_text %}
 {% block module_content %}
-<a href="{{ list_url }}">← Kembali ke daftar</a>
-<article class="ee-detail">
-<span class="tag">{{ object.get_category_display }}</span><h1>{{ object.title }}</h1>
-{% if object.image %}<img class="ee-cover" src="{{ object.image.url }}" alt="{{ object.title }}">{% endif %}
 {% if kind == 'event' %}
-<p><strong>{{ object.starts_at|date:'d M Y H:i' }} – {{ object.ends_at|date:'d M Y H:i' }} WIB (UTC+7)</strong></p>
-<p>{% if object.is_online %}Online{% else %}Offline{% endif %} · {{ object.location }}</p>
-<div class="ee-prose">{{ object.description|linebreaksbr }}</div>
+<a class="ee-breadcrumb" href="{{ list_url }}">Events / {{ object.title }}</a>
+<div class="ee-detail-grid"><div>
+{% include 'events/illustration.html' %}
+<article class="ee-detail"><p class="ee-eyebrow">{{ object.get_category_display }} <span class="ee-status">{{ object.status_label }}</span></p><h1>{{ object.title }}</h1>
+<div class="ee-prose">{{ object.description|structured_text }}</div>
+<h2>Sebelum ikut kegiatan</h2><ul class="ee-checklist"><li>Catat jadwal dan lokasi kegiatan.</li><li>Daftarkan keikutsertaan sebelum event dimulai.</li><li>Hubungi penyelenggara untuk kebutuhan khusus.</li></ul></article>
+<section class="ee-comments"><h2>Komentar komunitas</h2>
 {% if user.is_authenticated %}
-<aside class="ee-private"><h2>Informasi penyelenggara</h2><p>Kontak: {{ object.organizer_contact|default:'Belum tersedia' }}</p>
-<p>Link pertemuan: {% if object.safe_meeting_link %}<a href="{{ object.safe_meeting_link }}" rel="noopener noreferrer" target="_blank">{{ object.safe_meeting_link }}</a>{% else %}Belum tersedia{% endif %}</p></aside>
-{% else %}<p class="ee-private"><a href="{% url 'login' %}">Login</a> untuk melihat kontak penyelenggara, link pertemuan, dan komentar.</p>{% endif %}
-{% else %}<p><strong>{{ object.summary }}</strong></p><div class="ee-prose">{{ object.body|linebreaksbr }}</div><p>Penulis: {{ object.author.username }} · Diperbarui {{ object.updated_at|date:'d M Y H:i' }} WIB</p>{% endif %}
-{% if user.is_superuser %}<div class="ee-actions"><a class="btn btn-outline" href="{{ edit_url }}">Edit</a><form method="post" action="{{ delete_url }}" data-delete data-redirect="true">{% csrf_token %}<button class="btn ee-danger" type="submit">Hapus konten</button></form></div>{% endif %}
+<div id="ee-comments">{% for comment in comments %}{% include 'events/comment.html' %}{% endfor %}</div>
+<p id="ee-comments-empty" class="ee-muted" {% if comments %}hidden{% endif %}>Belum ada komentar. Mulai diskusinya!</p>
+<form method="post" action="{% url 'events:comment_add' object.pk %}" id="ee-comment-form" class="ee-comment-editor">{% csrf_token %}{% include 'events/fields.html' with form=comment_form %}<button class="ee-btn ee-primary" type="submit">Kirim komentar</button></form>
+{% else %}<div class="ee-panel"><h3>Bergabung dalam percakapan</h3><p class="ee-muted">Masuk untuk membaca dan menulis komentar event.</p><a class="ee-btn ee-primary" href="{% url 'login' %}">Masuk</a></div>{% endif %}
+</section><a class="ee-btn ee-outline ee-back" href="{{ list_url }}">← Kembali ke events</a>
+</div><aside class="ee-sidebar">
+<section class="ee-panel"><h2>Catat jadwalnya</h2>
+<dl class="ee-metadata"><dt>Mulai</dt><dd>{{ object.starts_at|date:'d M Y H:i' }} WIB</dd><dt>Selesai</dt><dd>{{ object.ends_at|date:'d M Y H:i' }} WIB</dd><dt>{% if object.is_online %}Platform online{% else %}Lokasi{% endif %}</dt><dd>{{ object.location }}</dd></dl>
+{% if is_registered %}<p class="ee-registration-success" role="status">✓ Kamu sudah terdaftar.</p>
+<form method="post" action="{% url 'events:event_participation' object.pk %}" data-participation>{% csrf_token %}<input type="hidden" name="action" value="cancel"><button class="ee-btn ee-outline ee-wide" type="submit">Batalkan keikutsertaan</button></form>
+{% elif not object.registration_open %}<button class="ee-btn ee-primary ee-wide" disabled>Pendaftaran ditutup</button>
+{% elif user.is_authenticated %}<form method="post" action="{% url 'events:event_participation' object.pk %}" data-participation>{% csrf_token %}<input type="hidden" name="action" value="register"><button class="ee-btn ee-primary ee-wide" type="submit">Daftar kegiatan</button></form>
+{% else %}<a class="ee-btn ee-primary ee-wide" href="{% url 'login' %}">Masuk untuk mendaftar</a>{% endif %}
+<p class="ee-muted ee-small">Pendaftaran ditutup saat event dimulai. Semua waktu dalam WIB (UTC+7).</p>
+</section>
+<section class="ee-panel ee-sage ee-private"><h2>Informasi pendaftaran</h2>
+{% if user.is_authenticated %}<p>Kontak penyelenggara</p><p>{{ object.organizer_contact|default:'Belum tersedia' }}</p><p>Link pertemuan</p><p>{% if object.safe_meeting_link %}<a href="{{ object.safe_meeting_link }}" rel="noopener noreferrer" target="_blank">Buka link pertemuan ↗</a>{% else %}Belum tersedia{% endif %}</p>
+{% else %}<p>Masuk untuk melihat kontak penyelenggara dan link pertemuan. Setelah masuk, kembali ke halaman ini untuk mendaftar.</p>{% endif %}
+</section>
+{% if user.is_superuser %}<div class="ee-actions"><a class="ee-btn ee-outline" href="{{ edit_url }}">Edit event</a><a class="ee-btn ee-danger" href="{% url 'events:event_delete_confirm' object.pk %}">Hapus event</a></div>{% endif %}
+</aside></div>
+{% else %}
+<article class="ee-article"><p class="ee-eyebrow">Education / {{ object.get_category_display }}</p><h1>{{ object.title }}</h1><p class="ee-muted ee-article-meta">{{ object.author.username }} · Diperbarui {{ object.updated_at|date:'d M Y' }}</p>
+{% include 'events/illustration.html' %}
+<p class="ee-article-intro">{{ object.summary }}</p><div class="ee-prose">{{ object.body|structured_text }}</div>
+{% if user.is_superuser %}<div class="ee-actions"><a class="ee-btn ee-outline" href="{{ edit_url }}">Edit artikel</a><a class="ee-btn ee-danger" href="{% url 'events:education_delete_confirm' object.pk %}">Hapus artikel</a></div>{% endif %}
+<a class="ee-btn ee-outline ee-back" href="{{ list_url }}">← Kembali ke education</a>
 </article>
-{% if kind == 'event' and user.is_authenticated %}
-<section class="ee-comments"><h2>Diskusi event</h2><div id="ee-comments">{% for comment in comments %}{% include 'events/comment.html' %}{% endfor %}</div><p id="ee-comments-empty" {% if comments %}hidden{% endif %}>Belum ada komentar. Mulai diskusinya!</p>
-<form method="post" action="{% url 'events:comment_add' object.pk %}" id="ee-comment-form">{% csrf_token %}{{ comment_form.as_p }}<div class="ee-errors" role="alert" tabindex="-1"></div><button class="btn btn-primary" type="submit">Kirim komentar</button></form></section>
 {% endif %}
 {% endblock %}

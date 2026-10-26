@@ -22,9 +22,12 @@
   function fragment(html) {
     return new DOMParser().parseFromString(html, 'text/html').body;
   }
-  function errors(form, error) {
+  function clearErrors(form) {
     form.querySelectorAll('[data-errors-for], .ee-errors').forEach(el => el.replaceChildren());
     form.querySelectorAll('[aria-invalid]').forEach(el => el.removeAttribute('aria-invalid'));
+  }
+  function errors(form, error) {
+    clearErrors(form);
     const summary = form.querySelector('.ee-errors');
     if (summary) summary.textContent = error.message;
     for (const [name, values] of Object.entries(error.fields || {})) {
@@ -40,7 +43,12 @@
   if (filter) {
     let controller, timer;
     const results = document.querySelector('#ee-results');
-    async function load(page = 1) {
+    function cancelPending() {
+      clearTimeout(timer);
+      controller?.abort();
+      results.removeAttribute('aria-busy');
+    }
+    async function load(page = 1, remember = true) {
       controller?.abort();
       controller = new AbortController();
       const current = controller;
@@ -50,40 +58,62 @@
       results.setAttribute('aria-busy', 'true');
       try {
         const data = await send(filter.action + '?' + params, {signal: current.signal});
+        if (current.signal.aborted) return;
         results.replaceChildren(...fragment(data.html).childNodes);
-        history.replaceState(null, '', filter.action + '?' + params);
+        params.set('page', data.page);
+        const url = new URL(filter.action + '?' + params);
+        if (remember && url.href !== location.href) history.pushState(null, '', url);
         message('Hasil diperbarui.');
-      } catch (e) { if (e.name !== 'AbortError') message('Gagal memuat hasil. Klik Terapkan untuk mencoba lagi. ' + e.message, true); }
+      } catch (e) { if (e.name !== 'AbortError') message('Gagal memuat hasil. Klik Cari untuk mencoba lagi. ' + e.message, true); }
       finally { if (!current.signal.aborted) results.removeAttribute('aria-busy'); }
     }
-    filter.addEventListener('submit', e => { e.preventDefault(); clearTimeout(timer); load(); });
-    filter.addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(() => load(), 350); });
+    filter.addEventListener('submit', e => { e.preventDefault(); cancelPending(); load(); });
+    filter.addEventListener('input', () => { cancelPending(); timer = setTimeout(() => load(), 350); });
     results.addEventListener('click', e => {
       const link = e.target.closest('[data-page]');
-      if (link) { e.preventDefault(); clearTimeout(timer); load(link.dataset.page); }
+      if (link && !e.ctrlKey && !e.metaKey && !e.shiftKey && !e.altKey && e.button === 0) {
+        e.preventDefault(); cancelPending(); load(link.dataset.page);
+      }
+    });
+    window.addEventListener('popstate', () => {
+      cancelPending();
+      const params = new URLSearchParams(location.search);
+      for (const name of ['q', 'category', 'status']) {
+        const input = filter.elements.namedItem(name);
+        if (input) input.value = params.get(name) || '';
+      }
+      load(params.get('page') || 1, false);
     });
   }
   root.addEventListener('submit', async e => {
     const form = e.target;
-    if (!form.matches('#ee-content-form, #ee-comment-form, [data-delete]')) return;
+    if (!form.matches('#ee-content-form, #ee-comment-form, #ee-delete-confirm-form, [data-delete], [data-participation]')) return;
     e.preventDefault();
     if (form.hasAttribute('data-delete') && !confirm('Hapus data ini? Tindakan ini tidak dapat dibatalkan.')) return;
     const button = form.querySelector('[type=submit]');
     if (button.disabled) return;
     button.disabled = true;
+    form.setAttribute('aria-busy', 'true');
+    const originalLabel = button.textContent;
+    button.textContent = form.matches('[data-delete], #ee-delete-confirm-form') ? 'Menghapus…' : 'Menyimpan…';
     message('Menyimpan perubahan…');
     try {
-      const data = await send(form.action || location.href, {method:'POST', body:new FormData(form)});
+      // A field named "action" shadows form.action on HTMLFormElement.
+      const data = await send(form.getAttribute('action') || location.href, {method:'POST', body:new FormData(form)});
       if (data.url) { location.assign(data.url); return; }
       if (form.id === 'ee-comment-form') {
         document.querySelector('#ee-comments').append(...fragment(data.html).childNodes);
         form.reset();
-        form.querySelector('.ee-errors').replaceChildren();
+        clearErrors(form);
       } else { form.closest('.ee-comment').remove(); }
       const empty = document.querySelector('#ee-comments-empty');
       if (empty) empty.hidden = !!document.querySelector('.ee-comment');
       message('Perubahan berhasil disimpan.');
     } catch (error) { errors(form, error); }
-    finally { button.disabled = false; }
+    finally {
+      button.disabled = false;
+      button.textContent = originalLabel;
+      form.removeAttribute('aria-busy');
+    }
   });
 })();

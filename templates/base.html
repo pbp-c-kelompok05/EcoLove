@@ -10,6 +10,7 @@
     {% block extra_head %}{% endblock %}
 </head>
 <body>
+    {% block navbar %}
     <header class="navbar">
         <a href="/" class="logo">EcoLove</a>
         <nav>
@@ -31,14 +32,15 @@
             {% endif %}
         </nav>
     </header>
+    {% endblock %}
 
     <main>
         {% block content %}{% endblock %}
     </main>
 
-    <footer class="footer">
+    {% block footer %}<footer class="footer">
         <p>&copy; 2026 EcoLove. Faculty of Computer Science, University of Indonesia.</p>
-    </footer>
+    </footer>{% endblock %}
     {% block extra_scripts %}{% endblock %}
 </body>
 </html>

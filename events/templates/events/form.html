@@ -1,11 +1,10 @@
 {% extends 'events/base.html' %}
 {% block module_content %}
-<a href="{{ list_url }}">← Kembali ke daftar</a>
-<h1>{% if object %}Edit{% else %}Tambah{% endif %} {{ label }}</h1>
-<p>Waktu event menggunakan WIB (UTC+7). Gambar opsional. Kolom lain wajib kecuali yang diberi keterangan khusus.</p>
+<p class="ee-eyebrow">{{ label }}</p>
+<h1>{% if object %}Edit {% elif kind == 'event' %}Buat {% else %}Tulis {% endif %}{% if kind == 'event' %}event{% else %}artikel{% endif %}{% if not object %} baru{% endif %}.</h1>
+<p class="ee-muted">{% if kind == 'event' %}Isi informasi utama agar kegiatanmu mudah dipahami dan diikuti. Waktu menggunakan WIB (UTC+7).{% else %}Bagikan pengetahuan sederhana untuk kebiasaan yang lebih berkelanjutan.{% endif %} Gambar opsional.</p>
 <form method="post" enctype="multipart/form-data" id="ee-content-form" class="ee-editor">{% csrf_token %}
-<div class="ee-errors" role="alert" tabindex="-1">{{ form.non_field_errors }}</div>
-{% for field in form %}<div class="ee-field">{{ field.label_tag }}{{ field }}{% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}<div data-errors-for="{{ field.name }}">{{ field.errors }}</div></div>{% endfor %}
-<button class="btn btn-primary" type="submit">Simpan</button> <a href="{{ list_url }}">Batal</a>
+{% include 'events/fields.html' %}
+<div class="ee-actions"><button class="ee-btn ee-primary" type="submit">{% if object %}Simpan perubahan{% else %}Simpan {% if kind == 'event' %}event{% else %}artikel{% endif %}{% endif %}</button><a class="ee-btn ee-outline" href="{% if object %}{% if kind == 'event' %}{% url 'events:event_detail' object.pk %}{% else %}{% url 'events:education_detail' object.pk %}{% endif %}{% else %}{{ list_url }}{% endif %}">Batal</a></div>
 </form>
 {% endblock %}

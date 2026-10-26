@@ -63,7 +63,9 @@ Daftar Modul & PIC:
 PIC: **David Mesakh (2506604503)**. App: `events`.
 
 - Halaman: `/events/` dan `/events/education/`, dilengkapi pencarian/filter AJAX dan pagination.
-- Superuser mengelola event/artikel; pengguna login dapat berkomentar pada event dan menghapus komentar sendiri. Superuser dapat memoderasi semua komentar. Artikel hanya dibaca.
+- Superuser mengelola event/artikel melalui `/events/manage/` dan `/events/education/manage/`; pengguna login dapat berkomentar pada event dan menghapus komentar sendiri. Superuser dapat memoderasi semua komentar. Artikel hanya dibaca.
+- Pengguna login dapat mendaftar event satu kali per akun, melihat status terdaftar, dan membatalkan keikutsertaan. Pendaftaran baru ditutup saat event dimulai; aturan ini diperiksa di server dan dilindungi unique constraint database.
+- Tampilan mengikuti PNG EcoLove baru: banner SVG, kartu, detail dua kolom, artikel, form, tabel pengelolaan, dan konfirmasi hapus. CSS dibatasi ke modul ini; login dan Marketplace tetap memakai tampilan bersama yang sudah ada.
 - Guest dapat membaca informasi umum. Kontak, link pertemuan, dan komentar event hanya tersedia setelah login, termasuk pada JSON.
 - Mendukung gambar opsional, validasi tanggal, waktu WIB, CSRF, escaping XSS, dan tampilan responsif Pure CSS 3.0.0 (grid lokal beserta lisensi BSD).
 
@@ -94,7 +96,7 @@ python manage.py makemigrations --check --dry-run --settings=EcoLove.test_settin
 python manage.py test --settings=EcoLove.test_settings
 ```
 
-Hasil: check dan konsistensi migrasi lulus; 24 test lulus, mencakup CRUD, akses, komentar, validasi, filter, CSRF, XSS, dan privasi HTML/JSON. Browser: akses guest/user, komentar, serta create/update event sudah dicoba. DOM desktop/mobile diperiksa, tetapi screenshot dan kelanjutan alur dialog hapus timeout; review visual lengkap dan CRUD Education lewat UI masih diperlukan.
+Hasil implementasi PNG: check dan konsistensi migrasi lulus; 40 test lulus, mencakup CRUD, akses, komentar, validasi, filter, CSRF, XSS, privasi HTML/JSON, pendaftaran, pembatalan, dan pengelolaan. Browser dengan database preview terisolasi: pencarian/filter, akses guest/user/admin, pendaftaran, create/update Events dan Education, serta halaman konfirmasi hapus diperiksa. Screenshot desktop, tablet, dan mobile juga diperiksa. Detail perubahan, batasan visual, dan langkah integrasi tersedia di [laporan implementasi](docs/events-education.md).
 
 Uji sebagai guest untuk informasi publik, user untuk komentar, dan superuser untuk CRUD/moderasi. Login saat ini mengarah ke Marketplace; buka Events melalui navbar setelah login.
 
@@ -103,4 +105,4 @@ Uji sebagai guest untuk informasi publik, user untuk komentar, dan superuser unt
 - Kategori awal: Reuse & Repair, Minim Sampah, Komunitas, Gaya Hidup. Kontak/link boleh kosong; hindari menulis informasi privat di deskripsi publik.
 - Koordinasikan kategori final, migrasi deployment, dan pembagian requirement 50 data lintas modul.
 - Konfigurasi storage lama dipertahankan: tanpa MEDIA_ROOT eksplisit, upload berada di `item_images/`, `event_images/`, dan `education_images/` relatif direktori kerja. Route development dibatasi ke folder tersebut. Tidak ada gambar dipindahkan/dihapus; file lama dari percobaan konfigurasi `media/` perlu dikoordinasikan jika ada. Hosting perlu mengatur persistensi dan penyajian media.
-- Database lokal/deployment belum dimigrasikan atau di-seed selama implementasi. Warning WhiteNoise tentang `staticfiles/` ditangani melalui `collectstatic` saat integrasi hosting.
+- Migrasi `events.0003_eventregistration` hanya menambah tabel pendaftaran dan unique constraint. Migrasi sudah diterapkan pada SQLite lokal setelah backup di folder sementara; data lama tidak dihapus atau di-seed. Database deployment tidak disentuh. Jalankan `python manage.py migrate` saat menyiapkan database lain. Warning WhiteNoise tentang `staticfiles/` ditangani melalui `collectstatic` saat integrasi hosting.

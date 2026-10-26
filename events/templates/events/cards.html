@@ -1,16 +1,23 @@
+{% load static %}
+<p class="ee-result-count">{{ page.paginator.count }} {% if kind == 'event' %}kegiatan{% else %}artikel{% endif %} {% if query or category or status %}ditemukan{% else %}untuk kamu{% endif %}</p>
 <div class="pure-g ee-grid">
 {% for entry in page %}
 <div class="pure-u-1 pure-u-md-1-2 pure-u-lg-1-3"><article class="ee-card">
-{% if entry.image %}<img src="{{ entry.image.url }}" alt="{{ entry.title }}" loading="lazy">{% endif %}
-<div class="ee-card-body"><span class="tag">{{ entry.get_category_display }}</span>
-<h2><a href="{% if kind == 'event' %}{% url 'events:event_detail' entry.pk %}{% else %}{% url 'events:education_detail' entry.pk %}{% endif %}">{{ entry.title }}</a></h2>
-{% if kind == 'event' %}<p>{{ entry.starts_at|date:'d M Y H:i' }} – {{ entry.ends_at|date:'d M Y H:i' }} WIB</p><p>{% if entry.is_online %}Online{% else %}Offline{% endif %} · {{ entry.location }}</p><p>{{ entry.description|truncatechars:150 }}</p><small>{% if entry.ends_at < now %}Selesai{% elif entry.starts_at > now %}Mendatang{% else %}Berlangsung{% endif %}</small>
-{% else %}<p>{{ entry.summary|truncatechars:180 }}</p>{% endif %}
+{% if kind == 'event' %}{% url 'events:event_detail' entry.pk as detail_url %}{% else %}{% url 'events:education_detail' entry.pk as detail_url %}{% endif %}
+<a class="ee-thumbnail" href="{{ detail_url }}" aria-label="Baca {{ entry.title }}">
+{% if entry.image %}<img src="{{ entry.image.url }}" alt="{{ entry.title }}" loading="lazy">
+{% elif kind == 'event' %}<img src="{% static 'events/illustrations/community.svg' %}" alt="Ilustrasi komunitas berbagi dan menggunakan kembali barang" loading="lazy">
+{% else %}<img src="{% static 'events/illustrations/plant.svg' %}" alt="Ilustrasi tunas hijau" loading="lazy">{% endif %}
+</a>
+<div class="ee-card-body"><span class="ee-eyebrow">{{ entry.get_category_display }}</span><h2><a href="{{ detail_url }}">{{ entry.title }}</a></h2>
+{% if kind == 'event' %}<p class="ee-card-meta">{{ entry.starts_at|date:'d M Y H:i' }} WIB</p><p class="ee-card-meta">{% if entry.is_online %}Online{% else %}Offline{% endif %} · {{ entry.location }}</p><p class="ee-card-description">{{ entry.description|truncatechars:100 }}</p><span class="ee-status">{{ entry.status_label }}</span>
+{% else %}<p class="ee-card-description">{{ entry.summary|truncatechars:120 }}</p>{% endif %}
+<a class="ee-btn ee-outline ee-card-action" href="{{ detail_url }}">{% if kind == 'event' %}Lihat detail{% else %}Baca artikel{% endif %} <span aria-hidden="true">→</span></a>
 </div></article></div>
-{% empty %}<p class="ee-empty">Belum ada konten yang cocok dengan pencarian ini.</p>{% endfor %}
+{% empty %}
+<div class="pure-u-1 ee-empty">
+{% if query or category or status %}<h2>Belum menemukan yang kamu cari?</h2><p>Tidak ada konten yang cocok dengan pencarian atau filter ini.</p><a class="ee-btn ee-outline" href="{{ list_url }}">Reset pencarian dan filter</a>
+{% else %}<h2>Cerita baik segera hadir.</h2><p>{% if kind == 'event' %}Belum ada event yang dipublikasikan.{% else %}Belum ada artikel edukasi yang dipublikasikan.{% endif %}</p>{% endif %}
+</div>{% endfor %}
 </div>
-<nav class="ee-pagination" aria-label="Halaman hasil">
-{% if page.has_previous %}<a href="{% querystring page=page.previous_page_number %}" data-page="{{ page.previous_page_number }}">Sebelumnya</a>{% endif %}
-<span>Halaman {{ page.number }} / {{ page.paginator.num_pages }}</span>
-{% if page.has_next %}<a href="{% querystring page=page.next_page_number %}" data-page="{{ page.next_page_number }}">Berikutnya</a>{% endif %}
-</nav>
+{% include 'events/pagination.html' %}

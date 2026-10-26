@@ -1,0 +1,15 @@
+{% extends 'events/base.html' %}
+{% block module_content %}
+<p class="ee-eyebrow">Dashboard admin</p><h1>Kelola cerita dan kegiatan.</h1>
+<p class="ee-muted">Atur event, artikel, dan percakapan komunitas dalam satu tempat.</p>
+<a class="ee-btn ee-primary ee-manage-link" href="{{ create_url }}">+ {% if kind == 'event' %}Buat event{% else %}Tulis artikel{% endif %}</a>
+<nav class="ee-management-tabs ee-chips" aria-label="Jenis konten"><a href="{% url 'events:event_manage' %}" {% if kind == 'event' %}aria-current="page"{% endif %}>Events</a><a href="{% url 'events:education_manage' %}" {% if kind == 'education' %}aria-current="page"{% endif %}>Education</a></nav>
+<form method="get" class="ee-filters"><label for="manage-search">Cari konten</label><div class="ee-search-row"><input id="manage-search" type="search" name="q" value="{{ query }}" placeholder="Cari judul untuk dikelola…"><button class="ee-btn ee-outline" type="submit">Cari</button></div></form>
+<div class="ee-table-wrap"><table class="ee-table"><thead><tr><th scope="col">Judul</th><th scope="col">{% if kind == 'event' %}Tanggal (WIB){% else %}Diperbarui{% endif %}</th><th scope="col">Aksi</th></tr></thead><tbody>
+{% for entry in page %}<tr><td><a href="{% if kind == 'event' %}{% url 'events:event_detail' entry.pk %}{% else %}{% url 'events:education_detail' entry.pk %}{% endif %}">{{ entry.title }}</a><small>{{ entry.get_category_display }}</small></td><td>{% if kind == 'event' %}{{ entry.starts_at|date:'d M Y H:i' }}{% else %}{{ entry.updated_at|date:'d M Y' }}{% endif %}</td><td><div class="ee-table-actions"><a class="ee-btn ee-outline" href="{% if kind == 'event' %}{% url 'events:event_edit' entry.pk %}{% else %}{% url 'events:education_edit' entry.pk %}{% endif %}">Edit<span class="ee-sr-only"> {{ entry.title }}</span></a><a class="ee-btn ee-danger" href="{% if kind == 'event' %}{% url 'events:event_delete_confirm' entry.pk %}{% else %}{% url 'events:education_delete_confirm' entry.pk %}{% endif %}">Hapus<span class="ee-sr-only"> {{ entry.title }}</span></a></div></td></tr>
+{% empty %}<tr><td colspan="3">{% if query %}Tidak ada konten yang cocok. <a href="?">Reset pencarian</a>{% else %}Belum ada konten. Mulai dengan membuat {% if kind == 'event' %}event{% else %}artikel{% endif %} baru.{% endif %}</td></tr>{% endfor %}
+</tbody></table></div>
+{% include 'events/pagination.html' %}
+<aside class="ee-panel ee-sage ee-moderation"><h2>Moderasi komentar</h2><p>Buka detail event untuk menghapus komentar yang tidak sesuai dengan aturan komunitas.</p></aside>
+<a class="ee-back ee-btn ee-outline" href="{{ list_url }}">← Lihat {% if kind == 'event' %}events{% else %}education{% endif %}</a>
+{% endblock %}
