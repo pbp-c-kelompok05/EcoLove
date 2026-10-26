@@ -6,9 +6,34 @@ class ItemForm(forms.ModelForm):
         model = Item
         fields = ['name', 'price', 'description', 'category', 'image']
         widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Item Name'}),
-            'price': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Price ($)'}),
-            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Describe your item...'}),
-            'category': forms.Select(attrs={'class': 'form-control'}),
-            'image': forms.FileInput(attrs={'class': 'form-control'}),
+            'name': forms.TextInput(
+                attrs={
+                    'class': 'form-group', 
+                    'placeholder': 'Item Name'
+                }
+            ),
+            'price': forms.NumberInput(
+                attrs={
+                    'class': 'form-group',
+                    'placeholder': 'Price ($)'
+                }
+            ),
+            'description': forms.Textarea(
+                attrs={
+                    'class': 'form-group', 
+                    'rows': 4, 
+                    'placeholder': 'Describe your item...'
+                }
+            ),
+            'category': forms.Select(
+                attrs={
+                    'class': 'form-group'
+                }
+            ),
+            'image': forms.FileInput(
+                attrs={
+                    'id': 'image-input',
+                    'class': 'form-group',
+                }
+            ),
         }

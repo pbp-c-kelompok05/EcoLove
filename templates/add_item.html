@@ -1,22 +1,28 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
-<section class="section">
-  <div style="max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; border: 1px solid #ddd;">
+<section class="section form-container">
+  <div class="card">
     <h2 style="margin-bottom: 20px;">Sell an Item</h2>
     
     <!-- enctype is REQUIRED for image uploads -->
-    <form method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 15px;">
+    <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         
-        <!-- Render the form fields dynamically -->
-        {{ form.as_p }}
+        {{ form.as_div }}
+        
+        <img class="product-image hide">
+        <br>
+        <button type="button" class="btn btn-primary disliked hide" onclick="removeImage()">Delete Image</button>
         
         <div style="display: flex; gap: 10px; margin-top: 10px;">
             <button type="submit" class="btn btn-primary" style="flex: 1;">List Item</button>
-            <a href="{% url 'items:show_marketplace' %}" class="btn btn-outline" style="flex: 1; text-align: center; text-decoration: none;">Cancel</a>
+            <a href="{% url 'items:my_marketplace' %}" class="btn btn-outline" style="flex: 1; text-align: center; text-decoration: none;">Cancel</a>
         </div>
     </form>
   </div>
 </section>
+
+<script src="{% static 'js/add_item.js' %}"></script>
 {% endblock %}
