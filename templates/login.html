@@ -1,42 +1,67 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
-<div class="auth-container">
-    <div class="card">
-        <h2 style="margin-top: 0; margin-bottom: 20px; font-size: 22px;">Log In</h2>
+<div class="login-main-content">
+    <div class="login-view">
         
-        {% if messages %}
-            {% for message in messages %}
-                {% if message.tags == 'success' %}
-                    <div style="padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 13px; background-color: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9;">
-                        {{ message }}
-                    </div>
-                {% else %}
-                    <div style="padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 13px; background-color: #ffebee; color: #c62828; border: 1px solid #ffcdd2;">
-                        {{ message }}
-                    </div>
-                {% endif %}
-            {% endfor %}
-        {% endif %}
+        <div class="welcome-card">
+            <div class="illustration-placeholder">
+                <svg width="193" height="230" viewBox="0 0 193 230" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M100.766 229.041V49.0412ZM100.766 149.041C11.8769 140.152 -17.012 100.152 14.0991 29.0412C80.7658 33.4856 109.655 73.4856 100.766 149.041ZM100.766 115.708C171.877 102.375 200.766 64.5967 187.432 2.37451C125.21 15.7078 96.3214 53.4856 100.766 115.708Z" fill="#93A58B"/>
+                    <path d="M100.766 229.041V49.0412M100.766 149.041C11.8769 140.152 -17.012 100.152 14.0991 29.0412C80.7658 33.4856 109.655 73.4856 100.766 149.041ZM100.766 115.708C171.877 102.375 200.766 64.5967 187.432 2.37451C125.21 15.7078 96.3214 53.4856 100.766 115.708Z" stroke-width="4" stroke="#2E7D32"/>
+                </svg>
+            </div>            
+            <h1 class="welcome-title">Welcome back.</h1>
+            <p class="welcome-body">One account to discover items and sell preloved goods.</p>
+        </div>
 
-        <form method="POST" action="">
-            {% csrf_token %}
-            <div class="form-group">
-                <label class="form-label">Username</label>
-                <input type="text" name="username" class="input-field" placeholder="Masukkan username" value="{{ username }}" required>
+        <!-- Right Box: Login Form (600px) -->
+        <div class="login-form-box">
+            <div class="form-header">
+                <h1 class="form-title">Log in to EcoLove</h1>
+                <p class="form-subtitle">Continue your eco-friendly journey.</p>
             </div>
 
-            <div class="form-group">
-                <label class="form-label">Password</label>
-                <input type="password" name="password" class="input-field" placeholder="Masukkan password" required>
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert-error">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="POST" action="{% url 'login' %}" class="login-form">
+                {% csrf_token %}
+                
+                <!-- Field Username -->
+                <div class="field-container">
+                    <label for="username" class="field-label">Username</label>
+                    <div class="field-surface-wrapper">
+                        <input type="text" id="username" name="username" value="{{ username }}" placeholder="Enter your username" required class="field-input">
+                    </div>
+                </div>
+
+                <!-- Field Password -->
+                <div class="field-container">
+                    <label for="password" class="field-label">Password</label>
+                    <div class="field-surface-wrapper">
+                        <input type="password" id="password" name="password" placeholder="Enter your password" required class="field-input">
+                    </div>
+                </div>
+
+                <!-- Action Button -->
+                <button type="submit" class="btn-primary-action">Log In</button>
+            </form>
+
+            <div class="form-footer-group">
+                <p class="signup-link-text">
+                    Don't have an account? <a href="{% url 'register' %}" class="link-action">Sign up</a>
+                </p>
+                <p class="meta-info-text">You will return to your destination page after logging in.</p>
             </div>
+        </div>
 
-            <button type="submit" class="btn btn-primary" style="width: 100%; border-radius: 10px; padding: 12px; color: #ffffff !important;">Log In</button>
-        </form>
-
-        <p style="margin-top: 20px; text-align: center; font-size: 14px; color: var(--text-muted);">
-            Belum punya akun? <a href="/register/" style="color: var(--primary); font-weight: bold;">Daftar di sini</a>
-        </p>
     </div>
 </div>
 {% endblock %}
