@@ -22,13 +22,17 @@ The attached PNG was the visual reference. No PNG, Figma export, previous Pendev
 
 ## Backend and data
 
-The only schema addition is `EventRegistration`: UUID, event, user, creation timestamp, and a database uniqueness constraint on `(event, user)`. Registration takes the user from the session, validates the action, locks the event on databases with row-lock support, and uses `get_or_create`. Event deletion cascades to its registrations; existing content and user ownership rules are retained. Participant identities are not exposed by public JSON; authenticated detail JSON includes only the current user's participation flag.
+The initial schema addition is `EventRegistration`: UUID, event, user, creation timestamp, and a database uniqueness constraint on `(event, user)`. Registration takes the user from the session, validates the action, locks the event on databases with row-lock support, and uses `get_or_create`. Event deletion cascades to its registrations; existing content and user ownership rules are retained. Participant identities are not exposed by public JSON; authenticated detail JSON includes only the current user's participation flag.
 
 `POST /events/<uuid>/participation/` accepts `action=register` or `action=cancel`. Repeated registration/cancellation is idempotent. New registration at or after the start time returns HTTP 409 to AJAX clients or redirects with an error notice for normal forms. Existing participation can still be viewed/cancelled after that boundary.
 
 There is no capacity, waitlist, payment, approval, separate registration deadline, or independent closed-status field in the existing backend/reference. Registration therefore closes at `starts_at`, as explained in the UI. These additional business rules were not invented.
 
 Articles retain their existing text field. An escaped, dependency-free formatter supports paragraphs, `#`/`##`/`###` headings, `-`/`*` bullet lists, and `1.` numbered lists. Raw HTML remains escaped. Existing plain-text articles still render.
+
+Event comments now support one optional photo, alongside the required comment text. The form accepts JPEG, PNG, and static WebP up to 5 MB and 20 megapixels. The existing Pillow dependency applies EXIF orientation, crops the center to a square, bounds dimensions to 1024 × 1024 without upscaling, flattens transparency against the module background, and writes a fresh JPEG without original EXIF metadata. The stored file itself is square. A client preview uses the same centered square composition and can be removed before submitting. The admin comment form uses the same normalization. Existing text-only comments remain valid, and Education remains read-only without comments.
+
+Migration `0004_eventcomment_image` adds only an optional `EventComment.image` field. It was applied to the existing local SQLite database after a separate backup outside the repository. Photos use `event_images/comments/` under the existing media storage/routing. HTML and JSON still expose event comments only to authenticated readers; existing user ownership, moderation, CSRF, and text escaping remain in place. Original upload names are replaced with random names. Uploaded files follow the project's existing storage retention behavior when their comment is deleted.
 
 Migration `0003_eventregistration` was verified to contain only `CreateModel` and applied to the existing local `db.sqlite3`. A consistent SQLite backup was made first outside the repository. No existing event, article, user, comment, upload, or product was deleted or overwritten. No deployment database was accessed for writes. Browser fixtures and test accounts were created only in a separate temporary preview database.
 
@@ -38,6 +42,7 @@ Modified during this task (some already had uncommitted changes):
 
 - `events/models.py` — registration relation and event status helpers.
 - `events/forms.py` — layout ordering, placeholders, invalid-field accessibility, article formatting hint; pre-existing accessibility work retained.
+- `events/admin.py` — comment uploads use the same photo normalization as the public comment form.
 - `events/views.py` — management, confirmation, participation, location search, access/error feedback.
 - `events/urls.py` — new module routes.
 - `events/templates/events/base.html` — module navigation/footer and notices.
@@ -55,6 +60,9 @@ Modified during this task (some already had uncommitted changes):
 Created:
 
 - `events/migrations/0003_eventregistration.py`
+- `events/migrations/0004_eventcomment_image.py`
+- `events/comment_images.py`
+- `events/test_comment_images.py`
 - `events/templates/events/access_denied.html`
 - `events/templates/events/confirm_delete.html`
 - `events/templates/events/illustration.html`
@@ -83,11 +91,13 @@ node --check static/events/module.js
 git diff --check
 ```
 
-All checks passed; 40 Django tests passed using the isolated SQLite test configuration. Coverage includes existing CRUD, permission checks (including staff), private HTML/JSON, uploads, safe URLs, WIB boundaries, CSRF/XSS, filters/pagination, plus new participation uniqueness, session ownership, cancellation, closure boundary, missing records, invalid actions, management access/search, confirmation and actual backend deletion, cascade behavior, structured text, and module links/static resolution.
+All checks passed; 50 Django tests passed using the isolated SQLite test configuration. Coverage includes existing CRUD, permission checks (including staff), private HTML/JSON, uploads, safe URLs, WIB boundaries, CSRF/XSS, filters/pagination, plus new participation uniqueness, session ownership, cancellation, closure boundary, missing records, invalid actions, management access/search, confirmation and actual backend deletion, cascade behavior, structured text, and module links/static resolution. Ten photo-specific tests cover real stored center cropping, portrait resizing, EXIF orientation/metadata removal, transparency, text-only compatibility, corrupt/unsupported/oversized uploads, pixel limits, auth/CSRF/ownership, HTML/JSON visibility, and the admin form preserving an existing image.
 
 Browser verification used synthetic content/accounts in a temporary SQLite database and separate preview cookies. Actual DOM widths of 390, 768, and 1280 CSS pixels were checked: one/two/three card columns, stacked mobile form fields, and no document overflow on inspected pages. Screenshots of listings, event details, an article, management, form errors, and confirmation pages were inspected against the visible PNG. A subsequent visible manual test exercised search by location, category filtering, empty results/reset, guest/login/reader/admin access, registration persistence after refresh, registration cancellation, comment creation/deletion, create/edit/delete of test Events and Education entries, server date validation, WIB edit values, and cancellation of the event delete-confirmation screen. Deletion was confirmed only for synthetic records in the temporary preview database. No missing images were found on the inspected pages.
 
 A harmless existing WhiteNoise warning occurs in tests because `staticfiles/` has not been collected. PostgreSQL/deployment and concurrent multi-process browser registration were not exercised; the uniqueness constraint is independently tested.
+
+For comment photos, an authenticated multipart HTTP upload of a synthetic 900 × 450 image returned HTTP 201 and a stored 450 × 450 JPEG. Browser inspection verified that the photo loaded and displayed at 280 × 280 in the comment. Automated file selection in the Chrome extension was blocked by its file-URL permission, so the file-chooser preview interaction was not fully exercised by browser automation. No browser permissions were changed. Test images and preview uploads stayed outside the repository.
 
 ## Visual limits and manual actions
 

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils import timezone
-from .forms import EventForm, WIB
+from .forms import EventForm, EventCommentAdminForm, WIB
 from .models import Event, Education, EventComment
 
 class SuperuserOnlyAdmin(admin.ModelAdmin):
@@ -45,6 +45,7 @@ class EducationAdmin(SuperuserOnlyAdmin):
 
 @admin.register(EventComment)
 class CommentAdmin(SuperuserOnlyAdmin):
+    form = EventCommentAdminForm
     readonly_fields = ['user']
     list_display = ['event', 'user', 'created_at']
     search_fields = ['body', 'user__username']

@@ -112,6 +112,10 @@ body:has(.ee) { background:#faf8f1; color:#293d2d; }
 .ee-comment-editor { padding:18px; background:white; border:1px solid var(--ee-line); border-radius:8px; }
 .ee-comment-editor .ee-field { margin-bottom:12px; }
 .ee-comment-editor textarea { min-height:80px; }
+.ee-comment-photo-link { display:block; width:fit-content; max-width:100%; margin:12px 0; }
+.ee-comment-photo, .ee-comment-preview img { display:block; width:280px; max-width:100%; height:auto; aspect-ratio:1; object-fit:cover; border:1px solid var(--ee-line); border-radius:9px; background:var(--ee-sage); }
+.ee-comment-preview { max-width:280px; margin:14px 0; }
+.ee-comment-preview .ee-btn { margin-top:10px; }
 .ee-back { margin-top:22px; }
 .ee-article { max-width:740px; margin:0 auto; }
 .ee-article h1 { font-size:30px; }

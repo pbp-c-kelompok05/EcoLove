@@ -48,6 +48,7 @@ def public_data(obj, request, detail=False):
             data.update(organizer_contact=obj.organizer_contact, meeting_link=obj.safe_meeting_link,
                         is_registered=obj.registrations.filter(user=request.user).exists(),
                         comments=[{'id': str(c.pk), 'body': c.body, 'username': c.user.username,
+                                   'image': c.image.url if c.image else None,
                                    'created_at': c.created_at.isoformat()} for c in obj.comments.select_related('user')])
     else:
         data.update(summary=obj.summary)
@@ -163,7 +164,7 @@ def add_comment(request, pk):
     if not request.user.is_authenticated:
         return JsonResponse({'error': 'Silakan login untuk berkomentar.'}, status=401)
     event = get_object_or_404(Event, pk=pk)
-    form = EventCommentForm(request.POST)
+    form = EventCommentForm(request.POST, request.FILES)
     if not form.is_valid():
         return JsonResponse({'error': 'Periksa kembali komentar yang ditandai.', 'errors': form.errors.get_json_data()}, status=400)
     comment = form.save(commit=False)

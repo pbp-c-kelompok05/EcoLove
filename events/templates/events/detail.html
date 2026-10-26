@@ -11,7 +11,9 @@
 {% if user.is_authenticated %}
 <div id="ee-comments">{% for comment in comments %}{% include 'events/comment.html' %}{% endfor %}</div>
 <p id="ee-comments-empty" class="ee-muted" {% if comments %}hidden{% endif %}>Belum ada komentar. Mulai diskusinya!</p>
-<form method="post" action="{% url 'events:comment_add' object.pk %}" id="ee-comment-form" class="ee-comment-editor">{% csrf_token %}{% include 'events/fields.html' with form=comment_form %}<button class="ee-btn ee-primary" type="submit">Kirim komentar</button></form>
+<form method="post" enctype="multipart/form-data" action="{% url 'events:comment_add' object.pk %}" id="ee-comment-form" class="ee-comment-editor">{% csrf_token %}{% include 'events/fields.html' with form=comment_form %}
+<div id="ee-comment-preview" class="ee-comment-preview" hidden><img alt="Pratinjau foto komentar dengan potongan persegi"><button type="button" class="ee-btn ee-outline" id="ee-remove-comment-image">Hapus foto terpilih</button></div>
+<button class="ee-btn ee-primary" type="submit">Kirim komentar</button></form>
 {% else %}<div class="ee-panel"><h3>Bergabung dalam percakapan</h3><p class="ee-muted">Masuk untuk membaca dan menulis komentar event.</p><a class="ee-btn ee-primary" href="{% url 'login' %}">Masuk</a></div>{% endif %}
 </section><a class="ee-btn ee-outline ee-back" href="{{ list_url }}">← Kembali ke events</a>
 </div><aside class="ee-sidebar">

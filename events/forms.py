@@ -2,6 +2,7 @@ from zoneinfo import ZoneInfo
 from django import forms
 from django.utils import timezone
 from .models import Event, Education, EventComment
+from .comment_images import square_comment_image
 
 WIB = ZoneInfo('Asia/Jakarta')
 
@@ -47,8 +48,26 @@ class EducationForm(AccessibleForm):
         widgets = {'summary': forms.Textarea(attrs={'rows': 3}), 'body': forms.Textarea(attrs={'rows': 12})}
         help_texts = {'body': 'Pisahkan paragraf dengan baris kosong. Gunakan ## untuk judul bagian, - untuk daftar, atau 1. untuk langkah berurutan. HTML ditampilkan sebagai teks.'}
 
+class CommentImageField(forms.ImageField):
+    def to_python(self, value):
+        if value is None or value is False:
+            return super().to_python(value)
+        return super().to_python(square_comment_image(value))
+
+
 class EventCommentForm(AccessibleForm):
+    image = CommentImageField(
+        label='Foto (opsional)', required=False,
+        help_text='JPG, PNG, atau WebP, maksimal 5 MB dan 20 megapiksel. Foto otomatis dipotong dari tengah menjadi persegi 1:1.',
+        widget=forms.ClearableFileInput(attrs={'accept': 'image/jpeg,image/png,image/webp'}),
+    )
+
     class Meta:
         model = EventComment
-        fields = ['body']
+        fields = ['body', 'image']
         widgets = {'body': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Tulis komentar dengan sopan'})}
+
+
+class EventCommentAdminForm(EventCommentForm):
+    class Meta(EventCommentForm.Meta):
+        fields = '__all__'

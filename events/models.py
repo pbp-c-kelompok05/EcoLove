@@ -80,6 +80,7 @@ class EventComment(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='comments')
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='event_comments')
     body = models.TextField('Komentar', max_length=2000)
+    image = models.ImageField('Foto (opsional)', upload_to='event_images/comments/', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

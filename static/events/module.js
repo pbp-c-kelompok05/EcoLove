@@ -85,6 +85,34 @@
       load(params.get('page') || 1, false);
     });
   }
+  const commentForm = document.querySelector('#ee-comment-form');
+  if (commentForm) {
+    const imageInput = commentForm.querySelector('input[name=image]');
+    const preview = document.querySelector('#ee-comment-preview');
+    const previewImage = preview.querySelector('img');
+    let previewUrl;
+    function clearPreview() {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+      previewUrl = null;
+      previewImage.removeAttribute('src');
+      preview.hidden = true;
+    }
+    imageInput.addEventListener('change', () => {
+      clearPreview();
+      const file = imageInput.files[0];
+      if (!file || !['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) return;
+      previewUrl = URL.createObjectURL(file);
+      previewImage.src = previewUrl;
+      preview.hidden = false;
+    });
+    previewImage.addEventListener('error', () => { preview.hidden = true; });
+    document.querySelector('#ee-remove-comment-image').addEventListener('click', () => {
+      imageInput.value = '';
+      clearPreview();
+    });
+    commentForm.addEventListener('reset', clearPreview);
+    window.addEventListener('pagehide', clearPreview);
+  }
   root.addEventListener('submit', async e => {
     const form = e.target;
     if (!form.matches('#ee-content-form, #ee-comment-form, #ee-delete-confirm-form, [data-delete], [data-participation]')) return;
