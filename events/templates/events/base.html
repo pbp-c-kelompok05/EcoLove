@@ -1,0 +1,22 @@
+{% extends 'base.html' %}{% load static %}
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'events/vendor/grids-min.css' %}">
+<link rel="stylesheet" href="{% static 'events/vendor/grids-responsive-min.css' %}">
+<link rel="stylesheet" href="{% static 'events/module.css' %}">
+{% endblock %}
+{% block navbar %}
+<header class="ee-navbar"><div class="ee-nav-inner">
+<a href="{% url 'home' %}" class="ee-logo">EcoLove<small>LOVE ME AGAIN</small></a>
+<nav aria-label="Navigasi utama"><a href="{% url 'home' %}">Home</a><a href="{% url 'items:show_marketplace' %}">Marketplace</a><a href="{% url 'events:event_list' %}" {% if kind == 'event' %}aria-current="page"{% endif %}>Events</a><a href="{% url 'events:education_list' %}" {% if kind == 'education' %}aria-current="page"{% endif %}>Education</a></nav>
+{% if user.is_superuser %}<a class="ee-btn ee-outline ee-account" href="{% url 'events:event_manage' %}">Kelola konten</a>{% elif user.is_authenticated %}<a class="ee-btn ee-outline ee-account" href="{% url 'profile' %}">Akun saya</a>{% else %}<a class="ee-btn ee-outline ee-account" href="{% url 'login' %}">Masuk</a>{% endif %}
+</div></header>
+{% endblock %}
+{% block content %}
+<section class="ee">
+{% for notice in messages %}<p class="ee-notice {{ notice.tags }}" role="status">{{ notice }}</p>{% endfor %}
+{% block module_content %}{% endblock %}
+<p id="ee-feedback" role="status" aria-live="polite"></p>
+</section>
+{% endblock %}
+{% block footer %}<footer class="ee-footer"><a href="{% url 'home' %}">EcoLove · Love Me Again</a><span>From the people. By the people. For the people.</span></footer>{% endblock %}
+{% block extra_scripts %}<script src="{% static 'events/module.js' %}" defer></script>{% endblock %}

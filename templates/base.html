@@ -7,14 +7,17 @@
     <title>EcoLove — Love Me Again</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% block extra_head %}{% endblock %}
 </head>
 <body>
+    {% block navbar %}
     <header class="navbar">
         <a href="/" class="logo">EcoLove</a>
         <nav>
             <a href="/#home">Home</a>
             <a href="{% url 'items:show_marketplace' %}">Marketplace</a>
-            <a href="/#events">Events</a>
+            <a href="{% url 'events:event_list' %}">Events</a>
+            <a href="{% url 'events:education_list' %}">Education</a>
 
             {% if user.is_authenticated %}
             
@@ -29,13 +32,15 @@
             {% endif %}
         </nav>
     </header>
+    {% endblock %}
 
     <main>
         {% block content %}{% endblock %}
     </main>
 
-    <footer class="footer">
+    {% block footer %}<footer class="footer">
         <p>&copy; 2026 EcoLove. Faculty of Computer Science, University of Indonesia.</p>
-    </footer>
+    </footer>{% endblock %}
+    {% block extra_scripts %}{% endblock %}
 </body>
 </html>
