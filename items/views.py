@@ -150,7 +150,7 @@ def add_item(request):
     else:
         form = ItemForm()
         
-    return render(request, 'add_item.html', {'form': form})
+    return render(request, 'item_form.html', {'form': form})
 
 @login_required(login_url='/login/')
 def edit_item(request, id):
@@ -164,7 +164,7 @@ def edit_item(request, id):
     else:
         form = ItemForm(instance=item)
     
-    return render(request, 'edit_item.html', {'form': form, 'item': item})
+    return render(request, 'item_form.html', {'form': form, 'item': item})
 
 @login_required(login_url='/login/')
 def delete_item(request, id):

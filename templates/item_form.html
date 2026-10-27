@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="section form-container">
+  <div class="card">
+    <h2 style="margin-bottom: 20px;">
+      {% if item %}
+        Edit Your Item: {{ item.name }}
+      {% else %}
+        Sell an Item
+      {% endif %}
+    </h2>
+    
+    <!-- enctype is REQUIRED for image uploads -->
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        {{ form.as_div }}
+        
+        {% if item %}
+          <a href="{% url 'items:item_detail' item.id %}" class="btn btn-outline">
+            Cancel
+          </a>
+          <button type="submit" class="btn btn-primary">
+            Save Changes
+          </button>
+        {% else %}
+          <a href="{% url 'items:my_marketplace' %}" class="btn btn-outline">
+            Cancel
+          </a>
+          <button type="submit" class="btn btn-primary">
+            List Item
+          </button>
+        {% endif %}
+    </form>
+  </div>
+</section>
+{% endblock %}
