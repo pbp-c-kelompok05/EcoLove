@@ -298,3 +298,8 @@ def sync_payment_status(request, id):
     if resp.status_code == 200:
         _apply_status(order, resp.json())
     return JsonResponse({"status": order.status})
+
+@login_required(login_url='/login/')
+def my_purchases(request):
+    orders = Order.objects.filter(buyer=request.user, status='PAID').select_related('item').order_by('-created_at')
+    return render(request, 'my_purchases.html', {'orders': orders})
