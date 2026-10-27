@@ -26,6 +26,7 @@
                     👤 {{ user.username }}
                 </a>
                 <a href="/logout/" class="btn btn-outline" style="padding: 6px 14px; font-size: 13px;">Logout</a>
+                <a href="{% url 'items:my_purchases' %}">My Purchases</a>
             {% else %}
                 <!-- Jika BELUM Login -->
                 <a href="/login/" class="btn btn-primary" style="padding: 6px 16px; color: #ffffff !important;">Login</a>
