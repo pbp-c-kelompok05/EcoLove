@@ -1,0 +1,9 @@
+<div class="ee-errors" role="alert" tabindex="-1">{{ form.non_field_errors }}</div>
+{% for field in form %}
+{% if field.name == 'organizer_contact' %}<div class="ee-form-section"><h2>Khusus anggota yang sudah masuk</h2><p class="ee-muted">Kontak dan link berikut hanya dapat dilihat setelah login.</p></div>{% endif %}
+<div class="ee-field ee-field-{{ field.name }}">
+  {{ field.label_tag }}{{ field }}
+  {% if field.help_text %}<small id="{{ field.auto_id }}_helptext">{{ field.help_text }}</small>{% endif %}
+  <div id="{{ field.auto_id }}_errors" data-errors-for="{{ field.name }}">{{ field.errors }}</div>
+</div>
+{% endfor %}

@@ -27,3 +27,22 @@ class Item(models.Model):
 
     def __str__(self):
         return self.name
+
+    @property 
+    def is_sold(self):
+        return self.order_set.filter(status='PAID').exists()
+
+# models.py
+class Order(models.Model):
+    STATUS_CHOICES = [
+        ('PENDING', 'Pending'), ('PAID', 'Paid'),
+        ('FAILED', 'Failed'), ('EXPIRED', 'Expired'),
+    ]
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)  # sent to Midtrans as order_id
+    item = models.ForeignKey(Item, on_delete=models.SET_NULL, null=True)
+    buyer = models.ForeignKey(User, on_delete=models.CASCADE)
+    amount = models.IntegerField()
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='PENDING')
+    snap_token = models.CharField(max_length=255, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
