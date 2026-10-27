@@ -11,6 +11,9 @@ from items.views import (
     edit_item,
     delete_item,
     get_items_json,
+    create_payment,
+    sync_payment_status,
+    midtrans_notification,
 )
 
 app_name = 'items'
@@ -29,4 +32,9 @@ urlpatterns = [
     path('add/', add_item, name='add_item'),
     path('edit/<uuid:id>/', edit_item, name='edit_item'),
     path('delete/<uuid:id>/', delete_item, name='delete_item'),
+
+    # === PAYMENT CONFIGURATION === 
+    path('pay/<uuid:id>/', create_payment, name='create_payment'),
+    path('pay/status/<uuid:id>/', sync_payment_status, name='sync_payment_status'),
+    path('midtrans/notification/', midtrans_notification, name='midtrans_notification'),
 ]
