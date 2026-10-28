@@ -78,6 +78,12 @@
     window.addEventListener('popstate', () => {
       cancelPending();
       const params = new URLSearchParams(location.search);
+      if (filter.dataset.kind === 'event' && params.get('category') === 'community') {
+        params.delete('category');
+        const url = new URL(location.href);
+        url.search = params.toString();
+        history.replaceState(null, '', url);
+      }
       for (const name of ['q', 'category', 'status']) {
         const input = filter.elements.namedItem(name);
         if (input) input.value = params.get(name) || '';

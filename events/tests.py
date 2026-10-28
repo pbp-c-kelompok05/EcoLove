@@ -84,7 +84,10 @@ class EventsTests(TestCase):
                 page = self.client.get(url)
                 self.assertContains(page, 'id="ee-filter"')
                 self.assertContains(page, 'id="ee-search"')
-                self.assertContains(page, 'name="category" value="community"')
+                if kind == 'education':
+                    self.assertContains(page, 'name="category" value="community"')
+                else:
+                    self.assertNotContains(page, 'name="category" value="community"')
                 self.assertContains(page, 'id="ee-results"')
                 fragment = self.client.get(url, {}, **AJAX).json()['html']
                 self.assertIn('ee-grid', fragment)
@@ -176,7 +179,8 @@ class EventsTests(TestCase):
         Event.objects.create(title='Sedang berlangsung',description='Repair',category='reuse',location='Depok',
             starts_at=self.now-timedelta(hours=1),ends_at=self.now+timedelta(hours=1),creator=self.admin)
         url=self.url('event','list')
-        for params,title in [({'q':'menjahit'},'Repair pakaian'),({'category':'community'},'Bersih pantai'),
+        for params,title in [({'q':'menjahit'},'Repair pakaian'),
+                             ({'q':'menjahit','category':'reuse','status':'upcoming'},'Repair pakaian'),
                              ({'status':'finished'},'Bersih pantai'),({'status':'upcoming'},'Repair pakaian'),
                              ({'status':'ongoing'},'Sedang berlangsung')]:
             data=self.client.get(url,dict(params,format='json')).json()
@@ -187,6 +191,121 @@ class EventsTests(TestCase):
         for i in range(14): Education.objects.create(title=f'Panduan {i}',summary='s',body='b',category='reuse',author=self.admin)
         data=self.client.get(self.url('education','list'),{'format':'json','page':2}).json()
         self.assertEqual(len(data['results']),3)
+
+    def test_event_filter_options_exclude_community_but_forms_keep_it(self):
+        from django.utils.html import escape
+        from .forms import EducationForm
+        from .models import CATEGORIES
+
+        for kind in ['event', 'education']:
+            with self.subTest(kind=kind):
+                response = self.client.get(self.url(kind, 'list'))
+                expected = [choice for choice in CATEGORIES if kind == 'education' or choice[0] != 'community']
+                self.assertEqual(response.context['categories'], expected)
+                for value, label in expected:
+                    self.assertContains(response, f'name="category" value="{value}"')
+                    self.assertContains(response, f'<span>{escape(label)}</span>')
+                self.assertContains(response, 'name="category" value="" checked')
+                if kind == 'event':
+                    self.assertNotContains(response, 'name="category" value="community"')
+        for form_class in [EventForm, EducationForm]:
+            self.assertIn(('community', 'Komunitas'), list(form_class().fields['category'].choices))
+        self.client.force_login(self.admin)
+        for kind, obj in [('event', self.event), ('education', self.education)]:
+            for action in ['create', 'edit']:
+                response = self.client.get(self.url(kind, action, obj if action == 'edit' else None))
+                self.assertContains(response, '<option value="community">Komunitas</option>')
+
+    def test_community_events_remain_in_all_search_and_ajax_results(self):
+        community = Event.objects.create(
+            title='Repair komunitas', description='Menjahit bersama', category='community', location='Depok',
+            starts_at=self.event.starts_at, ends_at=self.event.ends_at, creator=self.admin)
+        url = self.url('event', 'list')
+        for params in [{}, {'category': ''}, {'q': 'Repair'}, {'q': 'Repair', 'status': 'upcoming'}]:
+            with self.subTest(params=params):
+                response = self.client.get(url, params)
+                self.assertContains(response, community.title)
+                self.assertContains(response, self.event.title)
+                self.assertContains(response, 'name="category" value="" checked')
+                data = self.client.get(url, params, **AJAX).json()
+                self.assertEqual({row['id'] for row in data['results']}, {str(community.pk), str(self.event.pk)})
+                self.assertIn(community.title, data['html'])
+        for category in ['reuse', 'waste', 'lifestyle']:
+            if category != 'reuse':
+                Event.objects.create(
+                    title=category, description='Materi', category=category, location='Depok',
+                    starts_at=self.event.starts_at, ends_at=self.event.ends_at, creator=self.admin)
+            data = self.client.get(url, {'category': category}, **AJAX).json()
+            self.assertTrue(data['results'])
+            self.assertTrue(all(row['category'] == category for row in data['results']))
+        empty = self.client.get(url, {'q': 'tidak-ditemukan'}, **AJAX).json()
+        self.assertEqual(empty['results'], [])
+        self.assertIn('Reset pencarian dan filter', empty['html'])
+        community.refresh_from_db()
+        self.assertEqual(community.category, 'community')
+
+    def test_legacy_event_community_url_redirects_to_all_without_hidden_filter(self):
+        url = self.url('event', 'list')
+        response = self.client.get(url, {'category': 'community'}, follow=True)
+        self.assertEqual(response.redirect_chain, [(url, 302)])
+        self.assertEqual(response.context['category'], '')
+        self.assertContains(response, 'name="category" value="" checked')
+        self.assertNotContains(response, 'name="category" value="community"')
+        self.assertEqual(list(response.context['page']), [self.event])
+
+    def test_legacy_event_normalization_preserves_search_status_pagination_and_json(self):
+        from urllib.parse import urlencode
+
+        for index in range(14):
+            Event.objects.create(
+                title=f'Legacy Repair {index:02}', description='Materi',
+                category='community' if index % 2 else 'reuse', location='Depok',
+                starts_at=self.event.starts_at, ends_at=self.event.ends_at, creator=self.admin)
+        url = self.url('event', 'list')
+        for mode in ['html', 'json', 'ajax']:
+            with self.subTest(mode=mode):
+                valid = {'q': 'Legacy Repair', 'status': 'upcoming', 'page': '2'}
+                if mode == 'json':
+                    valid['format'] = 'json'
+                params = dict(valid, category='community')
+                response = self.client.get(url, params, follow=True, **(AJAX if mode == 'ajax' else {}))
+                self.assertEqual(response.redirect_chain, [(url + '?' + urlencode(valid), 302)])
+                self.assertEqual(response.status_code, 200)
+                if mode == 'html':
+                    self.assertEqual(response.context['category'], '')
+                    self.assertEqual(response.context['query'], valid['q'])
+                    self.assertEqual(response.context['status'], valid['status'])
+                    self.assertEqual(response.context['page'].number, 2)
+                    self.assertEqual(response.context['page'].paginator.count, 14)
+                    self.assertContains(response, 'name="category" value="" checked')
+                    self.assertNotContains(response, 'category=community')
+                else:
+                    data = response.json()
+                    self.assertEqual(set(data), {'results', 'html', 'page', 'pages'})
+                    self.assertEqual((data['page'], data['pages'], len(data['results'])), (2, 2, 2))
+                    self.assertIn('14 kegiatan', data['html'])
+                    self.assertNotIn('category=community', data['html'])
+                    self.assertEqual(data['results'], self.client.get(url, dict(valid, format='json')).json()['results'])
+        self.assertEqual(Event.objects.filter(category='community').count(), 7)
+
+    def test_education_community_filter_and_legacy_urls_remain_unchanged(self):
+        article = Education.objects.create(
+            title='Komunitas refill', summary='Belajar bersama', body='Materi', category='community', author=self.admin)
+        url = self.url('education', 'list')
+        for mode in ['html', 'json', 'ajax']:
+            with self.subTest(mode=mode):
+                params = {'category': 'community', 'q': 'refill'}
+                if mode == 'json':
+                    params['format'] = 'json'
+                response = self.client.get(url, params, **(AJAX if mode == 'ajax' else {}))
+                self.assertEqual(response.status_code, 200)
+                if mode == 'html':
+                    self.assertEqual(response.context['category'], 'community')
+                    self.assertContains(response, 'name="category" value="community" checked')
+                    self.assertContains(response, article.title)
+                    self.assertNotContains(response, self.education.title)
+                else:
+                    self.assertEqual([row['id'] for row in response.json()['results']], [str(article.pk)])
 
     def test_comments_auth_ownership_validation_and_moderation(self):
         add=reverse('events:comment_add',args=[self.event.pk])

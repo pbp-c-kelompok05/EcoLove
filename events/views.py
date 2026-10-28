@@ -62,6 +62,14 @@ def listing(request, kind):
     objects = model.objects.all()
     query = request.GET.get('q', '').strip()[:200]
     category = request.GET.get('category', '')
+    if kind == 'event' and category == 'community':
+        # Keep legacy links usable without an unavailable, invisible filter.
+        params = request.GET.copy()
+        del params['category']
+        url = content_url(kind, 'list')
+        if params:
+            url += '?' + params.urlencode()
+        return redirect(url)
     status = request.GET.get('status', '')
     if query:
         text_field = 'description' if kind == 'event' else 'body'
@@ -82,7 +90,8 @@ def listing(request, kind):
         elif status == 'finished':
             objects = objects.filter(ends_at__lt=now)
     page = Paginator(objects, 12).get_page(request.GET.get('page'))
-    context = {'kind': kind, 'label': label, 'page': page, 'categories': CATEGORIES,
+    categories = [choice for choice in CATEGORIES if kind != 'event' or choice[0] != 'community']
+    context = {'kind': kind, 'label': label, 'page': page, 'categories': categories,
                'query': query, 'category': category, 'status': status, 'now': now,
                'list_url': content_url(kind, 'list'), 'create_url': content_url(kind, 'create'),
                'manage_url': content_url(kind, 'manage')}
