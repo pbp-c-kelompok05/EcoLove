@@ -1,6 +1,9 @@
 from django import forms
 from .models import Item
 
+class ImageInput(forms.ClearableFileInput):
+    template_name = 'widgets/image_input.html'
+
 class ItemForm(forms.ModelForm):
     class Meta:
         model = Item
@@ -30,9 +33,8 @@ class ItemForm(forms.ModelForm):
                     'class': 'form-group'
                 }
             ),
-            'image': forms.FileInput(
+            'image': ImageInput(
                 attrs={
-                    'id': 'image-input',
                     'class': 'form-group',
                 }
             ),

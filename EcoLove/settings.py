@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.forms',
     'items',
     'users',
     'events',
@@ -157,3 +158,6 @@ MIDTRANS_CLIENT_KEY = os.getenv('MIDTRANS_CLIENT_KEY', '')
 MIDTRANS_SNAP_URL = "https://app.sandbox.midtrans.com/snap/v1/transactions"
 MIDTRANS_STATUS_URL = "https://api.sandbox.midtrans.com/v2/{order_id}/status" #uhm check on this later 
 MIDTRANS_SNAP_JS = "https://app.sandbox.midtrans.com/snap/snap.js"
+
+# Form renderer
+FORM_RENDERER = 'django.forms.renderers.TemplatesSetting'

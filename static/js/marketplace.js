@@ -14,6 +14,12 @@ const loadingState = document.getElementById('loading');
 const errorState = document.getElementById('error');
 const emptyState = document.getElementById('empty');
 const gridContainer = document.getElementById('grid');
+const searchForm = document.getElementById('search');
+const searchInput = document.getElementById('search-input');
+
+// Search Debounce
+const SEARCH_DEBOUNCE_DELAY = 500;
+let searchDebounceTimer;
 
 function displayPageSection({ showLoading = false, showError = false, showEmpty = false, showGrid = false }) {
     loadingState.classList.toggle('hide', !showLoading);
@@ -216,5 +222,20 @@ function getCookie(name) {
     }
     return cookieValue;
 }
+
+// Search Event Handlers
+searchInput.addEventListener("input", function() {
+    clearTimeout(searchDebounceTimer);
+
+    searchDebounceTimer = setTimeout(function() {
+        fetchProducts(searchInput.value.trim());
+    }, SEARCH_DEBOUNCE_DELAY);
+});
+
+searchForm.addEventListener("submit", function(event) {
+    event.preventDefault();
+    clearTimeout(searchDebounceTimer);
+    fetchProducts(searchInput.value.trim());
+});
 
 fetchProducts();
