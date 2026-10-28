@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
 <!-- HERO -->
@@ -7,20 +8,21 @@
     <p class="eyebrow">SUSTAINABLE MARKETPLACE</p>
     <h1>Love Me Again.</h1>
     <p class="hero-description">
-      
       Give pre-loved items a second life and make sustainable choices
       together with EcoLove.
     </p>
     <div class="hero-actions">
-      <a href="#marketplace" class="btn btn-primary">
+      <a href="{% url 'items:show_marketplace' %}" class="btn btn-primary">
         Explore Marketplace
       </a>
-      <a href="/login/" class="btn btn-outline"> Sell an Item </a>
+      <a href="/marketplace/my-marketplace/" class="btn btn-outline">
+        Sell an Item
+      </a>
     </div>
   </div>
 </section>
 
-<!-- MARKETPLACE -->
+<!-- MARKETPLACE (INFINITE MARQUEE 2 ROWS) -->
 <section id="marketplace" class="section">
   <div class="section-heading">
     <p class="eyebrow">MARKETPLACE</p>
@@ -30,33 +32,44 @@
     </p>
   </div>
 
-  <div class="card-grid">
-    <article class="product-card">
-      <div class="product-image"></div>
-      <div class="card-content">
-        <span class="tag">Preloved</span>
-        <h3>Product Name</h3>
-        <p>Rp100.000</p>
-      </div>
-    </article>
+  <div class="marquee-wrapper">
+    <div class="marquee-track">
+      <!-- Set 1: Baris 1 (Foto 1-8) & Baris 2 (Foto 9-16) -->
+      <div class="marquee-card"><img src="{% static 'img/1.jpg' %}" alt="Item 1" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
+      <div class="marquee-card"><img src="{% static 'img/9.jpg' %}" alt="Item 9" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
+      <div class="marquee-card"><img src="{% static 'img/2.jpg' %}" alt="Item 2" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
+      <div class="marquee-card"><img src="{% static 'img/10.jpg' %}" alt="Item 10" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
+      <div class="marquee-card"><img src="{% static 'img/3.jpg' %}" alt="Item 3" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
+      <div class="marquee-card"><img src="{% static 'img/11.jpg' %}" alt="Item 11" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
+      <div class="marquee-card"><img src="{% static 'img/4.jpg' %}" alt="Item 4" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
+      <div class="marquee-card"><img src="{% static 'img/12.jpg' %}" alt="Item 12" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
+      <div class="marquee-card"><img src="{% static 'img/5.jpg' %}" alt="Item 5" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
+      <div class="marquee-card"><img src="{% static 'img/13.jpg' %}" alt="Item 13" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
+      <div class="marquee-card"><img src="{% static 'img/6.jpg' %}" alt="Item 6" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
+      <div class="marquee-card"><img src="{% static 'img/14.jpg' %}" alt="Item 14" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
+      <div class="marquee-card"><img src="{% static 'img/7.jpg' %}" alt="Item 7" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
+      <div class="marquee-card"><img src="{% static 'img/15.jpg' %}" alt="Item 15" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
+      <div class="marquee-card"><img src="{% static 'img/8.jpg' %}" alt="Item 8" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
+      <div class="marquee-card"><img src="{% static 'img/16.jpg' %}" alt="Item 16" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
 
-    <article class="product-card">
-      <div class="product-image"></div>
-      <div class="card-content">
-        <span class="tag">Reusable</span>
-        <h3>Product Name</h3>
-        <p>Rp75.000</p>
-      </div>
-    </article>
-
-    <article class="product-card">
-      <div class="product-image"></div>
-      <div class="card-content">
-        <span class="tag">Upcycled</span>
-        <h3>Product Name</h3>
-        <p>Rp125.000</p>
-      </div>
-    </article>
+      <!-- Set 2: Duplikasi persis untuk animasi looping seamless -->
+      <div class="marquee-card"><img src="{% static 'img/1.jpg' %}" alt="Item 1" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
+      <div class="marquee-card"><img src="{% static 'img/9.jpg' %}" alt="Item 9" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
+      <div class="marquee-card"><img src="{% static 'img/2.jpg' %}" alt="Item 2" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
+      <div class="marquee-card"><img src="{% static 'img/10.jpg' %}" alt="Item 10" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
+      <div class="marquee-card"><img src="{% static 'img/3.jpg' %}" alt="Item 3" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
+      <div class="marquee-card"><img src="{% static 'img/11.jpg' %}" alt="Item 11" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
+      <div class="marquee-card"><img src="{% static 'img/4.jpg' %}" alt="Item 4" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
+      <div class="marquee-card"><img src="{% static 'img/12.jpg' %}" alt="Item 12" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
+      <div class="marquee-card"><img src="{% static 'img/5.jpg' %}" alt="Item 5" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
+      <div class="marquee-card"><img src="{% static 'img/13.jpg' %}" alt="Item 13" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
+      <div class="marquee-card"><img src="{% static 'img/6.jpg' %}" alt="Item 6" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
+      <div class="marquee-card"><img src="{% static 'img/14.jpg' %}" alt="Item 14" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
+      <div class="marquee-card"><img src="{% static 'img/7.jpg' %}" alt="Item 7" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
+      <div class="marquee-card"><img src="{% static 'img/15.jpg' %}" alt="Item 15" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
+      <div class="marquee-card"><img src="{% static 'img/8.jpg' %}" alt="Item 8" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
+      <div class="marquee-card"><img src="{% static 'img/16.jpg' %}" alt="Item 16" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
+    </div>
   </div>
 </section>
 
@@ -68,24 +81,34 @@
     <p>Find events that help you live more sustainably.</p>
   </div>
 
-  <div class="card-grid">
-    <article class="info-card">
-      <span class="tag">Swap</span>
-      <h3>Clothing Swap</h3>
-      <p>Exchange clothes and give them a new life.</p>
-    </article>
+  <div class="events-image-grid">
+    <div class="event-image-card">
+      <img src="{% static 'img/18.jpg' %}" alt="Event 18" onerror="this.src='https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=400&auto=format&fit=crop&q=60'">
+      <div class="event-card-overlay">
+        <a href="/events/" class="btn-check-events">Check events →</a>
+      </div>
+    </div>
 
-    <article class="info-card">
-      <span class="tag">Workshop</span>
-      <h3>Repair Workshop</h3>
-      <p>Learn how to repair and reuse your belongings.</p>
-    </article>
+    <div class="event-image-card">
+      <img src="{% static 'img/19.jpg' %}" alt="Event 19" onerror="this.src='https://images.unsplash.com/photo-1528605248644-14dd04022da1?w=400&auto=format&fit=crop&q=60'">
+      <div class="event-card-overlay">
+        <a href="/events/" class="btn-check-events">Check events →</a>
+      </div>
+    </div>
 
-    <article class="info-card">
-      <span class="tag">Cleanup</span>
-      <h3>Community Cleanup</h3>
-      <p>Join the community and make an impact together.</p>
-    </article>
+    <div class="event-image-card">
+      <img src="{% static 'img/20.jpg' %}" alt="Event 20" onerror="this.src='https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400&auto=format&fit=crop&q=60'">
+      <div class="event-card-overlay">
+        <a href="/events/" class="btn-check-events">Check events →</a>
+      </div>
+    </div>
+
+    <div class="event-image-card">
+      <img src="{% static 'img/21.jpg' %}" alt="Event 21" onerror="this.src='https://images.unsplash.com/photo-1531482615713-2afd69097998?w=400&auto=format&fit=crop&q=60'">
+      <div class="event-card-overlay">
+        <a href="/events/" class="btn-check-events">Check events →</a>
+      </div>
+    </div>
   </div>
 </section>
 {% endblock %}
