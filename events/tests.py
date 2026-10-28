@@ -36,6 +36,61 @@ class EventsTests(TestCase):
                     'ends_at':'2027-01-10T11:00', 'location':'Jakarta', 'meeting_link':'https://example.test/meet'}
         return {'title':'Artikel baru', 'summary':'Ringkasan', 'body':'Isi artikel', 'category':'waste'}
 
+    def test_module_pages_inherit_shared_shell_for_each_user_role(self):
+        import re
+        from django.templatetags.static import static
+
+        for actor in [None, self.user, self.admin]:
+            self.client.logout()
+            if actor:
+                self.client.force_login(actor)
+            home = self.client.get(reverse('home')).content.decode()
+            shared_header = re.search(r'<header\b.*?</header>', home, re.S).group()
+            shared_footer = re.search(r'<footer\b.*?</footer>', home, re.S).group()
+            for kind, obj in [('event', self.event), ('education', self.education)]:
+                for action in ['list', 'detail', 'create', 'edit', 'manage', 'delete_confirm']:
+                    with self.subTest(actor=actor and actor.username, kind=kind, action=action):
+                        target = obj if action in ['detail', 'edit', 'delete_confirm'] else None
+                        response = self.client.get(self.url(kind, action, target))
+                        protected = action not in ['list', 'detail']
+                        status = (403 if actor else 401) if protected and not (actor and actor.is_superuser) else 200
+                        self.assertEqual(response.status_code, status)
+                        self.assertTemplateUsed(response, 'base.html')
+                        self.assertTemplateUsed(response, 'events/base.html')
+                        html = response.content.decode()
+                        for tag in ['html', 'body', 'header', 'main', 'footer']:
+                            self.assertEqual(len(re.findall(rf'<{tag}\b', html)), 1)
+                            self.assertEqual(html.count(f'</{tag}>'), 1)
+                        header = re.search(r'<header\b.*?</header>', html, re.S).group()
+                        footer = re.search(r'<footer\b.*?</footer>', html, re.S).group()
+                        self.assertHTMLEqual(header, shared_header)
+                        self.assertHTMLEqual(footer, shared_footer)
+                        self.assertEqual(len(re.findall(r'<nav\b', header)), 1)
+                        self.assertIn(static('img/logo-ecolove.png'), header)
+                        self.assertNotIn('ee-navbar', html)
+                        self.assertNotIn('ee-footer', html)
+                        for asset in ['css/style.css', 'events/module.css', 'events/module.js',
+                                      'events/vendor/grids-min.css', 'events/vendor/grids-responsive-min.css']:
+                            self.assertEqual(html.count(f'"{static(asset)}"'), 1)
+                        self.assertIn('id="ee-feedback"', html)
+                        if actor and actor.is_superuser and action == 'list':
+                            self.assertIn(f'href="{self.url(kind, "manage")}"', html)
+                            self.assertIn(f'href="{self.url(kind, "create")}"', html)
+
+    def test_shared_layout_preserves_filter_controls_and_ajax_fragments(self):
+        for kind in ['event', 'education']:
+            with self.subTest(kind=kind):
+                url = self.url(kind, 'list')
+                page = self.client.get(url)
+                self.assertContains(page, 'id="ee-filter"')
+                self.assertContains(page, 'id="ee-search"')
+                self.assertContains(page, 'name="category" value="community"')
+                self.assertContains(page, 'id="ee-results"')
+                fragment = self.client.get(url, {}, **AJAX).json()['html']
+                self.assertIn('ee-grid', fragment)
+                for shell in ['<header', '<main', '<footer', 'events/module.css', 'events/module.js']:
+                    self.assertNotIn(shell, fragment)
+
     def test_guest_reads_both_modules_but_no_private_html_or_json(self):
         for kind, obj in [('event', self.event), ('education', self.education)]:
             for action in ['list', 'detail']:
