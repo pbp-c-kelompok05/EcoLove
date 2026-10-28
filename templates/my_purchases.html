@@ -1,42 +1,85 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<section class="section" style="padding-top: 40px;">
-  <div class="section-heading" style="text-align: left; margin: 0 0 30px 0;">
-    <h2 style="margin-bottom: 8px">My Purchases</h2>
-    <p>Items you have bought on EcoLove.</p>
-  </div>
+<div class="profile-wrapper">
+    <div class="profile-container">
+        
+        <aside class="profile-sidebar">
+            <div class="user-profile-info">
+                <div class="user-avatar">
+                    {{ request.user.username|slice:":1"|upper }}
+                </div>
+                <div>
+                    <strong style="display: block; font-size: 1rem; color: var(--text);">{{ request.user.username }}</strong>
+                    <span style="font-size: 0.8rem; color: var(--text-muted);">{{ request.user.email }}</span>
+                </div>
+            </div>
 
-  {% if orders %}
-  <div style="display: flex; flex-direction: column; gap: 16px; max-width: 800px;">
-    {% for order in orders %}
-    <article style="display: flex; gap: 16px; align-items: center; background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px;">
-      {% if order.item and order.item.image %}
-        <div style="width: 90px; height: 90px; border-radius: 8px; flex-shrink: 0; background-image: url('{{ order.item.image.url }}'); background-size: cover; background-position: center;"></div>
-      {% else %}
-        <div style="width: 90px; height: 90px; border-radius: 8px; flex-shrink: 0; background-color: #a3d9a5;"></div>
-      {% endif %}
+            <ul class="sidebar-menu">
+                <li>
+                    <a href="{% url 'profile' %}">
+                        📍 My Addresses
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'items:my_marketplace' %}">
+                        🛍️ My Marketplace
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'items:my_purchases' %}" class="active">
+                        📦 My Purchases
+                    </a>
+                </li>
+                <li style="margin-top: 12px; border-top: 1px solid var(--border); padding-top: 12px;">
+                    <a href="/logout/" style="color: #c62828;">
+                        🚪 Log Out
+                    </a>
+                </li>
+            </ul>
+        </aside>
 
-      <div style="flex: 1;">
-        {% if order.item %}
-          <a href="{% url 'items:item_detail' order.item.id %}" style="text-decoration: none; color: inherit;">
-            <h3 style="margin: 0 0 6px 0; font-size: 1.1rem;">{{ order.item.name }}</h3>
-          </a>
-        {% else %}
-          <h3 style="margin: 0 0 6px 0; font-size: 1.1rem;">Item no longer available</h3>
-        {% endif %}
-        <p style="margin: 0; font-weight: 600;">${{ order.amount }}</p>
-        <p style="margin: 4px 0 0 0; color: #777; font-size: 0.85rem;">{{ order.created_at|date:"d M Y, H:i" }}</p>
-      </div>
+        <main class="profile-content">
+            <div style="margin-bottom: 24px;">
+                <h2 style="margin: 0; font-size: 1.5rem; color: var(--text);">My Purchases</h2>
+                <p style="margin: 4px 0 0 0; font-size: 0.9rem; color: var(--text-muted);">Items you have bought on EcoLove.</p>
+            </div>
 
-      <span style="padding: 6px 14px; border-radius: 999px; font-size: 0.85rem; font-weight: 600; background:#e8f5e9; color:#2e7d32;">
-        {{ order.get_status_display }}
-      </span>
-    </article>
-    {% endfor %}
-  </div>
-  {% else %}
-  <p style="color: #666;">You have not bought anything yet.</p>
-  {% endif %}
-</section>
+            {% if orders %}
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+                {% for order in orders %}
+                <article style="display: flex; gap: 16px; align-items: center; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px;">
+                    {% if order.item and order.item.image %}
+                        <div style="width: 80px; height: 80px; border-radius: 8px; flex-shrink: 0; background-image: url('{{ order.item.image.url }}'); background-size: cover; background-position: center;"></div>
+                    {% else %}
+                        <div style="width: 80px; height: 80px; border-radius: 8px; flex-shrink: 0; background-color: var(--bg-card);"></div>
+                    {% endif %}
+
+                    <div style="flex: 1;">
+                        {% if order.item %}
+                            <a href="{% url 'items:item_detail' order.item.id %}" style="text-decoration: none; color: inherit;">
+                                <h3 style="margin: 0 0 4px 0; font-size: 1rem; color: var(--text);">{{ order.item.name }}</h3>
+                            </a>
+                        {% else %}
+                            <h3 style="margin: 0 0 4px 0; font-size: 1rem; color: var(--text);">Item no longer available</h3>
+                        {% endif %}
+                        <p style="margin: 0; font-weight: 700; color: var(--primary);">${{ order.amount }}</p>
+                        <p style="margin: 4px 0 0 0; color: var(--text-muted); font-size: 0.85rem;">{{ order.created_at|date:"d M Y, H:i" }}</p>
+                    </div>
+
+                    <span style="padding: 6px 14px; border-radius: 999px; font-size: 0.85rem; font-weight: 600; background: var(--tag-green); color: var(--primary);">
+                        {{ order.get_status_display }}
+                    </span>
+                </article>
+                {% endfor %}
+            </div>
+            {% else %}
+                <div style="text-align: center; padding: 48px 20px; border: 2px dashed var(--border); border-radius: 12px; background: var(--background);">
+                    <p style="color: var(--text-muted); margin: 0;">You have not bought anything yet.</p>
+                </div>
+            {% endif %}
+        </main>
+
+    </div>
+</div>
 {% endblock %}

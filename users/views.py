@@ -1,8 +1,9 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from .models import Address
 
 def login_user(request):
     username_input = ''
@@ -57,4 +58,35 @@ def logout_user(request):
 
 @login_required(login_url='/login/')
 def profile_view(request):
-    return render(request, 'profile.html')
+    addresses = Address.objects.filter(user=request.user).order_by('-is_primary', '-id')
+    return render(request, 'profile.html', {'addresses': addresses})
+
+@login_required(login_url='/login/')
+def add_address(request):
+    if request.method == 'POST':
+        recipient_name = request.POST.get('recipient_name')
+        phone_number = request.POST.get('phone_number')
+        full_address = request.POST.get('full_address')
+        city_province_postal = request.POST.get('city_province_postal')
+        is_primary = request.POST.get('is_primary') == 'on'
+
+        if is_primary:
+            Address.objects.filter(user=request.user, is_primary=True).update(is_primary=False)
+
+        Address.objects.create(
+            user=request.user,
+            recipient_name=recipient_name,
+            phone_number=phone_number,
+            full_address=full_address,
+            city_province_postal=city_province_postal,
+            is_primary=is_primary
+        )
+        messages.success(request, "Address successfully added!")
+    return redirect('profile')
+
+@login_required(login_url='/login/')
+def delete_address(request, address_id):
+    address = get_object_or_404(Address, id=address_id, user=request.user)
+    address.delete()
+    messages.success(request, "Address successfully deleted!")
+    return redirect('profile')

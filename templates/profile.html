@@ -1,23 +1,141 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="auth-container">
-    <div class="card" style="text-align: center;">
-        <div style="font-size: 50px; margin-bottom: 10px;">🌿</div>
-        <h2>Profil Saya</h2>
-        <hr style="border: 0; border-top: 1px solid var(--border); margin: 20px 0;">
+<div class="profile-wrapper">
+    <div class="profile-container">
+        
+        <aside class="profile-sidebar">
+            <div class="user-profile-info">
+                <div class="user-avatar">
+                    {{ request.user.username|slice:":1"|upper }}
+                </div>
+                <div>
+                    <strong style="display: block; font-size: 1rem; color: var(--text);">{{ request.user.username }}</strong>
+                    <span style="font-size: 0.8rem; color: var(--text-muted);">{{ request.user.email }}</span>
+                </div>
+            </div>
 
-        <p style="margin-bottom: 8px;"><strong>Username:</strong> {{ request.user.username }}</p>
-        <p style="margin-bottom: 20px; color: var(--text-muted);"><strong>Email:</strong> {{ request.user.email }}</p>
+            <ul class="sidebar-menu">
+                <li>
+                    <a href="{% url 'profile' %}" class="active">
+                        My Addresses
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'items:my_marketplace' %}">
+                        My Marketplace
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'items:my_purchases' %}">
+                        My Purchases
+                    </a>
+                </li>
+                <li style="margin-top: 12px; border-top: 1px solid var(--border); padding-top: 12px;">
+                    <a href="/logout/" style="color: #c62828;">
+                        Log Out
+                    </a>
+                </li>
+            </ul>
+        </aside>
 
-        <!-- tombol ke user's personal marketplace -->
-        <a href="{% url 'items:my_marketplace' %}" 
-        class="btn btn-primary" 
-        style="display: block; width: 100%; text-align: center; background-color: #2e7d32; color: #ffffff; padding: 12px 24px; border-radius: 50px; text-decoration: none; font-weight: 600; margin-bottom: 12px; box-sizing: border-box;">
-        My Marketplace</a>
+        <main class="profile-content">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; gap: 16px;">
+                <div>
+                    <h2 style="margin: 0; font-size: 1.5rem; color: var(--text);">My Addresses</h2>
+                    <p style="margin: 4px 0 0 0; font-size: 0.9rem; color: var(--text-muted);">Manage your shipping addresses for order delivery.</p>
+                </div>
+                <button type="button" onclick="openAddressModal()" class="btn btn-primary" style="padding: 10px 20px; border-radius: 10px; flex-shrink: 0;">
+                    + Add New Address
+                </button>
+            </div>
 
-        <!-- tombol log out -->
-        <a href="/logout/" class="btn btn-outline" style="width: 100%; display: block;">Log Out</a>
+            {% if addresses %}
+                <div class="address-list">
+                    {% for addr in addresses %}
+                        <div class="address-card-figma">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <strong style="font-size: 1.05rem; color: var(--text);">{{ addr.recipient_name }}</strong>
+                                    <span style="color: var(--text-muted); font-size: 0.9rem;">({{ addr.phone_number }})</span>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    {% if addr.is_primary %}
+                                        <span class="tag" style="margin-bottom: 0;">Primary</span>
+                                    {% endif %}
+                                    <form method="POST" action="{% url 'delete_address' addr.id %}" style="margin: 0;" onsubmit="return confirm('Are you sure you want to delete this address?');">
+                                        {% csrf_token %}
+                                        <button type="submit" style="background: none; border: none; color: #c62828; cursor: pointer; font-size: 0.85rem; font-weight: 600; padding: 0;">
+                                            Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                            <p style="margin: 0 0 4px 0; color: var(--text); font-size: 0.95rem; line-height: 1.4;">{{ addr.full_address }}</p>
+                            <p style="margin: 0; color: var(--text-muted); font-size: 0.85rem;">{{ addr.city_province_postal }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div style="text-align: center; padding: 48px 20px; border: 2px dashed var(--border); border-radius: 12px; background: var(--background);">
+                    <p style="color: var(--text-muted); margin: 0;">No saved addresses yet. Click "+ Add New Address" to create one.</p>
+                </div>
+            {% endif %}
+        </main>
+
     </div>
 </div>
+
+<div id="addressModal" class="modal-overlay">
+    <div class="modal-box">
+        <h3 style="margin-top: 0; margin-bottom: 20px; font-size: 1.3rem;">New Address</h3>
+        <form method="POST" action="{% url 'add_address' %}" style="display: flex; flex-direction: column; gap: 16px;">
+            {% csrf_token %}
+            <div class="field-container">
+                <label class="field-label">Name</label>
+                <input type="text" name="recipient_name" placeholder="Insert your name" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 10px; box-sizing: border-box; font-size: 0.95rem;" required>
+            </div>
+
+            <div class="field-container">
+                <label class="field-label">Phone Number</label>
+                <input type="text" id="phoneInput" name="phone_number" value="+62" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 10px; box-sizing: border-box; font-size: 0.95rem;" required>
+            </div>
+
+            <div class="field-container">
+                <label class="field-label">City, Province, Postal Code</label>
+                <input type="text" name="city_province_postal" placeholder="e.g. South Jakarta, DKI Jakarta, 12640" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 10px; box-sizing: border-box; font-size: 0.95rem;" required>
+            </div>
+
+            <div class="field-container">
+                <label class="field-label">Full Address</label>
+                <textarea name="full_address" placeholder="Street Name, Building, House No., Landmark" style="width: 100%; height: 90px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 10px; box-sizing: border-box; font-size: 0.95rem; resize: none;" required></textarea>
+            </div>
+
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer; color: var(--text);">
+                <input type="checkbox" name="is_primary" style="accent-color: var(--primary); width: 16px; height: 16px;"> Set as Primary Address
+            </label>
+
+            <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 12px;">
+                <button type="button" onclick="closeAddressModal()" class="btn btn-outline" style="padding: 10px 20px; border-radius: 10px;">Cancel</button>
+                <button type="submit" class="btn btn-primary" style="padding: 10px 24px; border-radius: 10px;">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function openAddressModal() {
+    document.getElementById('addressModal').style.display = 'flex';
+}
+function closeAddressModal() {
+    document.getElementById('addressModal').style.display = 'none';
+}
+
+const phoneInput = document.getElementById('phoneInput');
+phoneInput.addEventListener('input', function() {
+    if (!this.value.startsWith('+62')) {
+        this.value = '+62';
+    }
+});
+</script>
 {% endblock %}
