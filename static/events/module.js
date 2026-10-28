@@ -78,7 +78,7 @@
     window.addEventListener('popstate', () => {
       cancelPending();
       const params = new URLSearchParams(location.search);
-      if (filter.dataset.kind === 'event' && params.get('category') === 'community') {
+      if (params.get('category') === 'community') {
         params.delete('category');
         const url = new URL(location.href);
         url.search = params.toString();

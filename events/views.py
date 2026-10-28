@@ -62,7 +62,7 @@ def listing(request, kind):
     objects = model.objects.all()
     query = request.GET.get('q', '').strip()[:200]
     category = request.GET.get('category', '')
-    if kind == 'event' and category == 'community':
+    if category == 'community':
         # Keep legacy links usable without an unavailable, invisible filter.
         params = request.GET.copy()
         del params['category']
@@ -90,7 +90,7 @@ def listing(request, kind):
         elif status == 'finished':
             objects = objects.filter(ends_at__lt=now)
     page = Paginator(objects, 12).get_page(request.GET.get('page'))
-    categories = [choice for choice in CATEGORIES if kind != 'event' or choice[0] != 'community']
+    categories = [choice for choice in CATEGORIES if choice[0] != 'community']
     context = {'kind': kind, 'label': label, 'page': page, 'categories': categories,
                'query': query, 'category': category, 'status': status, 'now': now,
                'list_url': content_url(kind, 'list'), 'create_url': content_url(kind, 'create'),
