@@ -1307,3 +1307,119 @@ footer, .footer {
         grid-template-columns: 1fr;
     }
 }
+
+
+/* ==========================================
+   14. HERO HOMEPAGE BLUR
+   ========================================== */
+
+body:has(.hero-photo) .navbar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    background-color: rgba(8, 18, 12, 0.35);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+body:has(.hero-photo) .navbar span,
+body:has(.hero-photo) .navbar nav a {
+    color: #ffffff !important;
+}
+
+body:has(.hero-photo) .navbar nav a:hover {
+    opacity: 0.75;
+}
+
+.hero.hero-photo {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    min-height: 100vh;
+    max-width: none;
+    margin: 0;
+    padding: 140px 8% 56px;
+    border-radius: 0;
+    text-align: left;
+    color: #ffffff;
+    background-color: #1c2b20;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.hero-photo .hero-inner {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 40px;
+}
+
+.hero-photo .hero-content {
+    max-width: 640px;
+}
+
+.hero-photo .eyebrow,
+.hero-photo h1,
+.hero-photo .hero-description {
+    color: #ffffff;
+}
+
+.hero-photo h1 {
+    font-size: clamp(3.2rem, 8vw, 6.5rem);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin-bottom: 20px;
+}
+
+.hero-photo .hero-description {
+    margin-bottom: 0;
+    opacity: 0.92;
+}
+
+.hero-photo .hero-actions {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    gap: 14px;
+    width: 300px;
+    flex-shrink: 0;
+}
+
+.hero-photo .hero-actions .btn {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 26px;
+    border-radius: 4px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.hero-photo .hero-actions .btn-outline {
+    background-color: transparent;
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+}
+
+.hero-photo .hero-actions .btn-outline:hover {
+    background-color: rgba(255, 255, 255, 0.14);
+}
+
+@media (max-width: 768px) {
+    .hero.hero-photo {
+        padding: 160px 20px 32px;
+    }
+
+    .hero-photo .hero-inner {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .hero-photo .hero-actions {
+        width: 100%;
+    }
+}
