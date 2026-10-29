@@ -50,7 +50,7 @@ class ItemForm(forms.ModelForm):
         return name
 
     def clean_description(self):
-        description = strip_tags(self.cleaned_date["description"]).strip()
+        description = strip_tags(self.cleaned_data["description"]).strip()
         if not description:
             raise ValidationError("Description should only be written in normal text")
         return description

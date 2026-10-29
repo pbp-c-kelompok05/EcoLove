@@ -11,12 +11,12 @@ from django.conf import settings
 from .models import Item, Order
 from .forms import ItemForm
 
-#marketplace umum
+#marketplace umum (karen)
 def show_marketplace(request):
     all_items = Item.objects.all().order_by('-id')
     return render(request, 'marketplace.html', {'items': all_items})
 
-#marketplace pribadi milik user
+#marketplace pribadi milik user (karen)
 @login_required(login_url='/login/')
 def my_marketplace(request):
     user_items = Item.objects.filter(user=request.user).annotate(
@@ -150,6 +150,7 @@ def dislike_item_ajax(request, id):
         status=201
     )
 
+#karen
 @login_required(login_url='/login/')
 def add_item(request):
     if request.method == 'POST':
@@ -164,6 +165,7 @@ def add_item(request):
         
     return render(request, 'item_form.html', {'form': form})
 
+#karen
 @login_required(login_url='/login/')
 def edit_item(request, id):
     item = get_object_or_404(Item, id=id, user=request.user)
@@ -172,7 +174,7 @@ def edit_item(request, id):
         form = ItemForm(request.POST, request.FILES, instance=item)
         if form.is_valid():
             form.save()
-            return redirect('items:item_detail', id=item.id)
+            return redirect('items:my_marketplace')
     else:
         form = ItemForm(instance=item)
     
@@ -188,6 +190,20 @@ def delete_item(request, id):
         return redirect('items:my_marketplace')
   
     return redirect('items:show_marketplace')
+
+@login_required(login_url='/login/')
+@require_POST
+def delete_item_ajax(request, id):
+    item = Item.objects.filter(id=id).first()
+    
+    if not item:
+        return JsonResponse({"message": "Item already deleted or not found."}, status=404)
+        
+    if item.user != request.user:
+        return JsonResponse({"message": "You don't have permission to delete this item."}, status=403)
+
+    item.delete()
+    return JsonResponse({"message": "Item deleted successfully!"}, status=200)
 
 @require_GET
 def get_items_json(request):
