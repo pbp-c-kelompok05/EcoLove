@@ -3,7 +3,7 @@
 
 {% block content %}
 <section class="section">
-  <!-- Container utama dengan data attribute mengarah ke URL AJAX & CSRF Token -->
+  <!-- Container utama -->
   <div id="item-detail"
     class="item-detail-container"
     style="max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px;"
@@ -11,10 +11,8 @@
     data-like-item="{% url 'items:like_item_ajax' '00000000-0000-0000-0000-000000000000' %}"
     data-dislike-item="{% url 'items:dislike_item_ajax' '00000000-0000-0000-0000-000000000000' %}"
   >
-    <!-- CSRF Token bawaan untuk cadangan JS -->
     {% csrf_token %}
     
-    <!-- Tombol Back to Marketplace (Kiri Atas) -->
     <div style="width: 100%;">
       <a href="{% url 'items:show_marketplace' %}" class="btn btn-primary" style="text-decoration: none; display: inline-block;">
         &larr; Back to Marketplace
@@ -51,8 +49,7 @@
           <p style="white-space: pre-line;">{{ item.description }}</p>
         </div>
 
-        <!-- Interaction Buttons (Like & Dislike) -->
-        {% if user.is_authenticated %}
+        <!-- tambahan dari aqil -->
         <div class="interaction-buttons" style="display: flex; gap: 12px; margin-top: 10px;">
           <button id="like-button" 
                   class="{% if user in item.liked_by.all %} liked {% endif %}" 
@@ -67,29 +64,16 @@
               👎 {{ item.disliked_by.count }}
           </button>
         </div>
-        {% else %}
-        <p style="color: #777; font-style: italic; margin-top: 10px;">
-          <a href="/login/" style="color: #2e7d32; text-decoration: underline; font-weight: 600;">Log in</a> to like or dislike this item.
-        </p>
-        {% endif %}
 
-        <!-- ACTIONS: EDIT & DELETE (PEMILIK) / BUY NOW (PEMBELI) -->
         <div style="margin-top: auto; padding-top: 20px;">
           {% if request.user == item.user %}
-            <!-- Tampilan jika barang milik user yang sedang login -->
-            <div style="display: flex; gap: 12px;">
-              <a href="{% url 'items:edit_item' item.id %}" class="btn btn-primary" style="text-decoration: none; padding: 10px 24px; text-align: center; flex: 1;">
-                Edit Item
-              </a>
-              <form action="{% url 'items:delete_item' item.id %}" method="POST" style="margin: 0; flex: 1; display: flex;">
-                  {% csrf_token %}
-                  <button type="submit" class="btn btn-outline" style="cursor: pointer; color: red; border-color: red; padding: 10px 24px; width: 100%;" onclick="return confirm('Delete this item?');">
-                    Delete Item
-                  </button>
-              </form>
-            </div>
+            <!-- Tombol utk pemilik item -->
+            <a href="{% url 'items:my_marketplace' %}" class="btn btn-primary"
+               style="display: block; width: 100%; text-align: center; padding: 12px 24px; font-weight: 600; font-size: 1rem; border-radius: 8px; text-decoration: none; box-sizing: border-box;">
+              See More in My Marketplace
+            </a>
           {% else %}
-            <!-- Tombol Buy Now jika barang milik orang lain -->
+            <!-- Tombol utk non pemilik item -->
             <button id="buy-button" type="button" class="btn btn-primary"
                     data-url="{% url 'items:create_payment' item.id %}"
                     style="display: block; width: 100%; text-align: center; padding: 12px 24px; font-weight: 600; font-size: 1.1rem; border-radius: 8px; box-sizing: border-box; cursor: pointer;">
@@ -103,7 +87,7 @@
   </div>
 </section>
 
-<!-- Script AJAX -->
+<!-- SCRIPT PAYMENTS -->
 <script src="{% static 'js/item_detail.js' %}"></script>
 <script src="{{ midtrans_snap_js }}" data-client-key="{{ midtrans_client_key }}"></script>
 <script src="{% static 'js/payments.js' %}"></script>
