@@ -1,6 +1,7 @@
 import hashlib, hmac, json, requests
 
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import requires_csrf_token, csrf_exempt
 from django.views.decorators.http import require_GET, require_POST
@@ -159,6 +160,7 @@ def add_item(request):
             item = form.save(commit=False)
             item.user = request.user
             item.save()
+            messages.success(request, f"Item succesfully added!")
             return redirect('items:my_marketplace')
     else:
         form = ItemForm()
@@ -174,6 +176,7 @@ def edit_item(request, id):
         form = ItemForm(request.POST, request.FILES, instance=item)
         if form.is_valid():
             form.save()
+            messages.success(request, f"Item successfully updated!")
             return redirect('items:my_marketplace')
     else:
         form = ItemForm(instance=item)

@@ -82,7 +82,7 @@
   <div id="toast-container">
     {% if messages %}
       {% for message in messages %}
-        <div class="alert-banner">
+        <div class="alert-banner django-message">
           <span>{{ message }}</span>
           <button onclick="this.parentElement.remove()" style="background:none; border:none; color:#2e7d32; font-weight:bold; cursor:pointer;">&times;</button>
         </div>
@@ -153,8 +153,23 @@
     return cookieValue;
   }
 
-  function showNotification(message, type = 'success') {
+  // Otomatis hilangkan notifikasi Django bawaan (Add/Edit) dalam 2 detik
+  document.addEventListener('DOMContentLoaded', () => {
+    const djangoMessages = document.querySelectorAll('.django-message');
+    djangoMessages.forEach(banner => {
+      setTimeout(() => {
+        banner.style.transition = 'opacity 0.3s ease';
+        banner.style.opacity = '0';
+        setTimeout(() => banner.remove(), 300);
+      }, 2000); // 2 Detik
+    });
+  });
+
+  function showNotification(message, type = 'success', duration = 2000) {
     const container = document.getElementById('toast-container');
+    
+    container.innerHTML = '';
+
     const banner = document.createElement('div');
     banner.className = 'alert-banner';
     if (type === 'error') {
@@ -169,10 +184,10 @@
     container.appendChild(banner);
     
     setTimeout(() => {
-      banner.style.transition = 'opacity 0.5s';
+      banner.style.transition = 'opacity 0.3s ease';
       banner.style.opacity = '0';
-      setTimeout(() => banner.remove(), 500);
-    }, 4000);
+      setTimeout(() => banner.remove(), 300);
+    }, duration);
   }
 
   async function deleteItemAjax(itemId, buttonElement) {
