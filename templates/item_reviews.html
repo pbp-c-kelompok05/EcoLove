@@ -1,0 +1,36 @@
+{% load static %}
+<section id="reviews">
+  <form id="review-form">
+    <textarea placeholder="Insert your review..." name="text"></textarea>
+    <button type="submit">Give Review</button>
+  </form>
+    <!-- Loading State -->
+  <div id="loading" class="hide">
+    <p>Loading reviews...</p>
+  </div>
+
+  <!-- Error State -->
+  <div id="error" class="hide">
+    <p>Failed to load reviews. Please try again later.</p>
+  </div>
+
+  <!-- Empty State -->
+  <div id="empty" class="hide">
+    <p>No reviews are given to this product. Be the first to give review!</p>
+  </div>
+
+  <!-- Grid Container -->
+  <div 
+    id="grid"
+    class="hide"
+    data-get-reviews-json="{% url 'reviews:get_reviews_json' item.id %}"
+    data-like-comment="{% url 'reviews:like' '00000000-0000-0000-0000-000000000000' %}"
+    data-dislike-comment="{% url 'reviews:dislike' '00000000-0000-0000-0000-000000000000' %}"
+    data-add-review="{% url 'reviews:add_review' item.id %}"
+    data-edit-comment="{% url 'reviews:edit' '00000000-0000-0000-0000-000000000000' %}"
+    data-delete-comment="{% url 'reviews:delete' '00000000-0000-0000-0000-000000000000' %}"
+    data-is-authenticated="{{ user.is_authenticated }}"
+    data-user-id="{{ user.id }}"></div>
+</section>
+
+<script src="{% static 'js/item_reviews.js' %}"></script>
