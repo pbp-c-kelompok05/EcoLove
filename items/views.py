@@ -11,10 +11,12 @@ from django.conf import settings
 from .models import Item, Order
 from .forms import ItemForm
 
+#marketplace umum
 def show_marketplace(request):
     all_items = Item.objects.all().order_by('-id')
     return render(request, 'marketplace.html', {'items': all_items})
 
+#marketplace pribadi milik user
 @login_required(login_url='/login/')
 def my_marketplace(request):
     user_items = Item.objects.filter(user=request.user).annotate(
@@ -176,6 +178,7 @@ def edit_item(request, id):
     
     return render(request, 'item_form.html', {'form': form, 'item': item})
 
+#karen
 @login_required(login_url='/login/')
 def delete_item(request, id):
     item = get_object_or_404(Item, id=id, user=request.user)
