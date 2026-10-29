@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.validators import MaxValueValidator, MinValueValidator
 from items.models import Item
 
 import uuid
@@ -13,9 +14,16 @@ class Comment(models.Model):
     liked_by = models.ManyToManyField(User, related_name='liked_comments', blank=True)
     disliked_by = models.ManyToManyField(User, related_name='disliked_comments', blank=True)
 
-class Review(Comment):    
+class Review(Comment):
     item = models.ForeignKey(Item, related_name='reviews', on_delete=models.CASCADE)
+    rating = models.PositiveSmallIntegerField(
+        default=1,
+        validators=[
+            MaxValueValidator(5),
+            MinValueValidator(1)
+        ]
+    )
     
-class Reply(Comment):    
+class Reply(Comment):
     to = models.ForeignKey(Comment, related_name='replies', on_delete=models.CASCADE)
     

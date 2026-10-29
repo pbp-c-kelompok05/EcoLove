@@ -3,7 +3,7 @@ from .views import (
     like,
     dislike,
     add_review,
-    edit,
+    edit_review,
     delete,
     get_reviews_json
 )
@@ -17,6 +17,6 @@ urlpatterns = [
     path('like/<uuid:id>/', like, name='like'),
     path('dislike/<uuid:id>/', dislike, name='dislike'),
     path('add/review/<uuid:id>/', add_review, name='add_review'),
-    path('edit/<uuid:id>/', edit, name='edit'),
+    path('edit/review/<uuid:id>/', edit_review, name='edit_review'),
     path('delete/<uuid:id>/', delete, name='delete'),
 ]

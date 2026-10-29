@@ -2,6 +2,14 @@
 <section id="reviews">
   <form id="review-form">
     <textarea placeholder="Insert your review..." name="text"></textarea>
+    <select name="rating">
+      <option selected disabled>Select rating...</option>
+      <option>5</option>
+      <option>4</option>
+      <option>3</option>
+      <option>2</option>
+      <option>1</option>
+    </select>
     <button type="submit">Give Review</button>
   </form>
     <!-- Loading State -->
@@ -27,7 +35,7 @@
     data-like-comment="{% url 'reviews:like' '00000000-0000-0000-0000-000000000000' %}"
     data-dislike-comment="{% url 'reviews:dislike' '00000000-0000-0000-0000-000000000000' %}"
     data-add-review="{% url 'reviews:add_review' item.id %}"
-    data-edit-comment="{% url 'reviews:edit' '00000000-0000-0000-0000-000000000000' %}"
+    data-edit-review="{% url 'reviews:edit_review' '00000000-0000-0000-0000-000000000000' %}"
     data-delete-comment="{% url 'reviews:delete' '00000000-0000-0000-0000-000000000000' %}"
     data-is-authenticated="{{ user.is_authenticated }}"
     data-user-id="{{ user.id }}"></div>

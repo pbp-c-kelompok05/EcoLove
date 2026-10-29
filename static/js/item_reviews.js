@@ -11,7 +11,7 @@ const GET_REPLIES_ENDPOINT = gridContainer.dataset.getRepliesJson;
 const LIKE_COMMENT_ENDPOINT = gridContainer.dataset.likeComment;
 const DISLIKE_COMMENT_ENDPOINT = gridContainer.dataset.dislikeComment;
 const ADD_REVIEW_ENDPOINT = gridContainer.dataset.addReview;
-const EDIT_COMMENT_ENDPOINT = gridContainer.dataset.editComment;
+const EDIT_REVIEW_ENDPOINT = gridContainer.dataset.editReview;
 const DELETE_COMMENT_ENDPOINT = gridContainer.dataset.deleteComment;
 const IS_AUTHENTICATED = gridContainer.dataset.isAuthenticated === 'True';
 const USER_ID = gridContainer.dataset.userId;
@@ -26,72 +26,82 @@ function displayPageSection({ showLoading = false, showError = false, showEmpty 
     gridContainer.classList.toggle('hide', !showGrid);
 }
 
-function buildCard(item) {
+function buildReviewCard(item) {
     const user = item.user;
-    const comment = item.fields;
+    const review = item.fields;
 
     const card = document.createElement('article');
 
-    const image = comment.image
-        ? `<img src="${comment.image}">`
+    const image = review.image
+        ? `<img src="${review.image}">`
         : '';
 
     const cardContent = `
-        <h2>${user.name}</h2>
+        <h2>${user.name} (⭐${review.rating})</h2>
         ${image}
-        <p>${comment.text}<p>
+        <p>${review.text}<p>
     `;
 
     card.innerHTML = cardContent;
-    card.appendChild(buildActions(item, card));
+    card.appendChild(buildReviewActions(item, card));
 
     return card;
 }
 
-function buildActions(item, parent) {
-    const comment = item.fields;
+function buildReviewActions(item, parent) {
+    const review = item.fields;
 
     const actions = document.createElement('div');
     actions.setAttribute('class', 'interaction-buttons');
 
     const likeButton = document.createElement('button');
-    likeButton.innerHTML = `👍 ${comment.like_count}`;
-    likeButton.classList.toggle('liked', comment.is_liked);
+    likeButton.innerHTML = `👍 ${review.like_count}`;
+    likeButton.classList.toggle('liked', review.is_liked);
 
     likeButton.addEventListener('click', async function (event) {
         event.preventDefault();
         likeButton.disabled = true;
 
-        await likeComment(item);
-
-        likeButton.innerHTML = `👍 ${comment.like_count}`;
-        likeButton.classList.toggle('liked', comment.is_liked);
-        dislikeButton.innerHTML = `👎 ${comment.dislike_count}`;
-        dislikeButton.classList.toggle('disliked', comment.is_disliked);
+        if (await likeComment(item)) {
+            likeButton.innerHTML = `👍 ${review.like_count}`;
+            likeButton.classList.toggle('liked', review.is_liked);
+            dislikeButton.innerHTML = `👎 ${review.dislike_count}`;
+            dislikeButton.classList.toggle('disliked', review.is_disliked);
+        }
 
         likeButton.disabled = false;
     });
 
     const dislikeButton = document.createElement('button');
-    dislikeButton.innerHTML = `👎 ${comment.dislike_count}`;
-    dislikeButton.classList.toggle('disliked', comment.is_disliked);
+    dislikeButton.innerHTML = `👎 ${review.dislike_count}`;
+    dislikeButton.classList.toggle('disliked', review.is_disliked);
 
     dislikeButton.addEventListener('click', async function (event) {
         event.preventDefault();
         dislikeButton.disabled = true;
 
-        await dislikeComment(item);
-
-        likeButton.innerHTML = `👍 ${comment.like_count}`;
-        likeButton.classList.toggle('liked', comment.is_liked);
-        dislikeButton.innerHTML = `👎 ${comment.dislike_count}`;
-        dislikeButton.classList.toggle('disliked', comment.is_disliked);
+        if (await dislikeComment(item)) {
+            likeButton.innerHTML = `👍 ${review.like_count}`;
+            likeButton.classList.toggle('liked', review.is_liked);
+            dislikeButton.innerHTML = `👎 ${review.dislike_count}`;
+            dislikeButton.classList.toggle('disliked', review.is_disliked);
+        }
 
         dislikeButton.disabled = false;
     });
 
     if(USER_ID === item.user.pk) {
-        actions.appendChild(buildEditForm(item, parent.querySelector('p')));
+        const editForm = buildReviewEditForm(item);
+        
+        editForm.addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            
+            if (await editReview(item, editForm)) {
+                parent.querySelector('h2').innerHTML = `${item.user.name} (⭐${review.rating})`;
+                parent.querySelector('p').innerHTML = review.text;
+            }
+        });
 
         const deleteButton = document.createElement('button');
         deleteButton.innerHTML = 'Delete';
@@ -100,6 +110,8 @@ function buildActions(item, parent) {
         deleteButton.addEventListener('click', async function () {
             if (await deleteComment(item)) parent.remove();
         });
+
+        actions.appendChild(editForm);
         actions.appendChild(deleteButton);
     }
 
@@ -109,20 +121,24 @@ function buildActions(item, parent) {
     return actions;
 }
 
-function buildEditForm(item, target) {
-    const comment = item.fields;
+function buildReviewEditForm(item) {
+    const review = item.fields;
 
     const editForm = document.createElement('form');
 
     editForm.innerHTML = `
-        <textarea placeholder="Edit..." name="text">${comment.text}</textarea>
+        <textarea placeholder="Edit..." name="text">${review.text}</textarea>
+        <select name="rating" value=${review.rating}>
+            <option>5</option>
+            <option>4</option>
+            <option>3</option>
+            <option>2</option>
+            <option>1</option>
+        </select>
         <button type="submit">Edit</button>
     `;
 
-    editForm.addEventListener('submit', async function (event) {
-        const result = await editComment(event, item, editForm);
-        target.innerHTML = result ? result : target.innerHTML;
-    });
+    editForm.querySelector('select').selectedIndex = 5-review.rating;
 
     return editForm;
 }
@@ -144,6 +160,7 @@ async function likeComment(item) {
             comment.is_liked = result.is_liked;
             comment.dislike_count = result.dislike_count;
             comment.is_disliked = result.is_disliked;
+            return true;
         } else throw new Error(result.message);
     } catch (error) {
         console.error('COMMENT ERROR:', error);
@@ -167,6 +184,7 @@ async function dislikeComment(item) {
             comment.is_liked = result.is_liked;
             comment.dislike_count = result.dislike_count;
             comment.is_disliked = result.is_disliked;
+            return true;
         } else throw new Error(result.message);
     } catch (error) {
         console.error('COMMENT ERROR:', error);
@@ -189,7 +207,7 @@ async function addReview(event) {
 
         if (response.ok) {
             reviewForm.reset();
-            gridContainer.insertBefore(buildCard(result.review), gridContainer.firstChild);
+            gridContainer.insertBefore(buildReviewCard(result.review), gridContainer.firstChild);
         } else throw new Error(result.message);
     } catch (error) {
         console.error('ERROR:', error);
@@ -198,11 +216,9 @@ async function addReview(event) {
     }
 }
 
-async function editComment(event, item, form) {
-    event.preventDefault();
-
-    const comment = item.fields;
-    const editUrl = EDIT_COMMENT_ENDPOINT.replace('00000000-0000-0000-0000-000000000000', item.pk);
+async function editReview(item, form) {
+    const review = item.fields;
+    const editUrl = EDIT_REVIEW_ENDPOINT.replace('00000000-0000-0000-0000-000000000000', item.pk);
 
     const submitButton = form.querySelector('button[type="submit"]');
     submitButton.disabled = true;
@@ -215,8 +231,11 @@ async function editComment(event, item, form) {
         });
         const result = await response.json().catch(() => ({}));
 
-        if (response.ok) return result.text;    
-        else throw new Error(result.message);
+        if (response.ok) {
+            review.text = result.text;
+            review.rating = result.rating;
+            return true;
+        } else throw new Error(result.message);
     } catch (error) {
         console.error('ERROR:', error);
     } finally {
@@ -264,7 +283,7 @@ async function fetchReviews() {
         } else {
             gridContainer.innerHTML = '';
             reviewsData.forEach(item => {
-                gridContainer.appendChild(buildCard(item));
+                gridContainer.appendChild(buildReviewCard(item));
             });
             displayPageSection({ showGrid: true });
         }

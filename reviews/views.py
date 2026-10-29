@@ -5,7 +5,7 @@ from django.views.decorators.http import require_GET, require_POST
 from django.shortcuts import render, get_object_or_404, redirect
 
 from .models import Comment, Review, Reply
-from .forms import CommentForm, ReviewForm, ReplyForm
+from .forms import ReviewForm
 
 from items.models import Item
 
@@ -101,6 +101,7 @@ def add_review(request, id):
                     },
                     "fields": {
                         "text": review.text,
+                        "rating": review.rating,
                         "like_count": 0,
                         "is_liked": False,
                         "dislike_count": 0,
@@ -122,16 +123,17 @@ def add_review(request, id):
 @requires_csrf_token
 @require_POST
 @login_required(login_url='/login/')
-def edit(request, id):
-    comment = get_object_or_404(Comment, id=id)
+def edit_review(request, id):
+    review = get_object_or_404(Review, id=id)
     
-    form = CommentForm(request.POST, instance=comment)
+    form = ReviewForm(request.POST, instance=review)
     if form.is_valid():
         form.save()
         return JsonResponse(
         {
             'message': 'Successfully edited.',
-            'text': comment.text,
+            'text': review.text,
+            'rating': review.rating,
         },
         status=201
     )
@@ -182,6 +184,7 @@ def get_reviews_json(request, id):
             },
             "fields": {
                 "text": review.text,
+                "rating": review.rating,
                 "like_count": liked_users.count(),
                 "is_liked": is_liked,
                 "dislike_count": disliked_users.count(),
