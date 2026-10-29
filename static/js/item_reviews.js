@@ -39,16 +39,16 @@ function buildCard(item) {
     const cardContent = `
         <h2>${user.name}</h2>
         ${image}
-        ${comment.text}
+        <p>${comment.text}<p>
     `;
 
     card.innerHTML = cardContent;
-    card.appendChild(buildActions(item));
+    card.appendChild(buildActions(item, card));
 
     return card;
 }
 
-function buildActions(item) {
+function buildActions(item, parent) {
     const comment = item.fields;
 
     const actions = document.createElement('div');
@@ -60,12 +60,16 @@ function buildActions(item) {
 
     likeButton.addEventListener('click', async function (event) {
         event.preventDefault();
+        likeButton.disabled = true;
+
         await likeComment(item);
 
         likeButton.innerHTML = `👍 ${comment.like_count}`;
         likeButton.classList.toggle('liked', comment.is_liked);
         dislikeButton.innerHTML = `👎 ${comment.dislike_count}`;
         dislikeButton.classList.toggle('disliked', comment.is_disliked);
+
+        likeButton.disabled = false;
     });
 
     const dislikeButton = document.createElement('button');
@@ -74,22 +78,28 @@ function buildActions(item) {
 
     dislikeButton.addEventListener('click', async function (event) {
         event.preventDefault();
+        dislikeButton.disabled = true;
+
         await dislikeComment(item);
 
         likeButton.innerHTML = `👍 ${comment.like_count}`;
         likeButton.classList.toggle('liked', comment.is_liked);
         dislikeButton.innerHTML = `👎 ${comment.dislike_count}`;
         dislikeButton.classList.toggle('disliked', comment.is_disliked);
+
+        dislikeButton.disabled = false;
     });
 
     if(USER_ID === item.user.pk) {
-        actions.appendChild(buildEditForm(item));
+        actions.appendChild(buildEditForm(item, parent.querySelector('p')));
 
         const deleteButton = document.createElement('button');
         deleteButton.innerHTML = 'Delete';
         deleteButton.classList.add('disliked');
         
-        deleteButton.addEventListener('click',function () { deleteComment(item); });
+        deleteButton.addEventListener('click', async function () {
+            if (await deleteComment(item)) parent.remove();
+        });
         actions.appendChild(deleteButton);
     }
 
@@ -99,7 +109,7 @@ function buildActions(item) {
     return actions;
 }
 
-function buildEditForm(item) {
+function buildEditForm(item, target) {
     const comment = item.fields;
 
     const editForm = document.createElement('form');
@@ -109,13 +119,16 @@ function buildEditForm(item) {
         <button type="submit">Edit</button>
     `;
 
-    editForm.addEventListener('submit', function (event) { editComment(event, item, editForm); });
+    editForm.addEventListener('submit', async function (event) {
+        const result = await editComment(event, item, editForm);
+        target.innerHTML = result ? result : target.innerHTML;
+    });
 
     return editForm;
 }
 
 async function likeComment(item) {
-    const review = item.fields;
+    const comment = item.fields;
     const likeUrl = LIKE_COMMENT_ENDPOINT.replace('00000000-0000-0000-0000-000000000000', item.pk);
 
     try {
@@ -127,10 +140,10 @@ async function likeComment(item) {
         const result = await response.json();
 
         if (response.ok) {
-            review.like_count = result.like_count;
-            review.is_liked = result.is_liked;
-            review.dislike_count = result.dislike_count;
-            review.is_disliked = result.is_disliked;
+            comment.like_count = result.like_count;
+            comment.is_liked = result.is_liked;
+            comment.dislike_count = result.dislike_count;
+            comment.is_disliked = result.is_disliked;
         } else throw new Error(result.message);
     } catch (error) {
         console.error('COMMENT ERROR:', error);
@@ -138,7 +151,7 @@ async function likeComment(item) {
 }
 
 async function dislikeComment(item) {
-    const review = item.fields;
+    const comment = item.fields;
     const dislikeUrl = DISLIKE_COMMENT_ENDPOINT.replace('00000000-0000-0000-0000-000000000000', item.pk);
 
     try {
@@ -150,10 +163,10 @@ async function dislikeComment(item) {
         const result = await response.json();
 
         if (response.ok) {
-            review.like_count = result.like_count;
-            review.is_liked = result.is_liked;
-            review.dislike_count = result.dislike_count;
-            review.is_disliked = result.is_disliked;
+            comment.like_count = result.like_count;
+            comment.is_liked = result.is_liked;
+            comment.dislike_count = result.dislike_count;
+            comment.is_disliked = result.is_disliked;
         } else throw new Error(result.message);
     } catch (error) {
         console.error('COMMENT ERROR:', error);
@@ -176,7 +189,7 @@ async function addReview(event) {
 
         if (response.ok) {
             reviewForm.reset();
-            fetchReviews();
+            gridContainer.insertBefore(buildCard(result.review), gridContainer.firstChild);
         } else throw new Error(result.message);
     } catch (error) {
         console.error('ERROR:', error);
@@ -202,9 +215,8 @@ async function editComment(event, item, form) {
         });
         const result = await response.json().catch(() => ({}));
 
-        if (response.ok) {
-            fetchReviews();
-        } else throw new Error(result.message);
+        if (response.ok) return result.text;    
+        else throw new Error(result.message);
     } catch (error) {
         console.error('ERROR:', error);
     } finally {
@@ -223,9 +235,8 @@ async function deleteComment(item) {
         });
         const result = await response.json();
 
-        if (response.ok) {
-            fetchReviews();
-        } else throw new Error(result.message);
+        if (response.ok) return true;
+        else throw new Error(result.message);
     } catch (error) {
         console.error('ERROR:', error);
     }

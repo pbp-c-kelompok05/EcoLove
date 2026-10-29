@@ -92,6 +92,20 @@ def add_review(request, id):
         review.save()
         return JsonResponse(
             {
+                'review': {
+                    "pk": str(review.id),
+                    "user": {
+                        "pk": str(review.user.pk),
+                        "name": str(review.user),
+                    },
+                    "fields": {
+                        "text": review.text,
+                        "like_count": 0,
+                        "is_liked": False,
+                        "dislike_count": 0,
+                        "is_disliked": False,
+                    }
+                },
                 'message': 'Successfully added review.' 
             },
             status=201
@@ -114,7 +128,8 @@ def edit(request, id):
         form.save()
         return JsonResponse(
         {
-            'message': 'Successfully edited.' 
+            'message': 'Successfully edited.',
+            'text': comment.text,
         },
         status=201
     )
