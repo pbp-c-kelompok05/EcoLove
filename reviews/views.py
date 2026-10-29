@@ -81,6 +81,7 @@ def dislike(request, id):
         status=201
     )
 
+@requires_csrf_token
 @require_POST
 @login_required(login_url='/login/')
 def add_review(request, id):
@@ -118,6 +119,7 @@ def add_review(request, id):
         status=400
     )
 
+@requires_csrf_token
 @require_POST
 @login_required(login_url='/login/')
 def edit(request, id):
@@ -141,6 +143,7 @@ def edit(request, id):
         status=400
     )
 
+@requires_csrf_token
 @require_POST
 @login_required(login_url='/login/')
 def delete(request, id):
