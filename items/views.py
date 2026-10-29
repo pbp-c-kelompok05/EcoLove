@@ -21,7 +21,7 @@ def show_marketplace(request):
 @login_required(login_url='/login/')
 def my_marketplace(request):
     user_items = Item.objects.filter(user=request.user).annotate(
-        sold=Exists(Order.objects.filter(item=OuterRef('pk'), status='PAID'))
+        sold=Exists(Order.objects.filter(item=OuterRef('pk'), status='PAID')) #payment component
     ).order_by('-id')
     return render(request, 'my_marketplace.html', {'user_items': user_items})
 

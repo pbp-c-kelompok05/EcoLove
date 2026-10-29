@@ -2,21 +2,130 @@
 {% load static %}
 
 {% block content %}
-<section class="section" style="padding-top: 40px;">
+<style>
+  /* Layout Grid */
+  .market-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    margin-top: 24px;
+    width: 100%;
+  }
+
+  /* tampilan mobile */
+  @media (max-width: 1200px) {
+    .market-grid {
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+  }
+
+  /* Styling card item */
+  #grid > article,
+  #grid > div,
+  .item-card {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    width: 100%;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  #grid > article:hover,
+  #grid > div:hover,
+  .item-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+
+  /* image sizing */
+  #grid img,
+  .item-card img {
+    height: 160px !important;
+    width: 100% !important;
+    object-fit: cover !important;
+  }
+
+  .category-pill,
+  .tag {
+    background: #e8f5e9;
+    color: #2e7d32;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    align-self: flex-start;
+  }
+
+  /* Style Search Box */
+  .search-form-container {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin: 0;
+  }
+
+  .search-input-custom {
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 1px solid #d1d5db;
+    font-size: 0.9rem;
+    outline: none;
+    width: 220px;
+    background: #fafafa;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .search-input-custom:focus {
+    border-color: #2e7d32;
+    background: #ffffff;
+  }
+
+  .btn-search-custom {
+    padding: 8px 20px;
+    border-radius: 20px;
+    border: none;
+    background: #2e7d32;
+    color: white;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .btn-search-custom:hover {
+    background: #236326;
+  }
+</style>
+
+<section class="section" style="padding-top: 40px; max-width: 1200px; margin: 0 auto;">
   {% csrf_token %}
 
-  <div class="section-heading" style="text-align: left; margin: 0 0 30px 0;">
-    <h2 style="margin-bottom: 8px">Marketplace EcoLove</h2>
-    <p>Discover secondhand and sustainable products from the EcoLove community.</p>
-  </div>
+  <!-- section -->
+  <div style="display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 24px;">
+    
+    <!-- Header -->
+    <div>
+      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
+        <img src="{% static 'img/logo-ecolove.png' %}" alt="EcoLove Logo" style="height: 32px; width: auto; object-fit: contain; margin-bottom: 2px;">
+        <h2 style="margin: 0; font-size: 1.65rem; font-weight: 700; color: #254d2a;">Marketplace EcoLove</h2>
+      </div>
+      <p style="color: #6c757d; font-size: 0.92rem; margin: 0;">Discover secondhand and sustainable products from the EcoLove community.</p>
+    </div>
 
-  <form id="search" class="form-group" style="background-color: black;">
-    <input type="search"
-      id="search-input"
-      placeholder="Search item..."
-      class="form-group">
-    <button type="submit" class="btn btn-primary">Search</button>
-  </form>
+    <!-- search bar -->
+    <form id="search" class="search-form-container">
+      <input type="search"
+        id="search-input"
+        placeholder="Search item..."
+        class="search-input-custom">
+      <button type="submit" class="btn-search-custom">Search</button>
+    </form>
+
+  </div>
 
   <!-- Loading State -->
   <div id="loading" class="hide" style="text-align: center; padding: 40px 0;">
@@ -33,11 +142,10 @@
     <p style="color: #666; font-size: 1.1rem;">No items are available right now.</p>
   </div>
 
-  <!-- Grid Container (Elemen Utama yang Dipanggil JS Aqil) -->
+  <!-- Grid Container (Layout 5 Kolom + Menyimpan Semua ID & Data Attributes Asli) -->
   <div 
     id="grid" 
-    class="card-grid hide" 
-    style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; width: 100%;"
+    class="market-grid hide" 
     data-get-items-json="{% url 'items:get_items_json' %}"
     data-item-detail="{% url 'items:item_detail' '00000000-0000-0000-0000-000000000000' %}"
     data-like-item="{% url 'items:like_item_ajax' '00000000-0000-0000-0000-000000000000' %}"
