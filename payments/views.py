@@ -10,7 +10,8 @@ from django.conf import settings
 from django.contrib import messages
 
 from .forms import OrderForm
-from .models import Item, Order
+from .models import Order
+from items.models import Item
 
 # Payments
 def _apply_status(order, data):
