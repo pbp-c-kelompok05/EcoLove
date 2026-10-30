@@ -1,0 +1,7 @@
+{% if page.has_other_pages %}
+<nav class="ee-pagination" aria-label="Halaman hasil">
+{% if page.has_previous %}<a href="{% querystring page=page.previous_page_number %}" data-page="{{ page.previous_page_number }}">← Sebelumnya</a>{% endif %}
+<span>Halaman {{ page.number }} / {{ page.paginator.num_pages }}</span>
+{% if page.has_next %}<a href="{% querystring page=page.next_page_number %}" data-page="{{ page.next_page_number }}">Berikutnya →</a>{% endif %}
+</nav>
+{% endif %}

@@ -1,0 +1,4 @@
+{% load static %}
+{% if object.image %}<img class="ee-cover" src="{{ object.image.url }}" alt="{{ object.title }}">
+{% elif kind == 'event' %}<img class="ee-cover" src="{% static 'events/illustrations/community.svg' %}" alt="Ilustrasi komunitas berbagi barang">
+{% else %}<img class="ee-cover" src="{% static 'events/illustrations/plant.svg' %}" alt="Ilustrasi tunas hijau yang sedang tumbuh">{% endif %}

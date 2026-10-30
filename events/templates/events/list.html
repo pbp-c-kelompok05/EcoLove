@@ -1,0 +1,36 @@
+{% extends 'events/base.html' %}{% load static %}
+{% block module_content %}
+<div class="ee-page-heading">
+<p class="ee-eyebrow">{{ label }}</p>
+<h1>{% if kind == 'event' %}Langkah kecil. Dampak bersama.{% else %}Belajar merawat. Belajar mengurangi.{% endif %}</h1>
+<p class="ee-muted">{% if kind == 'event' %}Ikut kegiatan, bertemu komunitas, dan temukan cara baru untuk memberi bumi kesempatan.{% else %}Panduan sederhana agar barang bertahan lebih lama dan kebiasaan baik tumbuh setiap hari.{% endif %}</p>
+</div>
+<div class="ee-banner"><img src="{% if kind == 'event' %}{% static 'events/illustrations/banner.svg' %}{% else %}{% static 'events/illustrations/education-banner.svg' %}{% endif %}" alt="Ilustrasi pakaian yang dirawat dan digunakan kembali" fetchpriority="high"></div>
+<form id="ee-filter" action="{{ list_url }}" method="get" class="ee-filters" data-kind="{{ kind }}">
+{% if kind == 'education' %}
+<div class="ee-education-toolbar">
+<div class="ee-education-search">
+<label for="ee-search">Cari konten</label>
+<div class="ee-search-row"><input id="ee-search" type="search" name="q" value="{{ query }}" placeholder="Cari panduan yang ingin kamu pelajari…"><button class="ee-btn ee-outline" type="submit">Cari</button></div>
+</div>
+<div class="ee-education-category">
+<label for="ee-category">Kategori</label>
+<select id="ee-category" name="category">
+<option value="" {% if not category %}selected{% endif %}>Semua</option>
+{% for value, text in categories %}<option value="{{ value }}" {% if category == value %}selected{% endif %}>{{ text }}</option>{% endfor %}
+</select>
+</div>
+</div>
+{% if user.is_superuser %}<a class="ee-btn ee-primary ee-education-create" href="{{ create_url }}">+ Tulis artikel</a>{% endif %}
+{% else %}
+<label for="ee-search">Cari konten</label>
+<div class="ee-search-row"><input id="ee-search" type="search" name="q" value="{{ query }}" placeholder="{% if kind == 'event' %}Cari kegiatan atau lokasi…{% else %}Cari panduan yang ingin kamu pelajari…{% endif %}"><button class="ee-btn ee-outline" type="submit">Cari</button>{% if user.is_superuser %}<a class="ee-btn ee-primary" href="{{ create_url }}">+ {% if kind == 'event' %}Buat event{% else %}Tulis artikel{% endif %}</a>{% endif %}</div>
+<div class="ee-filter-row"><fieldset class="ee-chips"><legend class="ee-sr-only">Kategori</legend>
+<label><input type="radio" name="category" value="" {% if not category %}checked{% endif %}><span>Semua</span></label>
+{% for value, text in categories %}<label><input type="radio" name="category" value="{{ value }}" {% if category == value %}checked{% endif %}><span>{{ text }}</span></label>{% endfor %}
+</fieldset>{% if kind == 'event' %}<label class="ee-status-filter"><span class="ee-sr-only">Waktu kegiatan</span><select name="status" aria-label="Waktu kegiatan"><option value="">Semua waktu</option><option value="upcoming" {% if status == 'upcoming' %}selected{% endif %}>Mendatang</option><option value="ongoing" {% if status == 'ongoing' %}selected{% endif %}>Berlangsung</option><option value="finished" {% if status == 'finished' %}selected{% endif %}>Selesai</option></select></label>{% endif %}</div>
+{% endif %}
+</form>
+<div id="ee-results" aria-live="polite">{% include 'events/cards.html' %}</div>
+{% if user.is_superuser %}<a class="ee-btn ee-outline ee-manage-link" href="{{ manage_url }}">Kelola event &amp; edukasi</a>{% endif %}
+{% endblock %}

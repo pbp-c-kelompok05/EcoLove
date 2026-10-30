@@ -1,0 +1,337 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_head %}
+<style>
+  /* banner atas */
+  .page-banner {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: 100vh;
+    padding: 120px 8% 80px;
+    overflow: hidden;
+    background-color: #1c2b20;
+    background-image:
+      radial-gradient(ellipse 60% 90% at 90% 10%, rgba(46, 125, 50, 0.55) 0%, rgba(46, 125, 50, 0) 70%),
+      linear-gradient(135deg, #14261a 0%, #1c2b20 55%, #1f4a28 100%);
+  }
+  .page-banner::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    height: 4px;
+    background-color: var(--primary);
+  }
+  .page-banner::after {
+    content: "LOVE AGAIN";
+    position: absolute;
+    right: -2%;
+    bottom: -0.08em;
+    z-index: 1;
+    font-size: clamp(5rem, 15vw, 14rem);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    white-space: nowrap;
+    color: transparent;
+    -webkit-text-stroke: 2px rgba(255, 255, 255, 0.12);
+    pointer-events: none;
+  }
+  .banner-content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 640px;
+  }
+  .banner-content .eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    color: #ffffff;
+    letter-spacing: 0.25em;
+  }
+  .banner-content .eyebrow::before {
+    content: "";
+    width: 44px;
+    height: 2px;
+    background: #ffffff;
+  }
+  .banner-content h1 {
+    font-size: clamp(2.8rem, 6vw, 4.8rem);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: #ffffff;
+    margin: 12px 0 16px;
+  }
+  .banner-content p {
+    color: #ffffff;
+    opacity: 0.95;
+  }
+
+  /* search bar */
+  #search {
+    display: flex;
+    gap: 10px;
+    margin-top: 28px;
+    max-width: 560px;
+    background: none;
+  }
+  #search-input {
+    flex: 1;
+    min-width: 0;
+    padding: 14px 20px;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 1rem;
+    outline: none;
+  }
+  #search-input::placeholder {
+    color: rgba(255, 255, 255, 0.75);
+  }
+  #search-input:focus {
+    border-color: #ffffff;
+  }
+  #search .btn {
+    padding: 14px 28px;
+    border-radius: 4px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* daftar barang */
+  .marketplace-list.section {
+    --lm-size: clamp(5rem, 15vw, 14rem);
+    position: relative;
+    overflow: hidden;
+    background-color: var(--background);
+    padding-top: 72px;
+    padding-bottom: calc(var(--lm-size) * 0.84 + 24px);
+  }
+  .marketplace-list.section::before,
+  .marketplace-list.section::after {
+    content: "LOVE AGAIN";
+    position: absolute;
+    font-size: var(--lm-size);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    white-space: nowrap;
+    color: transparent;
+    -webkit-text-stroke: 2px rgba(46, 125, 50, 0.18);
+    pointer-events: none;
+  }
+  .marketplace-list.section::before {
+    top: 24px;
+    right: -2%;
+  }
+  .marketplace-list.section::after {
+    bottom: calc(var(--lm-size) * -0.08);
+    left: -2%;
+  }
+  .marketplace-list .section-heading,
+  .marketplace-list .list-body {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* kotak status */
+  .state-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 48px 32px;
+    text-align: center;
+    background-color: #ffffff;
+    border: 1px solid rgba(46, 125, 50, 0.18);
+    border-top: 4px solid var(--primary);
+    border-radius: 4px;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.12);
+  }
+  .state-box.hide {
+    display: none;
+  }
+  .state-box .state-icon {
+    display: grid;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background-color: rgba(46, 125, 50, 0.12);
+    font-size: 1.6rem;
+  }
+  .state-box h3 {
+    margin: 4px 0 0;
+    font-size: 1.4rem;
+    letter-spacing: -0.02em;
+    color: #000000;
+  }
+  .state-box p {
+    margin: 0;
+    color: var(--text-muted);
+  }
+  .state-box .btn {
+    margin-top: 14px;
+    padding: 14px 28px;
+    border-radius: 4px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .state-box.error {
+    border-top-color: #d32f2f;
+  }
+  .state-box.error .state-icon {
+    background-color: rgba(211, 47, 47, 0.12);
+  }
+  .state-box.error h3 {
+    color: #d32f2f;
+  }
+
+  /* skeleton loading */
+  .state-box.loading {
+    max-width: none;
+    padding: 0;
+    background: none;
+    border: 0;
+    box-shadow: none;
+  }
+  .skeleton-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+    width: 100%;
+  }
+  .skeleton-card {
+    height: 340px;
+    border-radius: 4px;
+    background-color: #ffffff;
+    border: 1px solid rgba(46, 125, 50, 0.12);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+  }
+  .skeleton-card::before {
+    content: "";
+    display: block;
+    height: 200px;
+    background: linear-gradient(90deg, rgba(202, 235, 199, 0.6) 25%, rgba(202, 235, 199, 0.95) 50%, rgba(202, 235, 199, 0.6) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.4s infinite linear;
+  }
+  .skeleton-card::after {
+    content: "";
+    display: block;
+    height: 12px;
+    margin: 24px 20px 0;
+    border-radius: 2px;
+    background-color: rgba(0, 0, 0, 0.08);
+    box-shadow: 0 28px 0 -0px rgba(0, 0, 0, 0.06);
+    width: 60%;
+  }
+  @keyframes shimmer {
+    from { background-position: 200% 0; }
+    to { background-position: -200% 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .skeleton-card::before { animation: none; }
+  }
+
+  /* kartu barang */
+  #grid .product-card {
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  #grid .product-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.2);
+  }
+
+  @media (max-width: 768px) {
+    .page-banner {
+      padding: 140px 20px 60px;
+    }
+    #search {
+      flex-direction: column;
+    }
+    .marketplace-list.section {
+      padding-top: 56px;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="page-banner">
+  <div class="banner-content">
+    <p class="eyebrow">MARKETPLACE</p>
+    <h1>Marketplace EcoLove</h1>
+    <p>Discover secondhand and sustainable products from the EcoLove community.</p>
+
+    <form id="search" class="form-group">
+      <input type="search"
+        id="search-input"
+        placeholder="Search item..."
+        class="form-group">
+      <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+  </div>
+</section>
+
+<section class="section marketplace-list">
+  {% csrf_token %}
+
+  <div class="section-heading">
+    <p class="eyebrow">ALL LISTINGS</p>
+    <h2>Find Something to Love Again</h2>
+    <p>Fresh listings from the EcoLove community, ready for a second life.</p>
+  </div>
+
+  <div class="list-body">
+    <div id="loading" class="state-box loading hide">
+      <div class="skeleton-grid">
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+      </div>
+    </div>
+
+    <div id="error" class="state-box error hide">
+      <div class="state-icon">!</div>
+      <h3>Failed to load items</h3>
+      <p>Please check your connection and try again.</p>
+      <button type="button" class="btn btn-primary" onclick="window.location.reload()">Try Again</button>
+    </div>
+
+    <div id="empty" class="state-box hide">
+      <div class="state-icon">🌱</div>
+      <h3>No items yet</h3>
+      <p>Nothing is listed right now. Be the first to give an item a second life.</p>
+      <a href="/marketplace/my-marketplace/" class="btn btn-primary">Sell an Item</a>
+    </div>
+
+    <div 
+      id="grid" 
+      class="card-grid hide" 
+      style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; width: 100%;"
+      data-get-items-json="{% url 'items:get_items_json' %}"
+      data-item-detail="{% url 'items:item_detail' '00000000-0000-0000-0000-000000000000' %}"
+      data-like-item="{% url 'items:like_item_ajax' '00000000-0000-0000-0000-000000000000' %}"
+      data-dislike-item="{% url 'items:dislike_item_ajax' '00000000-0000-0000-0000-000000000000' %}"
+      data-is-authenticated="{{ user.is_authenticated }}"
+      data-user-id="{{ user.id }}"
+    >
+    </div>
+  </div>
+</section>
+
+<script src="{% static 'js/marketplace.js' %}"></script>
+{% endblock %}
