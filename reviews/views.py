@@ -7,7 +7,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import Comment, Review, Reply
 from .forms import ReviewForm
 
-from items.models import Item
+from items.models import Item, Order
 
 @requires_csrf_token
 @require_POST
@@ -86,6 +86,23 @@ def dislike(request, id):
 @login_required(login_url='/login/')
 def add_review(request, id):
     item = get_object_or_404(Item, id=id)
+
+    if request.user == item.user:
+        return JsonResponse(
+            {
+                'message': 'Cannot give review to owned item.' 
+            },
+            status=403
+        )
+
+    #if not Order.objects.filter(item=item, buyer=request.user, status="PAID").exists():
+    #   return JsonResponse(
+    #       {
+    #           'message': 'Review can only be given after purchase.' 
+    #       },
+    #       status=403
+    #   )
+
     if item.reviews.filter(user=request.user):
         return JsonResponse(
             {
@@ -135,7 +152,7 @@ def add_review(request, id):
 def edit_review(request, id):
     review = get_object_or_404(Review, id=id)
 
-    if request.user != review.user:
+    if not request.user.is_superuser and request.user != review.user:
         return JsonResponse(
             {
                 'message': 'Cannot edit someone else\'s review.' 
@@ -168,7 +185,7 @@ def edit_review(request, id):
 def delete(request, id):
     comment = get_object_or_404(Comment, id=id)
 
-    if request.user != comment.user:
+    if not request.user.is_superuser and request.user != comment.user:
         return JsonResponse(
             {
                 'message': 'Cannot delete someone else\'s comment.' 
