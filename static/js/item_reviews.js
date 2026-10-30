@@ -15,6 +15,7 @@ const ADD_REVIEW_ENDPOINT = gridContainer.dataset.addReview;
 const EDIT_REVIEW_ENDPOINT = gridContainer.dataset.editReview;
 const DELETE_COMMENT_ENDPOINT = gridContainer.dataset.deleteComment;
 const IS_AUTHENTICATED = gridContainer.dataset.isAuthenticated === 'True';
+const IS_SUPERUSER = gridContainer.dataset.isSuperuser === 'True';
 const USER_ID = gridContainer.dataset.userId;
 
 // Abort controller
@@ -33,7 +34,7 @@ function displayPageSection(
     errorState.classList.toggle('hide', !showError);
     emptyState.classList.toggle('hide', !showEmpty);
     gridContainer.classList.toggle('hide', !showGrid);
-    reviewFormContainer.classList.toggle('hide', !showForm);
+    if (reviewFormContainer) reviewFormContainer.classList.toggle('hide', !showForm);
 }
 
 function buildReviewCard(item) {
@@ -55,7 +56,7 @@ function buildReviewCard(item) {
 
     card.innerHTML = cardContent;
 
-    if(USER_ID === item.user.pk) {
+    if(IS_SUPERUSER || USER_ID === item.user.pk) {
         const editForm = buildReviewEditForm(item);
         
         editForm.addEventListener('submit', async function (event) {
@@ -117,7 +118,7 @@ function buildReviewActions(item, parent) {
         dislikeButton.disabled = false;
     });
 
-    if(USER_ID === item.user.pk) {
+    if(IS_SUPERUSER || USER_ID === item.user.pk) {
         const deleteButton = document.createElement('button');
         deleteButton.innerHTML = 'Delete';
         deleteButton.classList.add('disliked');
@@ -145,7 +146,7 @@ function buildReviewEditForm(item) {
     editForm.className = 'review';
 
     editForm.innerHTML = `
-        <h2>Edit Your Review<h2>
+        <h2>Edit Review<h2>
         <textarea placeholder="Edit..."
                   name="text"
                   class="review">${review.text}</textarea>
@@ -157,7 +158,7 @@ function buildReviewEditForm(item) {
             <option>2</option>
             <option>1</option>
         </select>
-        <button type="submit" class="review btn btn-primary">Edit</button>
+        <button type="submit" class="btn btn-primary">Edit</button>
     `;
 
     editForm.querySelector('select').selectedIndex = 5-review.rating;
@@ -304,7 +305,7 @@ async function fetchReviews() {
         if (reviewsData.length === 0) {
             displayPageSection({ showEmpty: true, showForm: true });
         } else {
-            var show = true;
+            var show = IS_AUTHENTICATED;
             gridContainer.innerHTML = '';
             reviewsData.forEach(item => {
                 if (item.user.pk === USER_ID) show = false;
@@ -354,9 +355,11 @@ function validateEditReviewForm(form, item) {
 }
 
 // Review form event handler
-reviewForm.addEventListener('submit', function (event) {
-    event.preventDefault();
-    if (validateReviewForm()) addReview(event);
-});
+if (reviewForm) {
+    reviewForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+        if (validateReviewForm()) addReview(event);
+    });
+}
 
 fetchReviews();

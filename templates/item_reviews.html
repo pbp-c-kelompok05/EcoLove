@@ -1,7 +1,24 @@
 {% load static %}
 <section id="reviews" class="review">
+
+    <!-- Loading State -->
+  <div id="loading" class="hide review">
+    <p>Loading reviews...</p>
+  </div>
+
+  <!-- Error State -->
+  <div id="error" class="hide disliked review ">
+    <p>Failed to load reviews. Please try again later.</p>
+  </div>
+
+  <!-- Empty State -->
+  <div id="empty" class="hide review">
+    <p>No one gave this product a review yet. {% if item.user != user%}Be the first to give review!{% endif %}</p>
+  </div>
+  
+  {% if user != item.user %}
   <article id="review-form-container" class="review">
-    <form id="review-form" class="review">
+    <form id="review-form">
       <h2>Add Review</h2>
       <textarea placeholder="Insert your review..."
                 name="text"
@@ -15,24 +32,10 @@
         <option>2</option>
         <option>1</option>
       </select>
-      <button type="submit" class="review btn btn-primary">Give Review</button>
+      <button type="submit" class="btn btn-primary">Give Review</button>
     </form>
   </article>
-  
-    <!-- Loading State -->
-  <div id="loading" class="hide">
-    <p>Loading reviews...</p>
-  </div>
-
-  <!-- Error State -->
-  <div id="error" class="hide">
-    <p>Failed to load reviews. Please try again later.</p>
-  </div>
-
-  <!-- Empty State -->
-  <div id="empty" class="hide">
-    <p>No reviews are given to this product. Be the first to give review!</p>
-  </div>
+  {% endif %}
 
   <!-- Grid Container -->
   <div 
@@ -45,6 +48,7 @@
     data-edit-review="{% url 'reviews:edit_review' '00000000-0000-0000-0000-000000000000' %}"
     data-delete-comment="{% url 'reviews:delete' '00000000-0000-0000-0000-000000000000' %}"
     data-is-authenticated="{{ user.is_authenticated }}"
+    data-is-superuser="{{ user.is_superuser }}"
     data-user-id="{{ user.id }}"></div>
 </section>
 
