@@ -56,6 +56,23 @@
 .ee-card:hover { border-color:#b9cbb0; transform:translateY(-2px); }
 .ee-thumbnail { display:block; border-radius:6px; overflow:hidden; background:var(--ee-sage); }
 .ee-thumbnail img { display:block; width:100%; aspect-ratio:2; object-fit:cover; }
+.ee .ee-image-interaction { position:relative; isolation:isolate; }
+.ee .ee-image-interaction img { transition:transform .4s ease; }
+.ee .ee-image-overlay { position:absolute; inset:0; z-index:1; display:flex; align-items:center; justify-content:center; padding:12px; background:rgba(0,0,0,.3); opacity:0; pointer-events:none; transition:opacity .3s ease; }
+.ee .ee-image-cta { display:inline-flex; align-items:center; justify-content:center; max-width:100%; padding:14px 22px; border-radius:12px; background:#23832e; color:#fff; font:600 13px/1.4 var(--font-ui); text-align:center; transform:translateY(10px); transition:transform .3s ease; }
+.ee .ee-image-interaction:focus-within .ee-image-overlay { opacity:1; }
+.ee .ee-image-interaction:focus-within .ee-image-cta { transform:translateY(0); }
+.ee .ee-image-interaction:focus-within img { transform:scale(1.025); }
+.ee .ee-image-interaction:focus-visible .ee-image-cta { outline:3px solid #fff; outline-offset:3px; }
+@media (hover:hover) {
+  .ee .ee-image-interaction:hover .ee-image-overlay { opacity:1; }
+  .ee .ee-image-interaction:hover .ee-image-cta { transform:translateY(0); }
+  .ee .ee-image-interaction:hover img { transform:scale(1.025); }
+}
+@media (hover:none), (pointer:coarse) {
+  .ee .ee-image-interaction--event .ee-image-overlay { opacity:1; }
+  .ee .ee-image-interaction--event .ee-image-cta { transform:none; }
+}
 .ee-card-body { padding:13px 3px 2px; flex:1; display:flex; flex-direction:column; align-items:flex-start; }
 .ee-card-body .ee-eyebrow { font-size:9px; margin:0 0 4px; }
 .ee-card h2 { font-size:16px; letter-spacing:-.4px; margin:0 0 5px; line-height:1.45; }
@@ -196,4 +213,7 @@
   .ee-table .ee-btn { min-width:52px; }
   .ee-delete-confirm { padding:20px; }
 }
-@media (prefers-reduced-motion:reduce) { .ee * { transition:none!important; } }
+@media (prefers-reduced-motion:reduce) {
+  .ee * { transition:none!important; }
+  .ee .ee-image-interaction img, .ee .ee-image-cta, .ee .ee-card:hover { transform:none!important; }
+}
