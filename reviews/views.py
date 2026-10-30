@@ -7,7 +7,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import Comment, Review, Reply
 from .forms import ReviewForm
 
-from items.models import Item, Order
+from items.models import Item
+from payments.models import Order
 
 @requires_csrf_token
 @require_POST
