@@ -85,11 +85,20 @@ def dislike(request, id):
 @require_POST
 @login_required(login_url='/login/')
 def add_review(request, id):
+    item = get_object_or_404(Item, id=id)
+    if item.reviews.filter(user=request.user):
+        return JsonResponse(
+            {
+                'message': 'Cannot add duplicate review.' 
+            },
+            status=403
+        )
+
     form = ReviewForm(request.POST) 
     if form.is_valid():
         review = form.save(commit=False)
         review.user = request.user
-        review.item = get_object_or_404(Item, id=id)
+        review.item = item
         review.save()
         return JsonResponse(
             {

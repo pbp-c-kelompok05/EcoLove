@@ -96,8 +96,7 @@ function buildReviewActions(item, parent) {
         editForm.addEventListener('submit', async function (event) {
             event.preventDefault();
 
-            
-            if (await editReview(item, editForm)) {
+            if (validateEditReviewForm(editForm, item) && await editReview(item, editForm)) {
                 parent.querySelector('h2').innerHTML = `${item.user.name} (⭐${review.rating})`;
                 parent.querySelector('p').innerHTML = review.text;
             }
@@ -313,7 +312,25 @@ function getCookie(name) {
     return cookieValue;
 }
 
+function validateReviewForm() {
+    return (reviewForm.querySelector('textarea').value &&
+        reviewForm.querySelector('select').selectedIndex > 0 &&
+        reviewForm.querySelector('select').selectedIndex < 6);
+}
+
+function validateEditReviewForm(form, item) {
+    const review = item.fields;
+    return (form.querySelector('textarea').value &&
+        form.querySelector('select').selectedIndex > -1 &&
+        form.querySelector('select').selectedIndex < 5 &&
+        form.querySelector('textarea').value != review.text ||
+        form.querySelector('select').selectedIndex != 5-review.rating);
+}
+
 // Review form event handler
-reviewForm.addEventListener('submit', addReview);
+reviewForm.addEventListener('submit', function (event) {
+    event.preventDefault();
+    if (validateReviewForm()) addReview(event);
+});
 
 fetchReviews();
