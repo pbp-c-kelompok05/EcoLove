@@ -392,7 +392,7 @@ button:disabled {
 
 .disliked {
     background: #9a0000 !important;
-    color: white;
+    color: white !important;
 }
 
 .disliked:hover {
@@ -1440,12 +1440,7 @@ body:has(.hero-photo) .navbar nav a:hover {
 /* ==========================================
    15.   REVIEW MODULE 
    ========================================== */
-section[class="review"],
-article[class="review"],
-article[class="review"] > p,
-form[class="review"],
-textarea[class="review"],
-select[class="review"] {
+.review {
     margin-top: 6px;
     margin-bottom: 6px;
     font-family: var(--font-ui);
@@ -1454,14 +1449,14 @@ select[class="review"] {
     border-radius: 12px;
 }
 
-article[class="review"] {
+article.review, div.review {
     padding: 12px;
-    background-color: var(--bg-card);
+    background-color: white;
 }
 
-textarea[class="review"] {
+textarea.review {
     width: 100%;
     padding: 12px;
-    border: none;
+    border: 1px solid var(--border);
     background: white;
 }
