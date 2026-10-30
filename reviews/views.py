@@ -134,6 +134,14 @@ def add_review(request, id):
 @login_required(login_url='/login/')
 def edit_review(request, id):
     review = get_object_or_404(Review, id=id)
+
+    if request.user != review.user:
+        return JsonResponse(
+            {
+                'message': 'Cannot edit someone else\'s review.' 
+            },
+            status=403
+        )
     
     form = ReviewForm(request.POST, instance=review)
     if form.is_valid():
@@ -159,6 +167,14 @@ def edit_review(request, id):
 @login_required(login_url='/login/')
 def delete(request, id):
     comment = get_object_or_404(Comment, id=id)
+
+    if request.user != comment.user:
+        return JsonResponse(
+            {
+                'message': 'Cannot delete someone else\'s comment.' 
+            },
+            status=403
+        )
     
     comment.delete()
     return JsonResponse(
