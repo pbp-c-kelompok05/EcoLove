@@ -57,7 +57,8 @@
       message('Memuat hasil…');
       results.setAttribute('aria-busy', 'true');
       try {
-        const data = await send(filter.action + '?' + params, {signal: current.signal});
+        // AJAX JSON shares document URLs; keep it out of the Back/Forward cache.
+        const data = await send(filter.action + '?' + params, {signal: current.signal, cache: 'no-store'});
         if (current.signal.aborted) return;
         results.replaceChildren(...fragment(data.html).childNodes);
         params.set('page', data.page);
