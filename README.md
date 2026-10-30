@@ -51,12 +51,24 @@ Perbandingan:
 
 
 Daftar Modul & PIC:
-    Auth-Profile-User = 
+    Auth-Profile-User = Qanita Syafika (2506551996)
     Event+Education = David Mesakh (2506604503)
     Item = 
     Review = 
     Transaction+Payment =
 
+## Modul Auth-Profile-User
+
+PIC: **Qanita Syafika (2506551996)**. 
+
+- Halaman: Landing Page (/), Register, Login, Logout, dan My Account/Profile (/profile/).
+- Autentikasi & Akun: Pendaftaran pengguna baru dengan validasi keunikan username dan kekuatan password. 
+- Landing Page (Home): Desain landing page, tipografi judul dan menyetarakan html antara page yang ada.
+- Profile Layout: Struktur 2-kolom responsif yang memisahkan navigasi sidebar akun dengan panel konten utama (detail user, riwayat aktivitas, dan form alamat).
+- Keamanan & Validasi: Dilengkapi proteksi CSRF pada seluruh form submission, escaping karakter untuk mencegah celah XSS, validasi server-side pada otentikasi session, dan pembatasan hak akses halaman internal melalui dekorator @login_required.
+- Tampilan & Responsive: Menggunakan variabel sistem warna EcoLove, mempertahankan font konstan (Plus Jakarta Sans), serta layout responsif untuk tampilan desktop, tablet, dan mobile.
+- Desain & Implementasi Navbar Global: Merancang dan menerapkan navbar fixed/floating seragam di seluruh halaman melalui base.html.
+- Fitur Modal Interaktif & Validasi JS di Halaman Profile: Menambahkan Modal Pop-up untuk form "Add New Address" pada halaman Profile. Mengimplementasikan skrip JavaScript untuk interaktivitas modal serta validasi otomatis input nomor telepon (format standar +62).
 
 ## Modul Event + Education
 
@@ -108,3 +120,7 @@ Uji sebagai guest untuk informasi publik, user untuk komentar, dan superuser unt
 - Konfigurasi storage lama dipertahankan: tanpa MEDIA_ROOT eksplisit, upload berada di `item_images/`, `event_images/`, dan `education_images/` relatif direktori kerja. Route development dibatasi ke folder tersebut. Tidak ada gambar dipindahkan/dihapus; file lama dari percobaan konfigurasi `media/` perlu dikoordinasikan jika ada. Hosting perlu mengatur persistensi dan penyajian media.
 - Migrasi `events.0003_eventregistration` hanya menambah tabel pendaftaran dan unique constraint. Migrasi sudah diterapkan pada SQLite lokal setelah backup di folder sementara; data lama tidak dihapus atau di-seed. Database deployment tidak disentuh. Jalankan `python manage.py migrate` saat menyiapkan database lain. Warning WhiteNoise tentang `staticfiles/` ditangani melalui `collectstatic` saat integrasi hosting.
 - Migrasi `events.0004_eventcomment_image` menambah foto opsional pada komentar lama tanpa menghapus isinya. File disimpan di `event_images/comments/`, mengikuti storage/media proyek. Migrasi lokal sudah diterapkan setelah backup; database deployment tidak disentuh.
+
+
+## AI Disclosure 
+Kami menggunakan codex dan Gemini AI sebagai alat bantu kami untuk menyelesaikan bug yang ada maupun memberi beberapa ide desain. Seluruh saran baik itu kode, logika, dan elemen visual telah ditinjau, diuji, serta diintegrasikan secara mandiri untuk memastikan kebenaran fungsi dan integritas karya.
