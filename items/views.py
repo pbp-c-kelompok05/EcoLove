@@ -26,6 +26,7 @@ def my_marketplace(request):
     ).order_by('-id')
     return render(request, 'my_marketplace.html', {'user_items': user_items})
 
+# karen
 def item_detail(request, id):
     item = get_object_or_404(Item, id=id)
     pending_order = None
