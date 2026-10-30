@@ -1,0 +1,51 @@
+{% load static %}
+<section id="reviews" class="review">
+  <article id="review-form-container" class="review">
+    <form id="review-form" class="review">
+      <h2>Add Review</h2>
+      <textarea placeholder="Insert your review..."
+                name="text"
+                class="review"></textarea>
+      ⭐
+      <select name="rating" class="review">
+        <option selected disabled>Select rating...</option>
+        <option>5</option>
+        <option>4</option>
+        <option>3</option>
+        <option>2</option>
+        <option>1</option>
+      </select>
+      <button type="submit" class="review btn btn-primary">Give Review</button>
+    </form>
+  </article>
+  
+    <!-- Loading State -->
+  <div id="loading" class="hide">
+    <p>Loading reviews...</p>
+  </div>
+
+  <!-- Error State -->
+  <div id="error" class="hide">
+    <p>Failed to load reviews. Please try again later.</p>
+  </div>
+
+  <!-- Empty State -->
+  <div id="empty" class="hide">
+    <p>No reviews are given to this product. Be the first to give review!</p>
+  </div>
+
+  <!-- Grid Container -->
+  <div 
+    id="grid"
+    class="hide"
+    data-get-reviews-json="{% url 'reviews:get_reviews_json' item.id %}"
+    data-like-comment="{% url 'reviews:like' '00000000-0000-0000-0000-000000000000' %}"
+    data-dislike-comment="{% url 'reviews:dislike' '00000000-0000-0000-0000-000000000000' %}"
+    data-add-review="{% url 'reviews:add_review' item.id %}"
+    data-edit-review="{% url 'reviews:edit_review' '00000000-0000-0000-0000-000000000000' %}"
+    data-delete-comment="{% url 'reviews:delete' '00000000-0000-0000-0000-000000000000' %}"
+    data-is-authenticated="{{ user.is_authenticated }}"
+    data-user-id="{{ user.id }}"></div>
+</section>
+
+<script src="{% static 'js/item_reviews.js' %}"></script>
