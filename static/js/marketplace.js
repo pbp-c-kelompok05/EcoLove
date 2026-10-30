@@ -31,6 +31,8 @@ function displayPageSection({ showLoading = false, showError = false, showEmpty 
 function buildProductCard(item) {
     const productId = item.pk;
     const product = item.fields;
+    console.log("Product data:", product);
+    console.log("Seller:", product.seller);
 
     const card = document.createElement('article');
     card.setAttribute('class', 'product-card');
@@ -57,6 +59,8 @@ function buildProductCard(item) {
                         <h3 style="margin: 0; font-size: 1.1rem;">${product.name}</h3>
                     </a>
                 </div>
+
+                <p class="seller" style="margin: 6px 0 0 0; color: #777; font-size: 0.85rem;"></p>
             </div>
 
             <p style="margin-top: 12px; font-weight: 600;">\$${product.price}</p>
@@ -64,6 +68,8 @@ function buildProductCard(item) {
     `;
 
     card.innerHTML = cardContent;
+
+    card.querySelector('.seller').textContent = `Sold by ${product.seller}`;
 
     if (IS_AUTHENTICATED) {
         const targetDiv = card.querySelector('.card-content > div > div');

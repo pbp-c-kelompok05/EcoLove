@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block content %}
-<section class="section">
+<section class="section" style="padding-top: 150px;">
   <!-- Container utama -->
   <div id="item-detail"
     class="item-detail-container"
@@ -12,7 +12,7 @@
     data-dislike-item="{% url 'items:dislike_item_ajax' '00000000-0000-0000-0000-000000000000' %}"
   >
     {% csrf_token %}
-    
+
     <div style="width: 100%;">
       <a href="{% url 'items:show_marketplace' %}" class="btn btn-primary" style="text-decoration: none; display: inline-block;">
         &larr; Back to Marketplace
@@ -21,7 +21,7 @@
 
     <!-- Wrapper untuk Gambar dan Detail -->
     <div style="display: flex; gap: 40px; flex-wrap: wrap; width: 100%;">
-      
+
       <!-- Left Column: Image -->
       <div class="image-column" style="flex: 1; min-width: 300px;">
         {% if item.image %}
@@ -35,12 +35,13 @@
 
       <!-- Right Column: Details & Actions -->
       <div class="details-column" style="flex: 1; min-width: 300px; display: flex; flex-direction: column; gap: 20px;">
-        
+
         <!-- Header -->
         <div>
           <span class="tag" style="display: inline-block; margin-bottom: 12px;">{{ item.get_category_display }}</span>
           <h2 style="margin: 0; font-size: 2.2rem; color: #222;">{{ item.name }}</h2>
           <p style="font-size: 1.5rem; font-weight: 700; color: #2e7d32; margin-top: 8px;">${{ item.price }}</p>
+          <p style="margin: 4px 0 0 0; color: #777; font-size: 0.95rem;">Sold by <strong>{{ item.user.username }}</strong></p>
         </div>
 
         <!-- Description -->
@@ -51,20 +52,21 @@
 
         <!-- tambahan dari aqil -->
         <div class="interaction-buttons" style="display: flex; gap: 12px; margin-top: 10px;">
-          <button id="like-button" 
-                  class="{% if user in item.liked_by.all %} liked {% endif %}" 
+          <button id="like-button"
+                  class="{% if user in item.liked_by.all %} liked {% endif %}"
                   style="cursor: pointer;"
                   {% if request.user == item.user %} disabled {% endif %}>
               👍 {{ item.liked_by.count }}
           </button>
-          <button id="dislike-button" 
-                  class="{% if user in item.disliked_by.all %} disliked {% endif %}" 
+          <button id="dislike-button"
+                  class="{% if user in item.disliked_by.all %} disliked {% endif %}"
                   style="cursor: pointer;"
                   {% if request.user == item.user %} disabled {% endif %}>
               👎 {{ item.disliked_by.count }}
           </button>
         </div>
 
+        <!-- Actions -->
         <div style="margin-top: auto; padding-top: 20px;">
           {% if request.user == item.user %}
             <!-- Tombol utk pemilik item -->
@@ -72,13 +74,32 @@
                style="display: block; width: 100%; text-align: center; padding: 12px 24px; font-weight: 600; font-size: 1rem; border-radius: 8px; text-decoration: none; box-sizing: border-box;">
               See More in My Marketplace
             </a>
-          {% else %}
-            <!-- Tombol utk non pemilik item -->
-            <button id="buy-button" type="button" class="btn btn-primary"
-                    data-url="{% url 'items:create_payment' item.id %}"
-                    style="display: block; width: 100%; text-align: center; padding: 12px 24px; font-weight: 600; font-size: 1.1rem; border-radius: 8px; box-sizing: border-box; cursor: pointer;">
-              Buy Now
+
+          {% elif item.is_sold %}
+            <!-- Item sudah terjual -->
+            <button type="button" disabled class="btn btn-primary"
+                    style="display: block; width: 100%; padding: 12px 24px; font-weight: 600; font-size: 1.1rem; border-radius: 8px; opacity: 0.5; cursor: not-allowed;">
+              Sold
             </button>
+
+          {% else %}
+            <!-- Tombol utk pembeli -->
+            <button id="buy-button" type="button" class="btn btn-primary"
+                    data-url="{% url 'payments:create_payment' item.id %}"
+                    style="display: block; width: 100%; text-align: center; padding: 12px 24px; font-weight: 600; font-size: 1.1rem; border-radius: 8px; box-sizing: border-box; cursor: pointer;">
+              {% if pending_order %}Resume payment{% else %}Buy Now{% endif %}
+            </button>
+
+            {% if pending_order %}
+            <form action="{% url 'payments:cancel_order' pending_order.id %}" method="POST" style="margin-top: 10px;">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-outline"
+                      style="display: block; width: 100%; padding: 10px 24px; cursor: pointer; color: red; border-color: red;"
+                      onclick="return confirm('Cancel this payment?');">
+                Cancel payment
+              </button>
+            </form>
+            {% endif %}
           {% endif %}
         </div>
 
