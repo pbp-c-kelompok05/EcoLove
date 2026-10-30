@@ -1,17 +1,24 @@
 {% load static %}
-<section id="reviews">
-  <form id="review-form">
-    <textarea placeholder="Insert your review..." name="text"></textarea>
-    <select name="rating">
-      <option selected disabled>Select rating...</option>
-      <option>5</option>
-      <option>4</option>
-      <option>3</option>
-      <option>2</option>
-      <option>1</option>
-    </select>
-    <button type="submit">Give Review</button>
-  </form>
+<section id="reviews" class="review">
+  <article id="review-form-container" class="review">
+    <form id="review-form" class="review">
+      <h2>Add Review</h2>
+      <textarea placeholder="Insert your review..."
+                name="text"
+                class="review"></textarea>
+      ⭐
+      <select name="rating" class="review">
+        <option selected disabled>Select rating...</option>
+        <option>5</option>
+        <option>4</option>
+        <option>3</option>
+        <option>2</option>
+        <option>1</option>
+      </select>
+      <button type="submit" class="review btn btn-primary">Give Review</button>
+    </form>
+  </article>
+  
     <!-- Loading State -->
   <div id="loading" class="hide">
     <p>Loading reviews...</p>

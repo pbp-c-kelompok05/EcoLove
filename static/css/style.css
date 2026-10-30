@@ -49,6 +49,10 @@ p {
     word-wrap: break-word;
 }
 
+textarea {
+    resize: vertical;
+}
+
 /* ==========================================
    2. NAVBAR
    ========================================== */
@@ -941,4 +945,33 @@ footer, .footer {
     .profile-container {
         grid-template-columns: 1fr;
     }
+}
+
+/* ==========================================
+   10.   REVIEW MODULE 
+   ========================================== */
+section[class="review"],
+article[class="review"],
+article[class="review"] > p,
+form[class="review"],
+textarea[class="review"],
+select[class="review"] {
+    margin-top: 6px;
+    margin-bottom: 6px;
+    font-family: var(--font-ui);
+    font-size: 14px;
+    color: var(--text);
+    border-radius: 12px;
+}
+
+article[class="review"] {
+    padding: 12px;
+    background-color: var(--bg-card);
+}
+
+textarea[class="review"] {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    background: white;
 }

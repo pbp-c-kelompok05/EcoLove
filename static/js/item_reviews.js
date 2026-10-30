@@ -4,6 +4,7 @@ const errorState = document.getElementById('error');
 const emptyState = document.getElementById('empty');
 const gridContainer = document.getElementById('grid');
 const reviewForm = document.getElementById('review-form');
+const reviewFormContainer = document.getElementById('review-form-container');
 
 // Endpoint
 const GET_REVIEWS_ENDPOINT = gridContainer.dataset.getReviewsJson;
@@ -19,11 +20,20 @@ const USER_ID = gridContainer.dataset.userId;
 // Abort controller
 let reviewsAbortController;
 
-function displayPageSection({ showLoading = false, showError = false, showEmpty = false, showGrid = false }) {
+function displayPageSection(
+    {
+        showLoading = false,
+        showError = false,
+        showEmpty = false,
+        showGrid = false,
+        showForm = false
+    }
+) {
     loadingState.classList.toggle('hide', !showLoading);
     errorState.classList.toggle('hide', !showError);
     emptyState.classList.toggle('hide', !showEmpty);
     gridContainer.classList.toggle('hide', !showGrid);
+    reviewFormContainer.classList.toggle('hide', !showForm);
 }
 
 function buildReviewCard(item) {
@@ -31,6 +41,7 @@ function buildReviewCard(item) {
     const review = item.fields;
 
     const card = document.createElement('article');
+    card.className = 'review';
 
     const image = review.image
         ? `<img src="${review.image}">`
@@ -39,10 +50,26 @@ function buildReviewCard(item) {
     const cardContent = `
         <h2>${user.name} (⭐${review.rating})</h2>
         ${image}
-        <p>${review.text}<p>
+        <p>${review.text}</p>
     `;
 
     card.innerHTML = cardContent;
+
+    if(USER_ID === item.user.pk) {
+        const editForm = buildReviewEditForm(item);
+        
+        editForm.addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            if (validateEditReviewForm(editForm, item) && await editReview(item, editForm)) {
+                card.querySelector('h2').innerHTML = `${item.user.name} (⭐${review.rating})`;
+                card.querySelector('p').innerHTML = review.text;
+            }
+        });
+
+        card.appendChild(editForm);
+    }
+
     card.appendChild(buildReviewActions(item, card));
 
     return card;
@@ -52,7 +79,7 @@ function buildReviewActions(item, parent) {
     const review = item.fields;
 
     const actions = document.createElement('div');
-    actions.setAttribute('class', 'interaction-buttons');
+    actions.className = 'interaction-buttons';
 
     const likeButton = document.createElement('button');
     likeButton.innerHTML = `👍 ${review.like_count}`;
@@ -91,26 +118,17 @@ function buildReviewActions(item, parent) {
     });
 
     if(USER_ID === item.user.pk) {
-        const editForm = buildReviewEditForm(item);
-        
-        editForm.addEventListener('submit', async function (event) {
-            event.preventDefault();
-
-            if (validateEditReviewForm(editForm, item) && await editReview(item, editForm)) {
-                parent.querySelector('h2').innerHTML = `${item.user.name} (⭐${review.rating})`;
-                parent.querySelector('p').innerHTML = review.text;
-            }
-        });
-
         const deleteButton = document.createElement('button');
         deleteButton.innerHTML = 'Delete';
         deleteButton.classList.add('disliked');
         
         deleteButton.addEventListener('click', async function () {
-            if (await deleteComment(item)) parent.remove();
+            if (await deleteComment(item)) {
+                parent.remove();
+                displayPageSection({ showGrid: true, showForm: true})
+            }
         });
 
-        actions.appendChild(editForm);
         actions.appendChild(deleteButton);
     }
 
@@ -124,17 +142,22 @@ function buildReviewEditForm(item) {
     const review = item.fields;
 
     const editForm = document.createElement('form');
+    editForm.className = 'review';
 
     editForm.innerHTML = `
-        <textarea placeholder="Edit..." name="text">${review.text}</textarea>
-        <select name="rating" value=${review.rating}>
+        <h2>Edit Your Review<h2>
+        <textarea placeholder="Edit..."
+                  name="text"
+                  class="review">${review.text}</textarea>
+        ⭐
+        <select name="rating" class="review">
             <option>5</option>
             <option>4</option>
             <option>3</option>
             <option>2</option>
             <option>1</option>
         </select>
-        <button type="submit">Edit</button>
+        <button type="submit" class="review btn btn-primary">Edit</button>
     `;
 
     editForm.querySelector('select').selectedIndex = 5-review.rating;
@@ -207,6 +230,7 @@ async function addReview(event) {
         if (response.ok) {
             reviewForm.reset();
             gridContainer.insertBefore(buildReviewCard(result.review), gridContainer.firstChild);
+            displayPageSection({ showGrid: true, showForm: false})
         } else throw new Error(result.message);
     } catch (error) {
         console.error('ERROR:', error);
@@ -278,13 +302,15 @@ async function fetchReviews() {
         const reviewsData = await response.json();
 
         if (reviewsData.length === 0) {
-            displayPageSection({ showEmpty: true });
+            displayPageSection({ showEmpty: true, showForm: true });
         } else {
+            var show = true;
             gridContainer.innerHTML = '';
             reviewsData.forEach(item => {
+                if (item.user.pk === USER_ID) show = false;
                 gridContainer.appendChild(buildReviewCard(item));
             });
-            displayPageSection({ showGrid: true });
+            displayPageSection({ showGrid: true, showForm: show });
         }
     } catch (error) {
         if (error.name === 'AbortError') return;
