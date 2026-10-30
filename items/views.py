@@ -8,7 +8,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Exists, OuterRef
 from django.conf import settings
 
-from .models import Item, Order
+from .models import Item
 from .forms import ItemForm
 
 def show_marketplace(request):
