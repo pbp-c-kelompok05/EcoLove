@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'items',
     'users',
     'events',
+    'payments',
     'reviews',
 ]
 
@@ -154,11 +155,13 @@ STORAGES = {
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Midtrans keys
 MIDTRANS_SERVER_KEY = os.getenv('MIDTRANS_SERVER_KEY', '')
 MIDTRANS_CLIENT_KEY = os.getenv('MIDTRANS_CLIENT_KEY', '')
 MIDTRANS_SNAP_URL = "https://app.sandbox.midtrans.com/snap/v1/transactions"
-MIDTRANS_STATUS_URL = "https://api.sandbox.midtrans.com/v2/{order_id}/status" #uhm check on this later 
+MIDTRANS_STATUS_URL = "https://api.sandbox.midtrans.com/v2/{order_id}/status" 
 MIDTRANS_SNAP_JS = "https://app.sandbox.midtrans.com/snap/snap.js"
+MIDTRANS_CANCEL_URL = "https://api.sandbox.midtrans.com/v2/{order_id}/cancel"
 
 # Form renderer
 FORM_RENDERER = 'django.forms.renderers.TemplatesSetting'
