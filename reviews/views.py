@@ -2,9 +2,9 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.views.decorators.csrf import requires_csrf_token
 from django.views.decorators.http import require_GET, require_POST
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import get_object_or_404
 
-from .models import Comment, Review, Reply
+from .models import Comment, Review
 from .forms import ReviewForm
 
 from items.models import Item
