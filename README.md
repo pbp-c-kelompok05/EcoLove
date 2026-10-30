@@ -54,7 +54,7 @@ Daftar Modul & PIC:
     Auth-Profile-User = 
     Event+Education = David Mesakh (2506604503)
     Item = 
-    Review = 
+    Review = Sayyid Aqil Kusuma (2506596331)
     Transaction+Payment = Maurilla Maharani Nur Abdul (2506588374)
 
 
@@ -194,3 +194,46 @@ Perintah tersebut digunakan untuk memeriksa konfigurasi proyek, perubahan model 
 - Harga dan informasi item dikirim ke Midtrans dari data item saat checkout. Perubahan harga, pencegahan pembelian bersamaan, dan penguncian item ketika pembayaran berlangsung perlu ditinjau untuk menghindari transaksi dengan nominal atau status item yang tidak konsisten.
 - Konfigurasi hosting, penyimpanan kredensial, URL notifikasi publik, dan pengujian terhadap database production perlu dilakukan sebelum deployment. Jangan menganggap hasil pengujian lokal sebagai bukti bahwa seluruh konfigurasi hosting telah teruji.
 
+## Modul Review
+
+PIC: **Sayyid Aqil Kusuma (2506596331)**. App: `reviews`.
+
+- Modul terintegrasi pada halaman detail item.
+- Setiap user yang sudah login dapat memberikan review sekali.
+- Review berisi text dan rating terhadap item.
+- Setelah membuat review, user dapat mengedit dan menghapus review miliknya.
+- Jika user menghapus review, prompt untuk menambahkan review akan muncul kembali.
+- User yang sudah login juga dapat memberi like dan dislike pada semua review.
+- Superuser dapat membuat, mengedit, dan menghapus review manapun.
+
+### Pengujian
+
+Pengujian dilakukan dengan menggunakan testing bawaan Django. Cakupan dari test ada:
+
+1. Memberikan like pada kondisi:
+    - valid,
+    - user tidak terautentikasi,
+    - dan review tidak ditemukan.
+2. Memberikan dislike pada kondisi:
+    - valid,
+    - user tidak terautentikasi,
+    - dan review tidak ditemukan.
+3. Menambahkan review pada kondisi:
+    - valid,
+    - form tidak valid (form kosong),
+    - sudah ada review,
+    - user tidak terautentikasi,
+    - dan item yang ingin di-review tidak ditemukan.
+4. Mengedit review pada kondisi:
+    - valid,
+    - pengedit adalah superuser,
+    - form tidak valid,
+    - user bukan pemilik review,
+    - user tidak terautentikasi,
+    - dan review yang ingin diedit tidak ditemukan.
+5. Menghapus review pada kondisi:
+    - valid,
+    - penghapus adalah superuser,
+    - user bukan pemilik review,
+    - user tidak terautentikasi,
+    - dan review yang ingin dihapus tidak ditemukan.

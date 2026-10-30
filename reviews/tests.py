@@ -215,7 +215,7 @@ class ReviewsTest(TestCase):
 
         self.assertEqual(response.status_code, 404)
 
-    def test_edit_review_not_authenticated(self):
+    def test_delete_review_not_authenticated(self):
         response = self.client.post(
             reverse("reviews:delete", kwargs={'id':self.review.id}),
             {'text': 'test rev', 'rating':2}
