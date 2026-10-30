@@ -1,21 +1,211 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block extra_head %}
+<style>
+  /* hero fullscreen */
+  .hero.hero-photo {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    min-height: 100vh;
+    max-width: none;
+    margin: 0;
+    padding: 150px 8% 56px;
+    border-radius: 0;
+    text-align: left;
+    overflow: hidden;
+    background-color: #1c2b20;
+  }
+  .hero-photo .hero-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+  }
+  .hero-photo::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.65) 100%);
+  }
+  .hero-photo .hero-inner {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 40px;
+  }
+  .hero-photo .hero-content {
+    max-width: 760px;
+  }
+  .hero-photo .eyebrow,
+  .hero-photo h1,
+  .hero-photo .hero-description {
+    color: #ffffff;
+  }
+  .hero-photo .eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    letter-spacing: 0.25em;
+  }
+  .hero-photo .eyebrow::before {
+    content: "";
+    width: 44px;
+    height: 2px;
+    background: #ffffff;
+  }
+  .hero-photo h1 {
+    font-size: clamp(3.5rem, 9vw, 7.5rem);
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+    margin-bottom: 24px;
+  }
+  .hero-photo .hero-description {
+    margin-bottom: 0;
+    opacity: 0.95;
+  }
+
+  .hero-photo .hero-actions {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    gap: 14px;
+    width: 320px;
+    flex-shrink: 0;
+  }
+  .hero-photo .hero-actions .btn {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 22px 28px;
+    border-radius: 4px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .hero-photo .hero-actions .btn-outline {
+    background-color: transparent;
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.75);
+  }
+  .hero-photo .hero-actions .btn-outline:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+  }
+
+  @media (max-width: 768px) {
+    .hero.hero-photo {
+      padding: 170px 20px 32px;
+    }
+    .hero-photo .hero-inner {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .hero-photo .hero-actions {
+      width: 100%;
+    }
+  }
+
+  #marketplace.section {
+    --lm-size: clamp(5rem, 15vw, 14rem);
+    position: relative;
+    overflow: hidden;
+    background-color: var(--background);
+    padding-bottom: calc(var(--lm-size) * 0.84 + 24px);
+  }
+  #marketplace.section::before {
+    content: "LOVE AGAIN";
+    position: absolute;
+    top: 24px;
+    right: -2%;
+    font-size: var(--lm-size);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    white-space: nowrap;
+    color: transparent;
+    -webkit-text-stroke: 2px rgba(46, 125, 50, 0.18);
+    pointer-events: none;
+  }
+
+  #marketplace.section::after {
+    content: "LOVE AGAIN";
+    position: absolute;
+    bottom: calc(var(--lm-size) * -0.08);
+    left: -2%;
+    font-size: var(--lm-size);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    white-space: nowrap;
+    color: transparent;
+    -webkit-text-stroke: 2px rgba(46, 125, 50, 0.18);
+    pointer-events: none;
+  }
+  #marketplace .marketplace-heading-row,
+  #marketplace .marquee-wrapper {
+    position: relative;
+    z-index: 1;
+  }
+  #marketplace .marketplace-sell-button {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 24px;
+    border-radius: 4px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  #marketplace .marquee-card {
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.25);
+  }
+  @media (max-width: 768px) {
+    #marketplace .marketplace-heading-row {
+      flex-direction: column;
+    }
+  }
+
+  /* section community */
+  #events.section {
+    background-color: rgba(202, 235, 199, 0.849);
+  }
+  #events .eyebrow,
+  #events .section-heading h2 {
+    color: #000000;
+    font-weight: 700;
+  }
+  #events .section-heading p {
+    color: #000000;
+    font-weight: 400;
+  }
+</style>
+{% endblock %}
 
 {% block content %}
 <!-- HERO -->
-<section id="home" class="hero">
-  <div class="hero-content">
-    <p class="eyebrow">SUSTAINABLE MARKETPLACE</p>
-    <h1>Love Me Again.</h1>
-    <p class="hero-description">
-      
-      Give pre-loved items a second life and make sustainable choices
-      together with EcoLove.
-    </p>
+<section id="home" class="hero hero-photo">
+  <img src="{% static 'img/22.jpg' %}" alt="" class="hero-bg">
+  <div class="hero-inner">
+    <div class="hero-content">
+      <p class="eyebrow">SUSTAINABLE MARKETPLACE</p>
+      <h1>Love Me Again.</h1>
+      <p class="hero-description">
+        Give pre-loved items a second life and make sustainable choices
+        together with EcoLove.
+      </p>
+    </div>
+
     <div class="hero-actions">
-      <a href="#marketplace" class="btn btn-primary">
-        Explore Marketplace
+      <a href="{% url 'items:show_marketplace' %}" class="btn btn-primary">
+        <span>Explore Marketplace</span><span class="btn-arrow">↗</span>
       </a>
-      <a href="/login/" class="btn btn-outline"> Sell an Item </a>
+      <a href="/marketplace/my-marketplace/" class="btn btn-outline">
+        <span>Sell an Item</span><span class="btn-arrow">↗</span>
+      </a>
     </div>
   </div>
 </section>
@@ -30,33 +220,25 @@
     </p>
   </div>
 
-  <div class="card-grid">
-    <article class="product-card">
-      <div class="product-image"></div>
-      <div class="card-content">
-        <span class="tag">Preloved</span>
-        <h3>Product Name</h3>
-        <p>Rp100.000</p>
-      </div>
-    </article>
-
-    <article class="product-card">
-      <div class="product-image"></div>
-      <div class="card-content">
-        <span class="tag">Reusable</span>
-        <h3>Product Name</h3>
-        <p>Rp75.000</p>
-      </div>
-    </article>
-
-    <article class="product-card">
-      <div class="product-image"></div>
-      <div class="card-content">
-        <span class="tag">Upcycled</span>
-        <h3>Product Name</h3>
-        <p>Rp125.000</p>
-      </div>
-    </article>
+  <div class="marquee-wrapper">
+    <div class="marquee-track">
+      <div class="marquee-card"><img src="{% static 'img/1.jpg' %}" alt="Item 1" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
+      <div class="marquee-card"><img src="{% static 'img/9.jpg' %}" alt="Item 9" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
+      <div class="marquee-card"><img src="{% static 'img/2.jpg' %}" alt="Item 2" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
+      <div class="marquee-card"><img src="{% static 'img/10.jpg' %}" alt="Item 10" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
+      <div class="marquee-card"><img src="{% static 'img/3.jpg' %}" alt="Item 3" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
+      <div class="marquee-card"><img src="{% static 'img/11.jpg' %}" alt="Item 11" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
+      <div class="marquee-card"><img src="{% static 'img/4.jpg' %}" alt="Item 4" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
+      <div class="marquee-card"><img src="{% static 'img/12.jpg' %}" alt="Item 12" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
+      <div class="marquee-card"><img src="{% static 'img/5.jpg' %}" alt="Item 5" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
+      <div class="marquee-card"><img src="{% static 'img/13.jpg' %}" alt="Item 13" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
+      <div class="marquee-card"><img src="{% static 'img/6.jpg' %}" alt="Item 6" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
+      <div class="marquee-card"><img src="{% static 'img/14.jpg' %}" alt="Item 14" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
+      <div class="marquee-card"><img src="{% static 'img/7.jpg' %}" alt="Item 7" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
+      <div class="marquee-card"><img src="{% static 'img/15.jpg' %}" alt="Item 15" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
+      <div class="marquee-card"><img src="{% static 'img/8.jpg' %}" alt="Item 8" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
+      <div class="marquee-card"><img src="{% static 'img/16.jpg' %}" alt="Item 16" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
+    </div>
   </div>
 </section>
 
@@ -68,24 +250,34 @@
     <p>Find events that help you live more sustainably.</p>
   </div>
 
-  <div class="card-grid">
-    <article class="info-card">
-      <span class="tag">Swap</span>
-      <h3>Clothing Swap</h3>
-      <p>Exchange clothes and give them a new life.</p>
-    </article>
+  <div class="events-image-grid">
+    <div class="event-image-card">
+      <img src="{% static 'img/18.jpg' %}" alt="Event 18" onerror="this.src='https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=400&auto=format&fit=crop&q=60'">
+      <div class="event-card-overlay">
+        <a href="/events/" class="btn-check-events">Check events →</a>
+      </div>
+    </div>
 
-    <article class="info-card">
-      <span class="tag">Workshop</span>
-      <h3>Repair Workshop</h3>
-      <p>Learn how to repair and reuse your belongings.</p>
-    </article>
+    <div class="event-image-card">
+      <img src="{% static 'img/19.jpg' %}" alt="Event 19" onerror="this.src='https://images.unsplash.com/photo-1528605248644-14dd04022da1?w=400&auto=format&fit=crop&q=60'">
+      <div class="event-card-overlay">
+        <a href="/events/" class="btn-check-events">Check events →</a>
+      </div>
+    </div>
 
-    <article class="info-card">
-      <span class="tag">Cleanup</span>
-      <h3>Community Cleanup</h3>
-      <p>Join the community and make an impact together.</p>
-    </article>
+    <div class="event-image-card">
+      <img src="{% static 'img/20.jpg' %}" alt="Event 20" onerror="this.src='https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400&auto=format&fit=crop&q=60'">
+      <div class="event-card-overlay">
+        <a href="/events/" class="btn-check-events">Check events →</a>
+      </div>
+    </div>
+
+    <div class="event-image-card">
+      <img src="{% static 'img/21.jpg' %}" alt="Event 21" onerror="this.src='https://images.unsplash.com/photo-1531482615713-2afd69097998?w=400&auto=format&fit=crop&q=60'">
+      <div class="event-card-overlay">
+        <a href="/events/" class="btn-check-events">Check events →</a>
+      </div>
+    </div>
   </div>
 </section>
 {% endblock %}

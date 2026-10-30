@@ -16,38 +16,49 @@ def login_user(request):
             login(request, user)
             return redirect('items:show_marketplace')
         else:
-            messages.error(request, "Username atau password salah.")
+            messages.error(request, "Invalid username or password.")
             
     return render(request, 'login.html', {'username': username_input})
 
 def register_user(request):
     if request.method == 'POST':
-        username_input = request.POST.get('username')
-        email_input = request.POST.get('email')
-        password_input = request.POST.get('password')
-        
-        # 1. Cek apakah username sudah ada
-        if User.objects.filter(username=username_input).exists():
-            messages.error(request, "Username sudah digunakan.")
-            return render(request, 'register.html')
+        username_input = request.POST.get('username', '')
+        email_input = request.POST.get('email', '')
+        password_input = request.POST.get('password', '')
 
-        # 2. Validasi Ketentuan Password
+        context = {
+            'username': username_input,
+            'email': email_input,
+            'password': password_input,
+        }
+
+        if not username_input or not email_input or not password_input:
+            messages.error(request, "Please fill in all required fields.")
+            return render(request, 'register.html', context)
+
+        if '@' not in email_input:
+            messages.error(request, "Email must contain '@' character.")
+            return render(request, 'register.html', context)
+
+        if User.objects.filter(username=username_input).exists():
+            messages.error(request, "Username is already taken.")
+            return render(request, 'register.html', context)
+
         if len(password_input) < 8:
-            messages.error(request, "Password harus minimal 8 karakter.")
-            return render(request, 'register.html')
+            messages.error(request, "Password must be at least 8 characters long.")
+            return render(request, 'register.html', context)
         
         if not any(char.isupper() for char in password_input):
-            messages.error(request, "Password harus mengandung minimal 1 huruf kapital (A-Z).")
-            return render(request, 'register.html')
+            messages.error(request, "Password must contain at least 1 uppercase letter (A-Z).")
+            return render(request, 'register.html', context)
         
         if not any(not char.isalpha() for char in password_input):
-            messages.error(request, "Password harus mengandung minimal 1 angka atau karakter unik (seperti . , ! @ 1 2).")
-            return render(request, 'register.html')
+            messages.error(request, "Password must contain at least 1 number or special character.")
+            return render(request, 'register.html', context)
 
-        # 3. Buat akun jika semua syarat terpenuhi
         user = User.objects.create_user(username=username_input, email=email_input, password=password_input)
         user.save()
-        messages.success(request, "Akun berhasil dibuat! Silakan login.")
+        messages.success(request, "Account created successfully! Please log in.")
         return redirect('login')
             
     return render(request, 'register.html')

@@ -18,7 +18,7 @@ class Item(models.Model):
     description = models.TextField()
     category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='OTHERS')
     
-    # 'Pillow' library installed for image uploading
+    # 'Pillow' buat upload image
     image = models.ImageField(upload_to='item_images/', null=True, blank=True)
     
     # Interaction fields:

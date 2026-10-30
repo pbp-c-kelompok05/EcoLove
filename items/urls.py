@@ -10,6 +10,7 @@ from items.views import (
     add_item,
     edit_item,
     delete_item,
+    delete_item_ajax,
     get_items_json,
 )
 
@@ -36,6 +37,7 @@ urlpatterns = [
     path('add/', add_item, name='add_item'),
     path('edit/<uuid:id>/', edit_item, name='edit_item'),
     path('delete/<uuid:id>/', delete_item, name='delete_item'),
+    path('delete/ajax/<uuid:id>/', delete_item_ajax, name="delete_item_ajax"),
 
     # === PAYMENT CONFIGURATION === 
     path('pay/<uuid:id>/', create_payment, name='create_payment'),
