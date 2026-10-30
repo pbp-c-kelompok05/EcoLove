@@ -12,13 +12,8 @@ from payments.models import Order
 
 @requires_csrf_token
 @require_POST
+@login_required(login_url='/login/')
 def like(request, id):
-    if not request.user.is_authenticated:
-        return JsonResponse(
-            {"message": "Only logged-in users allowed to give likes."},
-            status=403,
-        )
-
     comment = get_object_or_404(Comment, id=id)
         
     if request.user in comment.disliked_by.all():
@@ -48,13 +43,8 @@ def like(request, id):
 
 @requires_csrf_token
 @require_POST
+@login_required(login_url='/login/')
 def dislike(request, id):
-    if not request.user.is_authenticated:
-        return JsonResponse(
-            {"message": "Only logged-in users allowed to give dislikes."},
-            status=403,
-        )
-
     comment = get_object_or_404(Comment, id=id)
         
     if request.user in comment.liked_by.all():
