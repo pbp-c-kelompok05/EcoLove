@@ -1028,6 +1028,15 @@ footer, .footer {
     }
 }
 
+.modal-overlay {
+    z-index: 10000 !important;
+    padding: 20px;
+  }
+  .modal-box {
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
 
 /* ==========================================
    10. HORIZONTAL SCROLL MARKETPLACE 
