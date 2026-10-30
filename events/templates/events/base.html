@@ -12,4 +12,18 @@
 <p id="ee-feedback" role="status" aria-live="polite"></p>
 </section>
 {% endblock %}
-{% block extra_scripts %}{{ block.super }}<script src="{% static 'events/module.js' %}" defer></script>{% endblock %}
+{% block extra_scripts %}{{ block.super }}
+<script>
+(() => {
+  const module = document.querySelector('.ee');
+  const navbar = document.querySelector('body > .navbar');
+  if (!module || !navbar) return;
+  const updateOffset = () => {
+    const height = getComputedStyle(navbar).position === 'fixed' ? navbar.getBoundingClientRect().height : 0;
+    module.style.setProperty('--ee-header-height', `${height}px`);
+  };
+  updateOffset();
+  new ResizeObserver(updateOffset).observe(navbar);
+})();
+</script>
+<script src="{% static 'events/module.js' %}" defer></script>{% endblock %}

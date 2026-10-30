@@ -1,6 +1,6 @@
 /* Module components inherit base typography; the shared layout owns the page shell. */
 .ee { --ee-green:var(--primary); --ee-dark:var(--text); --ee-muted:var(--text-muted); --ee-line:var(--border); --ee-sage:var(--bg-card); }
-.ee { max-width:1120px; margin:0 auto; padding:62px 28px 30px; min-height:calc(100vh - 160px); overflow-wrap:anywhere; }
+.ee { max-width:1120px; margin:0 auto; padding:calc(var(--ee-header-height, 88px) + 24px) 28px 30px; min-height:calc(100vh - 160px); overflow-wrap:anywhere; }
 .ee h1 { font-size:clamp(25px,3vw,32px); line-height:1.25; letter-spacing:-1.2px; margin:7px 0 10px; font-weight:700; }
 .ee h2 { font-size:18px; line-height:1.4; margin:22px 0 10px; letter-spacing:-.4px; overflow:visible; }
 .ee h3 { font-size:14px; line-height:1.5; margin:0 0 6px; overflow:visible; }
@@ -158,13 +158,13 @@
 .ee [hidden] { display:none!important; }
 @media (min-width:1024px) { .ee-grid > .pure-u-lg-1-3 { width:33.3333%; } }
 @media (max-width:800px) {
-  .ee { padding:38px 24px 28px; }
+  .ee { padding:calc(var(--ee-header-height, 130px) + 20px) 24px 28px; }
   .ee-detail-grid { grid-template-columns:minmax(0,1.5fr) minmax(230px,1fr); gap:20px; }
   .ee-panel { padding:16px; }
   .ee-filter-row { align-items:flex-start; }
 }
 @media (max-width:600px) {
-  .ee { padding:30px 18px 24px; }
+  .ee { padding:calc(var(--ee-header-height, 168px) + 18px) 18px 24px; }
   .ee .ee-education-toolbar { grid-template-columns:minmax(0,1fr); gap:12px; }
   .ee h1 { letter-spacing:-.7px; font-size:26px; }
   .ee-banner img { aspect-ratio:3.3; }

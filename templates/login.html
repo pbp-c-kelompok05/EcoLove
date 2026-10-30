@@ -1,6 +1,14 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block extra_head %}
+<style>
+  .login-main-content {
+    padding-top: 120px !important;
+  }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="login-main-content">
     <div class="login-view">
@@ -16,7 +24,6 @@
             <p class="welcome-body">One account to discover items and sell preloved goods.</p>
         </div>
 
-        <!-- Right Box: Login Form (600px) -->
         <div class="login-form-box">
             <div class="form-header">
                 <h1 class="form-title">Log in to EcoLove</h1>
@@ -25,7 +32,7 @@
 
             {% if messages %}
                 {% for message in messages %}
-                    <div class="alert-error">
+                    <div class="{% if 'success' in message.tags %}alert-success{% else %}alert-error{% endif %}">
                         {{ message }}
                     </div>
                 {% endfor %}
@@ -34,7 +41,6 @@
             <form method="POST" action="{% url 'login' %}" class="login-form">
                 {% csrf_token %}
                 
-                <!-- Field Username -->
                 <div class="field-container">
                     <label for="username" class="field-label">Username</label>
                     <div class="field-surface-wrapper">
@@ -42,7 +48,6 @@
                     </div>
                 </div>
 
-                <!-- Field Password -->
                 <div class="field-container">
                     <label for="password" class="field-label">Password</label>
                     <div class="field-surface-wrapper">
@@ -50,7 +55,6 @@
                     </div>
                 </div>
 
-                <!-- Action Button -->
                 <button type="submit" class="btn-primary-action">Log In</button>
             </form>
 

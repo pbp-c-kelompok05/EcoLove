@@ -7,13 +7,36 @@
     <title>EcoLove — Love Me Again</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    
+    <style>
+      .navbar {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        z-index: 9999 !important;
+        background: linear-gradient(90deg, rgba(10, 24, 15, 0.88) 0%, rgba(27, 67, 38, 0.78) 50%, rgba(56, 142, 60, 0.68) 100%) !important;
+        -webkit-backdrop-filter: blur(16px) !important;
+        backdrop-filter: blur(16px) !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+      }
+      .navbar span,
+      .navbar nav a {
+        color: #ffffff !important;
+      }
+      .navbar nav a.btn {
+        background-color: var(--primary);
+      }
+    </style>
+
     {% block extra_head %}{% endblock %}
 </head>
 <body>
     {% block navbar %}
     <header class="navbar">
         <a href="/" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
-        <span style="font-size: 1.8rem; font-weight: bold; color: #2e7d32; font-family: sans-serif; margin: 0;">EcoLove</span>
+        <span style="font-size: 1.8rem; font-weight: bold; color: #ffffff; font-family: sans-serif; margin: 0;">EcoLove</span>
         
         <img src="{% static 'img/logo-ecolove.png' %}" alt="EcoLove Logo" style="height: 32px; width: auto; object-fit: contain; margin-bottom: 2px;">
         </a>
@@ -25,13 +48,10 @@
             <a href="{% url 'events:education_list' %}">Education</a>
 
             {% if user.is_authenticated %}
-            
-                <!-- Jika SUDAH Login -->
                 <a href="/profile/" style="font-weight: 600; color: var(--primary);">
                     👤 {{ user.username }}
                 </a>
             {% else %}
-                <!-- Jika BELUM Login -->
                 <a href="/login/" class="btn btn-primary" style="padding: 6px 16px; color: #ffffff !important;">Login</a>
             {% endif %}
         </nav>
@@ -42,9 +62,12 @@
         {% block content %}{% endblock %}
     </main>
 
-    {% block footer %}<footer class="footer">
+    {% block footer %}
+    <footer class="footer">
         <p>&copy; 2026 EcoLove. Faculty of Computer Science, University of Indonesia.</p>
-    </footer>{% endblock %}
+    </footer>
+    {% endblock %}
+
     {% block extra_scripts %}{% endblock %}
 </body>
 </html>
