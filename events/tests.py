@@ -200,10 +200,17 @@ class EventsTests(TestCase):
                 expected = [choice for choice in CATEGORIES if choice[0] != 'community']
                 self.assertEqual(response.context['categories'], expected)
                 for value, label in expected:
-                    self.assertContains(response, f'name="category" value="{value}"')
-                    self.assertContains(response, f'<span>{escape(label)}</span>')
-                self.assertContains(response, 'name="category" value="" checked')
-                self.assertNotContains(response, 'name="category" value="community"')
+                    if kind == 'education':
+                        self.assertContains(response, f'<option value="{value}">{escape(label)}</option>', html=True)
+                    else:
+                        self.assertContains(response, f'name="category" value="{value}"')
+                        self.assertContains(response, f'<span>{escape(label)}</span>')
+                if kind == 'education':
+                    self.assertContains(response, '<option value="" selected>Semua</option>', html=True)
+                    self.assertNotContains(response, '<option value="community"')
+                else:
+                    self.assertContains(response, 'name="category" value="" checked')
+                    self.assertNotContains(response, 'name="category" value="community"')
         for form_class in [EventForm, EducationForm]:
             self.assertIn(('community', 'Komunitas'), list(form_class().fields['category'].choices))
         self.client.force_login(self.admin)
@@ -211,6 +218,62 @@ class EventsTests(TestCase):
             for action in ['create', 'edit']:
                 response = self.client.get(self.url(kind, action, obj if action == 'edit' else None))
                 self.assertContains(response, '<option value="community">Komunitas</option>')
+
+    def test_education_has_one_accessible_dropdown_while_events_keep_chips(self):
+        for actor in [None, self.user, self.admin]:
+            self.client.logout()
+            if actor:
+                self.client.force_login(actor)
+            with self.subTest(actor=actor and actor.username):
+                education = self.client.get(self.url('education', 'list'))
+                self.assertContains(education, '<select id="ee-category" name="category">', count=1)
+                self.assertContains(education, 'name="category"', count=1)
+                self.assertContains(education, '<label for="ee-category">Kategori</label>', html=True)
+                self.assertContains(education, '<option value="" selected>Semua</option>', html=True)
+                self.assertContains(education, 'id="ee-search"')
+                self.assertContains(education, 'action="/events/education/" method="get"')
+                self.assertContains(education, '<button class="ee-btn ee-outline" type="submit">Cari</button>', html=True)
+                self.assertNotContains(education, 'type="radio"')
+                self.assertNotContains(education, 'class="ee-chips"')
+                self.assertNotContains(education, 'class="ee-filter-row"')
+                self.assertNotContains(education, '<option value="community"')
+                if actor and actor.is_superuser:
+                    self.assertContains(education, f'href="{self.url("education", "create")}"')
+                    self.assertContains(education, f'href="{self.url("education", "manage")}"')
+                else:
+                    self.assertNotContains(education, f'href="{self.url("education", "create")}"')
+                events = self.client.get(self.url('event', 'list'))
+                self.assertContains(events, '<fieldset class="ee-chips">', count=1)
+                self.assertContains(events, 'type="radio" name="category"', count=4)
+                self.assertContains(events, '<select name="status"')
+                self.assertNotContains(events, 'id="ee-category"')
+                self.assertNotContains(events, 'ee-education-toolbar')
+
+    def test_education_dropdown_restores_selection_and_combined_search(self):
+        from django.utils.html import escape
+        from .models import CATEGORIES
+
+        articles = {}
+        labels = {'': 'Semua', **dict(CATEGORIES)}
+        for category in ['reuse', 'waste', 'lifestyle']:
+            articles[category] = Education.objects.create(
+                title=f'Repair guide {category}', summary='Ringkasan', body='Materi', category=category, author=self.admin)
+        url = self.url('education', 'list')
+        for category in ['', 'reuse', 'waste', 'lifestyle']:
+            with self.subTest(category=category):
+                params = {'q': 'Repair guide', 'category': category}
+                response = self.client.get(url, params)
+                self.assertContains(response, f'<option value="{category}" selected>{escape(labels[category])}</option>', html=True)
+                self.assertContains(response, ' selected', count=1)
+                expected = {articles[category].pk} if category else {article.pk for article in articles.values()}
+                self.assertEqual({article.pk for article in response.context['page']}, expected)
+                for headers in [{}, AJAX]:
+                    data = self.client.get(url, dict(params, format='json'), **headers).json()
+                    self.assertEqual({row['id'] for row in data['results']}, {str(pk) for pk in expected})
+        query = '"><img src=x onerror=alert(1)>'
+        response = self.client.get(url, {'q': query})
+        self.assertContains(response, escape(query))
+        self.assertNotContains(response, query)
 
     def test_community_events_remain_in_all_search_and_ajax_results(self):
         community = Event.objects.create(
@@ -305,8 +368,8 @@ class EventsTests(TestCase):
                     if mode == 'html':
                         self.assertEqual(response.context['category'], '')
                         self.assertEqual({entry.pk for entry in response.context['page']}, expected)
-                        self.assertContains(response, 'name="category" value="" checked')
-                        self.assertNotContains(response, 'name="category" value="community"')
+                        self.assertContains(response, '<option value="" selected>Semua</option>', html=True)
+                        self.assertNotContains(response, '<option value="community"')
                     else:
                         self.assertEqual({row['id'] for row in response.json()['results']}, {str(pk) for pk in expected})
         article.refresh_from_db()
@@ -324,7 +387,7 @@ class EventsTests(TestCase):
                     expected.add(str(self.education.pk))
                 response = self.client.get(url, params)
                 self.assertContains(response, article.title)
-                self.assertContains(response, 'name="category" value="" checked')
+                self.assertContains(response, '<option value="" selected>Semua</option>', html=True)
                 for headers in [{}, AJAX]:
                     data = self.client.get(url, dict(params, format='json'), **headers).json()
                     self.assertEqual({row['id'] for row in data['results']}, expected)

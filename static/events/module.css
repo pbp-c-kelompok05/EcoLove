@@ -33,6 +33,12 @@
 .ee-search-row { display:flex; gap:12px; margin-top:6px; }
 .ee-search-row > input { flex:1; }
 .ee-search-row > .ee-btn { flex-shrink:0; min-width:92px; }
+.ee .ee-education-toolbar { display:grid; grid-template-columns:minmax(0,1fr) 220px; gap:16px; align-items:end; }
+.ee .ee-education-search, .ee .ee-education-category { min-width:0; }
+.ee .ee-education-search .ee-search-row { flex-wrap:nowrap; }
+.ee .ee-education-search .ee-search-row > input { flex:1 1 0; }
+.ee .ee-education-category select { margin-top:6px; }
+.ee .ee-education-create { margin-top:12px; max-width:100%; }
 .ee-filter-row { display:flex; justify-content:space-between; gap:16px; align-items:center; margin-top:16px; }
 .ee-chips { padding:0; margin:0; display:flex; flex-wrap:wrap; align-items:center; gap:8px; border:0; min-width:0; }
 .ee-chips label { position:relative; cursor:pointer; }
@@ -159,6 +165,7 @@
 }
 @media (max-width:600px) {
   .ee { padding:30px 18px 24px; }
+  .ee .ee-education-toolbar { grid-template-columns:minmax(0,1fr); gap:12px; }
   .ee h1 { letter-spacing:-.7px; font-size:26px; }
   .ee-banner img { aspect-ratio:3.3; }
   .ee-filter-row { flex-direction:column; gap:12px; }
