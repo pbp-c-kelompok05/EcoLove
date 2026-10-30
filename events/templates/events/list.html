@@ -5,7 +5,7 @@
 <h1>{% if kind == 'event' %}Langkah kecil. Dampak bersama.{% else %}Belajar merawat. Belajar mengurangi.{% endif %}</h1>
 <p class="ee-muted">{% if kind == 'event' %}Ikut kegiatan, bertemu komunitas, dan temukan cara baru untuk memberi bumi kesempatan.{% else %}Panduan sederhana agar barang bertahan lebih lama dan kebiasaan baik tumbuh setiap hari.{% endif %}</p>
 </div>
-<div class="ee-banner"><img src="{% if kind == 'event' %}{% static 'events/illustrations/banner.svg' %}{% else %}{% static 'events/illustrations/education-banner.svg' %}{% endif %}" alt="Ilustrasi pakaian yang dirawat dan digunakan kembali" fetchpriority="high"></div>
+<div class="ee-banner"><img src="{% if kind == 'event' %}{% static 'events/illustrations/banner.svg' %}{% else %}{% static 'events/illustrations/education-banner.svg' %}{% endif %}" alt="{% if kind == 'event' %}Ilustrasi kalender kegiatan lingkungan dan partisipasi komunitas{% else %}Ilustrasi buku terbuka, daun, dan ide untuk belajar hidup berkelanjutan{% endif %}" fetchpriority="high"></div>
 <form id="ee-filter" action="{{ list_url }}" method="get" class="ee-filters" data-kind="{{ kind }}">
 {% if kind == 'education' %}
 <div class="ee-education-toolbar">

@@ -1,0 +1,14 @@
+[run]
+source = events
+branch = True
+omit =
+    events/migrations/*
+    events/test*.py
+
+[report]
+show_missing = True
+precision = 2
+
+
+[html]
+directory = htmlcov

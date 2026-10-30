@@ -20,3 +20,10 @@ media/
 event_images/
 education_images/
 .test-media/
+
+# Local test reports
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+.coverage
