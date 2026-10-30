@@ -3,25 +3,6 @@
 
 {% block extra_head %}
 <style>
-  body:has(.hero-photo) .navbar {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 50;
-    background-color: rgba(10, 20, 14, 0.35);
-    -webkit-backdrop-filter: blur(18px);
-    backdrop-filter: blur(18px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-  }
-  body:has(.hero-photo) .navbar span,
-  body:has(.hero-photo) .navbar nav a {
-    color: #ffffff !important;
-  }
-  body:has(.hero-photo) .navbar nav a.btn {
-    background-color: var(--primary);
-  }
-
   /* hero fullscreen */
   .hero.hero-photo {
     position: relative;
@@ -218,7 +199,6 @@
       </p>
     </div>
 
-    <!-- tombol dipindah ke kanan bawah -->
     <div class="hero-actions">
       <a href="{% url 'items:show_marketplace' %}" class="btn btn-primary">
         <span>Explore Marketplace</span><span class="btn-arrow">↗</span>
@@ -242,23 +222,6 @@
 
   <div class="marquee-wrapper">
     <div class="marquee-track">
-      <div class="marquee-card"><img src="{% static 'img/1.jpg' %}" alt="Item 1" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
-      <div class="marquee-card"><img src="{% static 'img/9.jpg' %}" alt="Item 9" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
-      <div class="marquee-card"><img src="{% static 'img/2.jpg' %}" alt="Item 2" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
-      <div class="marquee-card"><img src="{% static 'img/10.jpg' %}" alt="Item 10" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
-      <div class="marquee-card"><img src="{% static 'img/3.jpg' %}" alt="Item 3" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
-      <div class="marquee-card"><img src="{% static 'img/11.jpg' %}" alt="Item 11" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
-      <div class="marquee-card"><img src="{% static 'img/4.jpg' %}" alt="Item 4" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
-      <div class="marquee-card"><img src="{% static 'img/12.jpg' %}" alt="Item 12" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
-      <div class="marquee-card"><img src="{% static 'img/5.jpg' %}" alt="Item 5" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
-      <div class="marquee-card"><img src="{% static 'img/13.jpg' %}" alt="Item 13" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
-      <div class="marquee-card"><img src="{% static 'img/6.jpg' %}" alt="Item 6" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
-      <div class="marquee-card"><img src="{% static 'img/14.jpg' %}" alt="Item 14" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
-      <div class="marquee-card"><img src="{% static 'img/7.jpg' %}" alt="Item 7" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
-      <div class="marquee-card"><img src="{% static 'img/15.jpg' %}" alt="Item 15" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
-      <div class="marquee-card"><img src="{% static 'img/8.jpg' %}" alt="Item 8" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
-      <div class="marquee-card"><img src="{% static 'img/16.jpg' %}" alt="Item 16" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
-
       <div class="marquee-card"><img src="{% static 'img/1.jpg' %}" alt="Item 1" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
       <div class="marquee-card"><img src="{% static 'img/9.jpg' %}" alt="Item 9" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>
       <div class="marquee-card"><img src="{% static 'img/2.jpg' %}" alt="Item 2" onerror="this.src='https://images.unsplash.com/photo-1544441893-675973e31985?w=400&auto=format&fit=crop&q=60'"><div class="card-overlay"><a href="{% url 'items:show_marketplace' %}" class="btn-goto-marketplace">Go to Marketplace →</a></div></div>

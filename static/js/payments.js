@@ -13,15 +13,28 @@ if (buyBtn) {
       const data = await res.json();
       if (!res.ok) { alert(data.message); return; }
 
+      const syncStatus = () => fetch(`/payments/pay/status/${data.order_id}/`);
+
       window.snap.pay(data.token, {
         onSuccess: async () => {
-          await fetch(`/marketplace/pay/status/${data.order_id}/`);
+          await syncStatus();
           alert('Payment successful!');
           location.reload();
         },
-        onPending: () => { alert('Waiting for your payment.'); },
-        onError:   () => { alert('Payment failed.'); },
-        onClose:   () => { /* user closed popup */ },
+        onPending: async () => {
+          await syncStatus();
+          alert('Waiting for your payment.');
+          location.reload();
+        },
+        onError: async () => {
+          await syncStatus();
+          alert('Payment failed.');
+          location.reload();
+        },
+        onClose: () => {
+          // popup closed without finishing: reload so the page shows "Resume payment" and "Cancel payment"
+          location.reload();
+        },
       });
     } finally {
       buyBtn.disabled = false;

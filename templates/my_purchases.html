@@ -1,5 +1,14 @@
 {% extends 'base.html' %}
 
+{% block extra_head %}
+<style>
+  main, 
+  .my-purchases-container {
+    padding-top: 120px !important;
+  }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="profile-wrapper">
     <div class="profile-container">
@@ -27,7 +36,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="{% url 'items:my_purchases' %}" class="active">
+                    <a href="{% url 'payments:my_purchases' %}" class="active">
                         📦 My Purchases
                     </a>
                 </li>
