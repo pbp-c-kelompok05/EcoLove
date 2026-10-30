@@ -1,15 +1,9 @@
 {% extends 'base.html' %}{% load static %}
 {% block extra_head %}
+{{ block.super }}
 <link rel="stylesheet" href="{% static 'events/vendor/grids-min.css' %}">
 <link rel="stylesheet" href="{% static 'events/vendor/grids-responsive-min.css' %}">
 <link rel="stylesheet" href="{% static 'events/module.css' %}">
-{% endblock %}
-{% block navbar %}
-<header class="ee-navbar"><div class="ee-nav-inner">
-<a href="{% url 'home' %}" class="ee-logo">EcoLove<small>LOVE ME AGAIN</small></a>
-<nav aria-label="Navigasi utama"><a href="{% url 'home' %}">Home</a><a href="{% url 'items:show_marketplace' %}">Marketplace</a><a href="{% url 'events:event_list' %}" {% if kind == 'event' %}aria-current="page"{% endif %}>Events</a><a href="{% url 'events:education_list' %}" {% if kind == 'education' %}aria-current="page"{% endif %}>Education</a></nav>
-{% if user.is_superuser %}<a class="ee-btn ee-outline ee-account" href="{% url 'events:event_manage' %}">Kelola konten</a>{% elif user.is_authenticated %}<a class="ee-btn ee-outline ee-account" href="{% url 'profile' %}">Akun saya</a>{% else %}<a class="ee-btn ee-outline ee-account" href="{% url 'login' %}">Masuk</a>{% endif %}
-</div></header>
 {% endblock %}
 {% block content %}
 <section class="ee">
@@ -18,5 +12,18 @@
 <p id="ee-feedback" role="status" aria-live="polite"></p>
 </section>
 {% endblock %}
-{% block footer %}<footer class="ee-footer"><a href="{% url 'home' %}">EcoLove · Love Me Again</a><span>From the people. By the people. For the people.</span></footer>{% endblock %}
-{% block extra_scripts %}<script src="{% static 'events/module.js' %}" defer></script>{% endblock %}
+{% block extra_scripts %}{{ block.super }}
+<script>
+(() => {
+  const module = document.querySelector('.ee');
+  const navbar = document.querySelector('body > .navbar');
+  if (!module || !navbar) return;
+  const updateOffset = () => {
+    const height = getComputedStyle(navbar).position === 'fixed' ? navbar.getBoundingClientRect().height : 0;
+    module.style.setProperty('--ee-header-height', `${height}px`);
+  };
+  updateOffset();
+  new ResizeObserver(updateOffset).observe(navbar);
+})();
+</script>
+<script src="{% static 'events/module.js' %}" defer></script>{% endblock %}
