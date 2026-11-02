@@ -1,0 +1,10 @@
+{% extends 'events/base.html' %}
+{% block module_content %}
+<p class="ee-eyebrow">{{ label }}</p>
+<h1>{% if object %}Edit {% elif kind == 'event' %}Buat {% else %}Tulis {% endif %}{% if kind == 'event' %}event{% else %}artikel{% endif %}{% if not object %} baru{% endif %}.</h1>
+<p class="ee-muted">{% if kind == 'event' %}Isi informasi utama agar kegiatanmu mudah dipahami dan diikuti. Waktu menggunakan WIB (UTC+7).{% else %}Bagikan pengetahuan sederhana untuk kebiasaan yang lebih berkelanjutan.{% endif %} Gambar opsional.</p>
+<form method="post" enctype="multipart/form-data" id="ee-content-form" class="ee-editor">{% csrf_token %}
+{% include 'events/fields.html' %}
+<div class="ee-actions"><button class="ee-btn ee-primary" type="submit">{% if object %}Simpan perubahan{% else %}Simpan {% if kind == 'event' %}event{% else %}artikel{% endif %}{% endif %}</button><a class="ee-btn ee-outline" href="{% if object %}{% if kind == 'event' %}{% url 'events:event_detail' object.pk %}{% else %}{% url 'events:education_detail' object.pk %}{% endif %}{% else %}{{ list_url }}{% endif %}">Batal</a></div>
+</form>
+{% endblock %}

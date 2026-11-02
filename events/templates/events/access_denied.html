@@ -1,0 +1,6 @@
+{% extends 'events/base.html' %}
+{% block module_content %}
+<p class="ee-eyebrow">EcoLove / Kelola konten</p><h1>{% if user.is_authenticated %}Akses terbatas.{% else %}Masuk terlebih dahulu.{% endif %}</h1>
+<div class="ee-panel ee-sage"><p>{% if user.is_authenticated %}Hanya superuser yang dapat membuat, mengedit, dan menghapus event atau artikel. Kamu tetap bisa membaca konten dan mengikuti kegiatan.{% else %}Halaman pengelolaan hanya tersedia untuk superuser. Masuk dengan akun yang memiliki akses untuk melanjutkan.{% endif %}</p></div>
+<div class="ee-actions">{% if not user.is_authenticated %}<a class="ee-btn ee-primary" href="{% url 'login' %}">Masuk</a>{% endif %}<a class="ee-btn ee-outline" href="{% url 'events:event_list' %}">Kembali ke events</a><a class="ee-btn ee-outline" href="{% url 'events:education_list' %}">Baca education</a></div>
+{% endblock %}

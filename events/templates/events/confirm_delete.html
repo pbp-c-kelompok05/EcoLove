@@ -1,0 +1,5 @@
+{% extends 'events/base.html' %}
+{% block module_content %}
+<section class="ee-delete-confirm"><p class="ee-eyebrow">Konfirmasi penghapusan</p><h1>Hapus {% if kind == 'event' %}event{% else %}artikel{% endif %} ini?</h1><h2>{{ object.title }}</h2><p>Konten akan dihapus.{% if kind == 'event' %} Komentar dan pendaftaran peserta juga akan dihapus.{% endif %} Pastikan kamu memilih konten yang tepat. Tindakan ini tidak dapat dibatalkan.</p>
+<form method="post" action="{{ delete_url }}" class="ee-actions" id="ee-delete-confirm-form">{% csrf_token %}<a class="ee-btn ee-outline" href="{{ manage_url }}">Batal</a><button class="ee-btn ee-danger" type="submit">Ya, hapus</button></form></section>
+{% endblock %}
