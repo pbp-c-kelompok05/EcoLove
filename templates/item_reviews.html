@@ -41,15 +41,13 @@
   <div 
     id="grid"
     class="hide"
-    data-get-reviews-json="{% url 'reviews:get_reviews_json' item.id %}"
-    data-like-comment="{% url 'reviews:like' '00000000-0000-0000-0000-000000000000' %}"
-    data-dislike-comment="{% url 'reviews:dislike' '00000000-0000-0000-0000-000000000000' %}"
-    data-add-review="{% url 'reviews:add_review' item.id %}"
-    data-edit-review="{% url 'reviews:edit_review' '00000000-0000-0000-0000-000000000000' %}"
-    data-delete-comment="{% url 'reviews:delete' '00000000-0000-0000-0000-000000000000' %}"
+    data-review-list="{% url 'reviews_api:review-list' item.id %}"
+    data-review-detail="{% url 'reviews_api:review-detail' '00000000-0000-0000-0000-000000000000' %}"
+    data-like="{% url 'reviews_api:review-like' '00000000-0000-0000-0000-000000000000' %}"
+    data-dislike="{% url 'reviews_api:review-dislike' '00000000-0000-0000-0000-000000000000' %}"
     data-is-authenticated="{{ user.is_authenticated }}"
-    data-is-superuser="{{ user.is_superuser }}"
-    data-user-id="{{ user.id }}"></div>
+    data-user-pk="{{ user.pk }}"
+    data-item-pk="{{ item.pk }}"></div>
 </section>
 
 <script src="{% static 'js/item_reviews.js' %}"></script>

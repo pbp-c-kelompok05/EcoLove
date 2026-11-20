@@ -13,7 +13,7 @@ urlpatterns = [
     path('events/', include('events.urls')),
     path('marketplace/', include('items.urls')),
     path('payments/', include('payments.urls')),
-    path('reviews/', include('reviews.urls')),
+    path('reviews/', include('reviews.api_urls')),
 ]
 
 # This block is required to serve images locally

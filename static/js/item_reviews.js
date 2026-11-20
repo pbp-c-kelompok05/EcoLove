@@ -7,16 +7,11 @@ const reviewForm = document.getElementById('review-form');
 const reviewFormContainer = document.getElementById('review-form-container');
 
 // Endpoint
-const GET_REVIEWS_ENDPOINT = gridContainer.dataset.getReviewsJson;
-const GET_REPLIES_ENDPOINT = gridContainer.dataset.getRepliesJson;
-const LIKE_COMMENT_ENDPOINT = gridContainer.dataset.likeComment;
-const DISLIKE_COMMENT_ENDPOINT = gridContainer.dataset.dislikeComment;
-const ADD_REVIEW_ENDPOINT = gridContainer.dataset.addReview;
-const EDIT_REVIEW_ENDPOINT = gridContainer.dataset.editReview;
-const DELETE_COMMENT_ENDPOINT = gridContainer.dataset.deleteComment;
+const REVIEW_LIST_ENDPOINT = gridContainer.dataset.reviewList;
+const REVIEW_DETAIL_ENDPOINT = gridContainer.dataset.reviewDetail;
+const REVIEW_LIKE_ENDPOINT = gridContainer.dataset.like;
+const REVIEW_DISLIKE_ENDPOINT = gridContainer.dataset.dislike;
 const IS_AUTHENTICATED = gridContainer.dataset.isAuthenticated === 'True';
-const IS_SUPERUSER = gridContainer.dataset.isSuperuser === 'True';
-const USER_ID = gridContainer.dataset.userId;
 
 // Abort controller
 let reviewsAbortController;
@@ -37,33 +32,25 @@ function displayPageSection(
     if (reviewFormContainer) reviewFormContainer.classList.toggle('hide', !showForm);
 }
 
-function buildReviewCard(item) {
-    const user = item.user;
-    const review = item.fields;
-
+function buildReviewCard(review) {
     const card = document.createElement('article');
     card.className = 'review';
 
-    const image = review.image
-        ? `<img src="${review.image}">`
-        : '';
-
     const cardContent = `
-        <h2>${user.name} (⭐${review.rating})</h2>
-        ${image}
+        <h2>${review.owner} (⭐${review.rating})</h2>
         <p>${review.text}</p>
     `;
 
     card.innerHTML = cardContent;
 
-    if(IS_SUPERUSER || USER_ID === item.user.pk) {
-        const editForm = buildReviewEditForm(item);
+    if(review.is_owner) {
+        const editForm = buildReviewEditForm(review);
         
         editForm.addEventListener('submit', async function (event) {
             event.preventDefault();
 
-            if (validateEditReviewForm(editForm, item) && await editReview(item, editForm)) {
-                card.querySelector('h2').innerHTML = `${item.user.name} (⭐${review.rating})`;
+            if (validateEditReviewForm(editForm, review) && await editReview(review, editForm)) {
+                card.querySelector('h2').innerHTML = `${review.owner} (⭐${review.rating})`;
                 card.querySelector('p').innerHTML = review.text;
             }
         });
@@ -71,14 +58,12 @@ function buildReviewCard(item) {
         card.appendChild(editForm);
     }
 
-    card.appendChild(buildReviewActions(item, card));
+    card.appendChild(buildReviewActions(review, card));
 
     return card;
 }
 
-function buildReviewActions(item, parent) {
-    const review = item.fields;
-
+function buildReviewActions(review, parent) {
     const actions = document.createElement('div');
     actions.className = 'interaction-buttons';
 
@@ -86,47 +71,53 @@ function buildReviewActions(item, parent) {
     likeButton.innerHTML = `👍 ${review.like_count}`;
     likeButton.classList.toggle('liked', review.is_liked);
 
-    likeButton.addEventListener('click', async function (event) {
-        event.preventDefault();
-        likeButton.disabled = true;
-
-        if (await likeComment(item)) {
-            likeButton.innerHTML = `👍 ${review.like_count}`;
-            likeButton.classList.toggle('liked', review.is_liked);
-            dislikeButton.innerHTML = `👎 ${review.dislike_count}`;
-            dislikeButton.classList.toggle('disliked', review.is_disliked);
-        }
-
-        likeButton.disabled = false;
-    });
-
     const dislikeButton = document.createElement('button');
     dislikeButton.innerHTML = `👎 ${review.dislike_count}`;
     dislikeButton.classList.toggle('disliked', review.is_disliked);
 
-    dislikeButton.addEventListener('click', async function (event) {
-        event.preventDefault();
+    if (IS_AUTHENTICATED) {
+        likeButton.addEventListener('click', async function (event) {
+            event.preventDefault();
+            likeButton.disabled = true;
+
+            if (await likeReview(review)) {
+                likeButton.innerHTML = `👍 ${review.like_count}`;
+                likeButton.classList.toggle('liked', review.is_liked);
+                dislikeButton.innerHTML = `👎 ${review.dislike_count}`;
+                dislikeButton.classList.toggle('disliked', review.is_disliked);
+            }
+
+            likeButton.disabled = false;
+        });
+
+        dislikeButton.addEventListener('click', async function (event) {
+            event.preventDefault();
+            dislikeButton.disabled = true;
+
+            if (await dislikeReview(review)) {
+                likeButton.innerHTML = `👍 ${review.like_count}`;
+                likeButton.classList.toggle('liked', review.is_liked);
+                dislikeButton.innerHTML = `👎 ${review.dislike_count}`;
+                dislikeButton.classList.toggle('disliked', review.is_disliked);
+            }
+
+            dislikeButton.disabled = false;
+        });
+    } else {
+        likeButton.disabled = true;
         dislikeButton.disabled = true;
+    }
+    
 
-        if (await dislikeComment(item)) {
-            likeButton.innerHTML = `👍 ${review.like_count}`;
-            likeButton.classList.toggle('liked', review.is_liked);
-            dislikeButton.innerHTML = `👎 ${review.dislike_count}`;
-            dislikeButton.classList.toggle('disliked', review.is_disliked);
-        }
-
-        dislikeButton.disabled = false;
-    });
-
-    if(IS_SUPERUSER || USER_ID === item.user.pk) {
+    if(review.is_deletable) {
         const deleteButton = document.createElement('button');
         deleteButton.innerHTML = 'Delete';
         deleteButton.classList.add('disliked');
         
         deleteButton.addEventListener('click', async function () {
-            if (await deleteComment(item)) {
+            if (await deleteReview(review)) {
                 parent.remove();
-                displayPageSection({ showGrid: true, showForm: true})
+                if (review.is_owner) displayPageSection({ showGrid: true, showForm: true});
             }
         });
 
@@ -139,9 +130,7 @@ function buildReviewActions(item, parent) {
     return actions;
 }
 
-function buildReviewEditForm(item) {
-    const review = item.fields;
-
+function buildReviewEditForm(review) {
     const editForm = document.createElement('form');
     editForm.className = 'review';
 
@@ -166,9 +155,8 @@ function buildReviewEditForm(item) {
     return editForm;
 }
 
-async function likeComment(item) {
-    const comment = item.fields;
-    const likeUrl = LIKE_COMMENT_ENDPOINT.replace('00000000-0000-0000-0000-000000000000', item.pk);
+async function likeReview(review) {
+    const likeUrl = REVIEW_LIKE_ENDPOINT.replace('00000000-0000-0000-0000-000000000000', review.id);
 
     try {
         const response = await fetch(likeUrl, {
@@ -179,20 +167,19 @@ async function likeComment(item) {
         const result = await response.json();
 
         if (response.ok) {
-            comment.like_count = result.like_count;
-            comment.is_liked = result.is_liked;
-            comment.dislike_count = result.dislike_count;
-            comment.is_disliked = result.is_disliked;
+            review.like_count = result.like_count;
+            review.is_liked = result.is_liked;
+            review.dislike_count = result.dislike_count;
+            review.is_disliked = result.is_disliked;
             return true;
-        } else throw new Error(result.message);
+        } else throw new Error(`HTTP ${response.status}`);
     } catch (error) {
         console.error('COMMENT ERROR:', error);
     }
 }
 
-async function dislikeComment(item) {
-    const comment = item.fields;
-    const dislikeUrl = DISLIKE_COMMENT_ENDPOINT.replace('00000000-0000-0000-0000-000000000000', item.pk);
+async function dislikeReview(review) {
+    const dislikeUrl = REVIEW_DISLIKE_ENDPOINT.replace('00000000-0000-0000-0000-000000000000', review.id);
 
     try {
         const response = await fetch(dislikeUrl, {
@@ -203,12 +190,12 @@ async function dislikeComment(item) {
         const result = await response.json();
 
         if (response.ok) {
-            comment.like_count = result.like_count;
-            comment.is_liked = result.is_liked;
-            comment.dislike_count = result.dislike_count;
-            comment.is_disliked = result.is_disliked;
+            review.like_count = result.like_count;
+            review.is_liked = result.is_liked;
+            review.dislike_count = result.dislike_count;
+            review.is_disliked = result.is_disliked;
             return true;
-        } else throw new Error(result.message);
+        } else throw new Error(`HTTP ${response.status}`);
     } catch (error) {
         console.error('COMMENT ERROR:', error);
     }
@@ -221,7 +208,7 @@ async function addReview(event) {
     submitButton.disabled = true;
 
     try {
-        const response = await fetch(ADD_REVIEW_ENDPOINT, {
+        const response = await fetch(REVIEW_LIST_ENDPOINT, {
             method: 'POST',
             headers: { 'X-CSRFToken': getCookie('csrftoken') },
             body: new FormData(reviewForm),
@@ -230,9 +217,9 @@ async function addReview(event) {
 
         if (response.ok) {
             reviewForm.reset();
-            gridContainer.insertBefore(buildReviewCard(result.review), gridContainer.firstChild);
+            gridContainer.insertBefore(buildReviewCard(result), gridContainer.firstChild);
             displayPageSection({ showGrid: true, showForm: false})
-        } else throw new Error(result.message);
+        } else throw new Error(`HTTP ${response.status}`);
     } catch (error) {
         console.error('ERROR:', error);
     } finally {
@@ -240,16 +227,15 @@ async function addReview(event) {
     }
 }
 
-async function editReview(item, form) {
-    const review = item.fields;
-    const editUrl = EDIT_REVIEW_ENDPOINT.replace('00000000-0000-0000-0000-000000000000', item.pk);
+async function editReview(review, form) {
+    const editUrl = REVIEW_DETAIL_ENDPOINT.replace('00000000-0000-0000-0000-000000000000', review.id);
 
     const submitButton = form.querySelector('button[type="submit"]');
     submitButton.disabled = true;
 
     try {
         const response = await fetch(editUrl, {
-            method: 'POST',
+            method: 'PATCH',
             headers: { 'X-CSRFToken': getCookie('csrftoken') },
             body: new FormData(form),
         });
@@ -259,7 +245,7 @@ async function editReview(item, form) {
             review.text = result.text;
             review.rating = result.rating;
             return true;
-        } else throw new Error(result.message);
+        } else throw new Error(`HTTP ${response.status}`);
     } catch (error) {
         console.error('ERROR:', error);
     } finally {
@@ -267,19 +253,17 @@ async function editReview(item, form) {
     }
 }
 
-async function deleteComment(item) {
-    const comment = item.fields;
-    const deleteUrl = DELETE_COMMENT_ENDPOINT.replace('00000000-0000-0000-0000-000000000000', item.pk);
+async function deleteReview(review) {
+    const deleteUrl = REVIEW_DETAIL_ENDPOINT.replace('00000000-0000-0000-0000-000000000000', review.id);
 
     try {
         const response = await fetch(deleteUrl, {
-            method: 'POST',
+            method: 'DELETE',
             headers: { 'X-CSRFToken': getCookie('csrftoken') },
         });
-        const result = await response.json();
 
         if (response.ok) return true;
-        else throw new Error(result.message);
+        else throw new Error(`HTTP ${response.status}`);
     } catch (error) {
         console.error('ERROR:', error);
     }
@@ -292,13 +276,13 @@ async function fetchReviews() {
     try {
         displayPageSection({ showLoading: true });
 
-        const response = await fetch(GET_REVIEWS_ENDPOINT, {
+        const response = await fetch(REVIEW_LIST_ENDPOINT, {
             method: 'GET',
             headers: { 'Accept': 'application/json' },
             signal: reviewsAbortController.signal,
         });
 
-        if (!response.ok) throw new Error('Failed to fetch data');
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
         const reviewsData = await response.json();
 
@@ -306,11 +290,17 @@ async function fetchReviews() {
             displayPageSection({ showEmpty: true, showForm: true });
         } else {
             var show = IS_AUTHENTICATED;
+            const arr = [];
             gridContainer.innerHTML = '';
             reviewsData.forEach(item => {
-                if (item.user.pk === USER_ID) show = false;
-                gridContainer.appendChild(buildReviewCard(item));
+                if (item.is_owner) {
+                    show = false;
+                    gridContainer.appendChild(buildReviewCard(item));
+                } else {
+                    arr.push(buildReviewCard(item))
+                }
             });
+            arr.forEach(item => gridContainer.appendChild(item));
             displayPageSection({ showGrid: true, showForm: show });
         }
     } catch (error) {
@@ -345,8 +335,7 @@ function validateReviewForm() {
         reviewForm.querySelector('select').selectedIndex < 6);
 }
 
-function validateEditReviewForm(form, item) {
-    const review = item.fields;
+function validateEditReviewForm(form, review) {
     return (form.querySelector('textarea').value &&
         form.querySelector('select').selectedIndex > -1 &&
         form.querySelector('select').selectedIndex < 5 &&
