@@ -5,3 +5,4 @@ python-dotenv
 whitenoise
 Pillow
 requests
+djangorestframework~=3.18.3

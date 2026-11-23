@@ -14,6 +14,8 @@ urlpatterns = [
     path('marketplace/', include('items.urls')),
     path('payments/', include('payments.urls')),
     path('reviews/', include('reviews.urls')),
+    path('api/v1/', include('events.api_urls')),
+    path('api-auth/', include('rest_framework.urls')),
 ]
 
 # This block is required to serve images locally
