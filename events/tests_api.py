@@ -7,7 +7,7 @@ from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
 
-from events.models import Education, Event
+from events.models import Education, Event, EventComment
 
 
 class EventAPITest(APITestCase):
@@ -399,3 +399,96 @@ class EducationAPITest(APITestCase):
             HTTP_X_CSRFTOKEN=token,
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+
+class EventCommentAPITest(APITestCase):
+    def setUp(self):
+        self.owner = User.objects.create_superuser(
+            username="owner", password="test-password", email="owner@example.com"
+        )
+        self.visitor = User.objects.create_user(
+            username="visitor", password="test-password"
+        )
+        self.other = User.objects.create_user(
+            username="other", password="test-password"
+        )
+        self.now = timezone.now()
+        self.event = Event.objects.create(
+            title="Repair Pakaian",
+            category="reuse",
+            description="Belajar menjahit bersama komunitas.",
+            starts_at=self.now + timedelta(days=2),
+            ends_at=self.now + timedelta(days=2, hours=2),
+            location="Depok",
+            creator=self.owner,
+        )
+        self.comment = EventComment.objects.create(
+            event=self.event,
+            user=self.visitor,
+            body="Seru banget acaranya!",
+        )
+        self.list_url = reverse("api:event-comment-list", args=[self.event.id])
+        self.detail_url = reverse("api:event-comment-detail", args=[self.comment.id])
+
+    def test_public_can_list_comments(self):
+        response = self.client.get(self.list_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]["username"], "visitor")
+        self.assertFalse(response.data[0]["can_delete"])
+
+        missing_url = reverse("api:event-comment-list", args=[uuid.uuid4()])
+        self.assertEqual(self.client.get(missing_url).status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_guest_cannot_create_or_delete_comment(self):
+        self.assertEqual(
+            self.client.post(self.list_url, {"body": "Halo"}, format="json").status_code,
+            status.HTTP_403_FORBIDDEN,
+        )
+        self.assertEqual(
+            self.client.delete(self.detail_url).status_code,
+            status.HTTP_403_FORBIDDEN,
+        )
+
+    def test_authenticated_user_can_post_and_validate_comment(self):
+        self.client.force_authenticate(user=self.visitor)
+        response = self.client.post(
+            self.list_url,
+            {"body": "Ikut daftar ya!", "user": self.owner.id},
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data["username"], "visitor")
+        self.assertTrue(response.data["can_delete"])
+
+        invalid = self.client.post(
+            self.list_url,
+            {"body": "<b>   </b>"},
+            format="json",
+        )
+        self.assertEqual(invalid.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("body", invalid.data)
+
+    def test_delete_comment_permissions(self):
+        self.client.force_authenticate(user=self.other)
+        list_resp = self.client.get(self.list_url)
+        self.assertFalse(list_resp.data[0]["can_delete"])
+        self.assertEqual(
+            self.client.delete(self.detail_url).status_code,
+            status.HTTP_403_FORBIDDEN,
+        )
+
+        self.client.force_authenticate(user=self.visitor)
+        self.assertEqual(
+            self.client.delete(self.detail_url).status_code,
+            status.HTTP_204_NO_CONTENT,
+        )
+        self.assertFalse(EventComment.objects.filter(pk=self.comment.id).exists())
+
+    def test_superuser_can_delete_any_comment(self):
+        self.client.force_authenticate(user=self.owner)
+        self.assertEqual(
+            self.client.delete(self.detail_url).status_code,
+            status.HTTP_204_NO_CONTENT,
+        )
+        self.assertFalse(EventComment.objects.filter(pk=self.comment.id).exists())

@@ -1,7 +1,9 @@
+from django.core.exceptions import ValidationError as DjangoValidationError
 from django.utils.html import strip_tags
 from rest_framework import serializers
 
-from events.models import Education, Event
+from events.comment_images import square_comment_image
+from events.models import Education, Event, EventComment
 
 
 def _clean_required_text(value, field_label):
@@ -117,3 +119,40 @@ class EducationSerializer(serializers.ModelSerializer):
 
     def validate_body(self, value):
         return _clean_required_text(value, "Body")
+
+
+class EventCommentSerializer(serializers.ModelSerializer):
+    """Serialize EventComment instances with sanitized text and optional square image."""
+
+    username = serializers.CharField(source="user.username", read_only=True)
+    can_delete = serializers.SerializerMethodField()
+
+    class Meta:
+        model = EventComment
+        fields = [
+            "id",
+            "event",
+            "username",
+            "body",
+            "image",
+            "can_delete",
+            "created_at",
+        ]
+        read_only_fields = ["id", "event", "username", "can_delete", "created_at"]
+
+    def validate_body(self, value):
+        return _clean_required_text(value, "Comment")
+
+    def validate_image(self, value):
+        if not value:
+            return value
+        try:
+            return square_comment_image(value)
+        except DjangoValidationError as exc:
+            raise serializers.ValidationError(exc.messages) from exc
+
+    def get_can_delete(self, obj):
+        request = self.context.get("request")
+        if request is None or not request.user.is_authenticated:
+            return False
+        return obj.user_id == request.user.pk or request.user.is_superuser

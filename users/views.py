@@ -40,8 +40,16 @@ def register_user(request):
             messages.error(request, "Email must contain '@' character.")
             return render(request, 'register.html', context)
 
+        if not email_input.lower().endswith('@gmail.com'):
+            messages.error(request, "Email must use a valid Gmail address.")
+            return render(request, 'register.html', context)
+
         if User.objects.filter(username=username_input).exists():
             messages.error(request, "Username is already taken.")
+            return render(request, 'register.html', context)
+
+        if User.objects.filter(email=email_input).exists():
+            messages.error(request, "Email is already taken.")
             return render(request, 'register.html', context)
 
         if len(password_input) < 8:
@@ -81,6 +89,7 @@ def add_address(request):
         city_province_postal = request.POST.get('city_province_postal')
         is_primary = request.POST.get('is_primary') == 'on'
 
+        
         if is_primary:
             Address.objects.filter(user=request.user, is_primary=True).update(is_primary=False)
 
@@ -98,6 +107,7 @@ def add_address(request):
 @login_required(login_url='/login/')
 def delete_address(request, address_id):
     address = get_object_or_404(Address, id=address_id, user=request.user)
+
     address.delete()
     messages.success(request, "Address successfully deleted!")
     return redirect('profile')

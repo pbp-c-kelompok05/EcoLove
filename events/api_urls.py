@@ -12,6 +12,16 @@ urlpatterns = [
         api_views.event_participate,
         name="event-participate",
     ),
+    path(
+        "events/<uuid:event_id>/comments/",
+        api_views.event_comment_list,
+        name="event-comment-list",
+    ),
+    path(
+        "events/comments/<uuid:comment_id>/",
+        api_views.event_comment_detail,
+        name="event-comment-detail",
+    ),
     path("education/", api_views.education_list, name="education-list"),
     path(
         "education/<uuid:education_id>/",

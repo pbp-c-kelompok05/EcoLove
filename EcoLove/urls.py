@@ -15,6 +15,7 @@ urlpatterns = [
     path('payments/', include('payments.urls')),
     path('reviews/', include('reviews.urls')),
     path('api/v1/', include('events.api_urls')),
+    path('api/v1/users/', include('users.api_urls')),
     path('api-auth/', include('rest_framework.urls')),
 ]
 

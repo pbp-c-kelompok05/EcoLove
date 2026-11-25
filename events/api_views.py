@@ -9,12 +9,16 @@ from rest_framework.decorators import (
     authentication_classes,
     permission_classes,
 )
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 
-from events.models import Education, Event, EventRegistration
+from events.models import Education, Event, EventComment, EventRegistration
 from events.permissions import IsSuperuserOrReadOnly
-from events.serializers import EducationSerializer, EventSerializer
+from events.serializers import (
+    EducationSerializer,
+    EventCommentSerializer,
+    EventSerializer,
+)
 
 
 def _detail_response(request, instance, serializer_class):
@@ -108,6 +112,42 @@ def event_participate(request, event_id):
 
     serializer = EventSerializer(event, context={"request": request})
     return Response(serializer.data)
+
+
+@api_view(["GET", "HEAD", "POST"])
+@authentication_classes([SessionAuthentication])
+@permission_classes([IsAuthenticatedOrReadOnly])
+def event_comment_list(request, event_id):
+    """List comments for an event, or post a new comment (authenticated users)."""
+    event = get_object_or_404(Event, pk=event_id)
+    if request.method in ("GET", "HEAD"):
+        comments = event.comments.select_related("user")
+        serializer = EventCommentSerializer(
+            comments, many=True, context={"request": request}
+        )
+        return Response(serializer.data)
+
+    serializer = EventCommentSerializer(
+        data=request.data, context={"request": request}
+    )
+    serializer.is_valid(raise_exception=True)
+    serializer.save(event=event, user=request.user)
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+@api_view(["DELETE"])
+@authentication_classes([SessionAuthentication])
+@permission_classes([IsAuthenticated])
+def event_comment_detail(request, comment_id):
+    """Delete a comment (comment author or superuser only)."""
+    comment = get_object_or_404(EventComment, pk=comment_id)
+    if comment.user_id != request.user.pk and not request.user.is_superuser:
+        return Response(
+            {"detail": "Anda hanya boleh menghapus komentar sendiri."},
+            status=status.HTTP_403_FORBIDDEN,
+        )
+    comment.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 @api_view(["GET", "HEAD", "POST"])
