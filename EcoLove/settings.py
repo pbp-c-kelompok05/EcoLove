@@ -27,6 +27,7 @@ ALLOWED_HOSTS = [
     'qanita-syafika-ecolove.pws.cs.ui.ac.id',
     'localhost',
     '127.0.0.1',
+    '10.0.2.2',
     '*.pws.cs.ui.ac.id',
     '.pws.cs.ui.ac.id',
 ]
@@ -45,18 +46,23 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.forms',
+    'corsheaders',
     'items',
     'users',
     'events',
     'payments',
     'reviews',
     'rest_framework',
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # Memuat file CSS/Static di PWS
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+
+    'corsheaders.middleware.CorsMiddleware',
+
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -84,6 +90,9 @@ TEMPLATES = [
 WSGI_APPLICATION = 'EcoLove.wsgi.application'
 
 PRODUCTION = os.getenv('PRODUCTION', 'False').lower() == 'true'
+
+# CORS configuration
+CORS_ALLOW_ALL_ORIGINS = not PRODUCTION
 
 if PRODUCTION and os.getenv('DB_HOST'):
     DATABASES = {
@@ -166,3 +175,10 @@ MIDTRANS_CANCEL_URL = "https://api.sandbox.midtrans.com/v2/{order_id}/cancel"
 
 # Form renderer
 FORM_RENDERER = 'django.forms.renderers.TemplatesSetting'
+
+# CORS Configuration
+CORS_ALLOWED_ORIGINS = [
+    origin.strip()
+    for origin in os.getenv('CORS_ALLOWED_ORIGINS', '').split(',')
+    if origin.strip()
+]
