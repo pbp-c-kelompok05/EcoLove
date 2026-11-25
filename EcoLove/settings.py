@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'payments',
     'reviews',
     'rest_framework',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -62,6 +63,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'EcoLove.urls'
@@ -166,3 +168,11 @@ MIDTRANS_CANCEL_URL = "https://api.sandbox.midtrans.com/v2/{order_id}/cancel"
 
 # Form renderer
 FORM_RENDERER = 'django.forms.renderers.TemplatesSetting'
+
+# keperluan drf
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+CSRF_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_SAMESITE = 'None'
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True

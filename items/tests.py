@@ -15,7 +15,7 @@ class ItemModelTest(TestCase):
             name='Vintage Jacket',
             price=150,
             description='A nice secondhand jacket',
-            category='CLOTHES'  # Sesuai dengan models.py
+            category='CLOTHES' 
         )
 
     def test_item_creation(self):

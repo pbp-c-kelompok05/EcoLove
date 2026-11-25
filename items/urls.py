@@ -12,6 +12,8 @@ from items.views import (
     delete_item,
     delete_item_ajax,
     get_items_json,
+    my_items_drf,
+    item_list_drf,
 )
 
 app_name = 'items'
@@ -31,4 +33,8 @@ urlpatterns = [
     path('edit/<uuid:id>/', edit_item, name='edit_item'),
     path('delete/<uuid:id>/', delete_item, name='delete_item'),
     path('delete/ajax/<uuid:id>/', delete_item_ajax, name="delete_item_ajax"),
+
+    #DRF VIEW
+    path('api/drf/items/', item_list_drf, name='item_list_drf'),
+    path('api/drf/my-items/', my_items_drf, name='my_items_drf'),
 ]

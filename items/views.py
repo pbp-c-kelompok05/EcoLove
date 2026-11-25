@@ -9,6 +9,15 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Exists, OuterRef
 from django.conf import settings
 
+#REST IMPORTS
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.response import Response
+from rest_framework import status
+
+#ITEMS JSON
+from .serializers import ItemSerializer
+
 from .models import Item
 from .forms import ItemForm
 from payments.models import Order
@@ -164,6 +173,7 @@ def dislike_item_ajax(request, id):
 def add_item(request):
     if request.method == 'POST':
         form = ItemForm(request.POST, request.FILES) 
+        
         if form.is_valid():
             item = form.save(commit=False)
             item.user = request.user
@@ -219,10 +229,11 @@ def delete_item_ajax(request, id):
 @require_GET
 def get_items_json(request):
     title_query = request.GET.get("title", "").strip()
+
     items = Item.objects.select_related("user").prefetch_related("liked_by", "disliked_by").exclude(order__status='PAID')
 
     if title_query:
-        items = items.filter(name__icontains=title_query) # Diubah dari 'title' menjadi 'name'
+        items = items.filter(name__icontains=title_query)
 
     data = []
     for item in items:
@@ -254,3 +265,18 @@ def get_items_json(request):
 
     return JsonResponse(data, safe=False)
 
+#DRF-based
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def item_list_drf(request):
+    items = Item.objects.exclude(order__status='PAID').order_by('-id')
+    serializer = ItemSerializer(items, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def my_items_drf(request):
+    items = Item.objects.filter(user=request.user).order_by('-id')
+    serializer = ItemSerializer(items, many=True)
+    return Response(serializer.data)
