@@ -53,7 +53,6 @@ INSTALLED_APPS = [
     'payments',
     'reviews',
     'rest_framework',
-    'corsheaders',
     'rest_framework.authtoken',
 ]
 
